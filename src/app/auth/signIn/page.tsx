@@ -7,10 +7,11 @@
 import { FormEvent, useState } from "react";
 
 import { getSession, signIn } from "next-auth/react";
-import router from "next/router";
+import  { useRouter } from "next/navigation";
 
 
 export default function SignupPage() {
+  const router = useRouter()
 
   const [formData, setFormData] = useState({
     id: "",
@@ -33,10 +34,10 @@ export default function SignupPage() {
         pin: formData.pin, 
         redirect: false,
       })
+
+
       if (signinResponse?.status === 200) {
-      
-        
-    
+      router.push('/')
       } else {
         setErrorMessage(signinResponse?.error ?? 'Signin failed')
       }
