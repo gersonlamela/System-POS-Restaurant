@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import { buttonVariants } from '@/components/ui/button'
 import User from '@/components/user'
-import { Exo_2 } from 'next/font/google'
+
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
