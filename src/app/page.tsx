@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth'
 
 import { authOptions } from './api/auth/[...nextauth]/route'
 import { User } from './user'
-import { signOut } from 'next-auth/react'
 
 import Link from 'next/link'
 
@@ -23,8 +22,8 @@ export default async function Home() {
 
   <div className='flex gap-10'>
 
-  <Link href={"/auth/signIn"} >Sign In</Link>
-  <Link href={"/auth/signUp"}>Sign Up</Link>
+  <Link href={"/sign-in"} >Sign In</Link>
+  <Link href={"/sign-up"}>Sign Up</Link>
   </div>
 
   </main>
