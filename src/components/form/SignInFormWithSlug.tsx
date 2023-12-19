@@ -15,11 +15,9 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+
 import { useToast } from '../ui/use-toast';
-import { User } from 'next-auth';
-import UserCard from '../dashboard/UserCard';
-import user from '../user';
+
 import { UserSignIn } from './UserSignIn';
 
 
@@ -32,12 +30,13 @@ const FormSchema = z.object({
     }),
 });
 
-const SignInForm = () => {
+const SignInForm = ({ params }: { params: { slug: string } }) => {
+
  const {toast} = useToast()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      userId: '',
+      userId: params.slug,
       pin: '',
     },
   });
@@ -73,7 +72,7 @@ const SignInForm = () => {
               <FormItem>
                 <FormLabel>ID do Utilizador</FormLabel>
                 <FormControl>
-                  <Input placeholder='Insira o seu ID de utilizador' {...field} />
+                  <Input placeholder='Insira o seu ID de utilizador' {...field}  value={params.slug} disabled/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,10 +101,31 @@ const SignInForm = () => {
           Sign in
         </Button>
       </form>
+
+      <div className="mt-4 space-y-2">
+        <div className="grid grid-cols-3 gap-2">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((number) => (
+            <Button
+              key={number}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              onClick={() => form.setValue('pin', form.getValues('pin') + String(number))}
+            >
+              {number}
+            </Button>
+          ))}
+        </div>
+        {/* Botão para Limpar */}
+        <Button
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => form.setValue('pin', '')}
+        >
+          Limpar
+        </Button>
+            </div>
       <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
         or
       </div>
-     
+    
       <p className='text-center text-sm text-gray-600 mt-2'>
       Se ainda não tem uma conta, por favor&nbsp;
       <Link className='text-blue-500 hover:underline' href='/sign-up'>
