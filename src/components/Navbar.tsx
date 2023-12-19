@@ -16,7 +16,7 @@ export default async function Navbar(){
         </Link>
       
         {session?.user ? (
-          <UserAccountnav/>
+          <UserAccountnav name={session.user.username} />
         ): (
             <Link className={buttonVariants()} href='/sign-in'>
             Sign in

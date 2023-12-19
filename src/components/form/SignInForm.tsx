@@ -54,7 +54,7 @@ const SignInForm = () => {
       variant: 'destructive'
     })
    }else{
-    location.href = '/admin'
+    location.href = '/dashboard/admin'
    }
   };
 
