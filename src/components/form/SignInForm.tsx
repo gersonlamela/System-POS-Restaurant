@@ -14,6 +14,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '../ui/use-toast';
 
 
 const FormSchema = z.object({
@@ -26,7 +29,10 @@ const FormSchema = z.object({
 });
 
 
+
+
 const SignInForm = () => {
+ const {toast} = useToast()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -35,8 +41,21 @@ const SignInForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+   const signInData = await signIn('credentials', {
+    id: values.userId,
+    pin: values.pin,
+    redirect: false,
+   })
+   if(signInData?.error) {
+    toast({
+      title: 'Erro',
+      description: signInData.error,
+      variant: 'destructive'
+    })
+   }else{
+    location.href = '/admin'
+   }
   };
 
   return (
@@ -84,7 +103,7 @@ const SignInForm = () => {
       </div>
       <p className='text-center text-sm text-gray-600 mt-2'>
       Se ainda não tem uma conta, por favor&nbsp;
-      <Link className='text-blue-500 hover:underline' href='/registar'>
+      <Link className='text-blue-500 hover:underline' href='/sign-up'>
           Registe-se
         </Link>
       </p>

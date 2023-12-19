@@ -15,6 +15,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useToast } from '../ui/use-toast';
 
 
 const FormSchema = z
@@ -41,6 +42,7 @@ const FormSchema = z
   });
 
 const SignUpForm = () => {
+  const {toast} = useToast()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -72,7 +74,11 @@ const SignUpForm = () => {
     if(response.ok){
       router.push('/sign-in')
     }else{
-      console.error('Registration failed.')
+      toast({
+        title: 'Erro',
+        description: "OPS! Algo correu mal. Tente novamente mais tarde.",
+        variant: 'destructive'
+      })
     }
   };
 
