@@ -11,9 +11,11 @@ const POSLayout: FC<POSLayoutProps> = ({ children }) => {
     <div className='flex flex-row flex-1  '>
    <SideBar/>
     </div>
-    <div className='flex flex-col w-full h-full'>
+    <div className='flex flex-col w-full h-full gap-[20px]'>
     <Navbar /> 
-    {children}
+   <div className='bg-red-500 w-full h-full'>
+   {children}
+   </div>
     </div></div>;
 };
 
