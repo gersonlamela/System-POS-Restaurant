@@ -4,7 +4,6 @@ import { UserSignIn } from '@/components/form/UserSignIn';
 export default function SignInPage() {
   return (
     <div className='w-full'>
-      <SignInForm />
       <UserSignIn/>
     </div>
   );

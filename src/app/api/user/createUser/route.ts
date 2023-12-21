@@ -5,6 +5,33 @@ import { hash } from 'bcrypt';
 import { prisma } from '@/lib/prisma';
 
 import * as z from 'zod';
+import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+
+const authenticateAndAuthorize = async (req: any): Promise<boolean> => {
+  try {
+    const session = await getServerSession(authOptions);
+
+    console.log(session)
+
+    if (!session) {
+      console.error('No session found.');
+      return false;
+    }
+
+    // Check if the user has the 'ADMIN' role
+    if (session.user?.role !== 'ADMIN') {
+      console.error('User is not an admin.');
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return false;
+  }
+};
 
 const userSchema = z
   .object({
@@ -23,6 +50,14 @@ const userSchema = z
 
 export async function POST(req:Request,res:Response) {
   try {
+    const isAuthenticatedAndAuthorized = await authenticateAndAuthorize(req);
+
+    if (!isAuthenticatedAndAuthorized) {
+      return NextResponse.json(
+        { user: null, message: 'Unauthorized. User must be logged in as an admin.' },
+        { status: 401 }
+      );
+    }
     const body = await req.json();
 
     const { username, email, pin, role } = userSchema.parse(body);

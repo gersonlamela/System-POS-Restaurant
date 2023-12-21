@@ -55,7 +55,7 @@ const SignInForm = () => {
       variant: 'destructive'
     })
    }else{
-    location.href = '/dashboard/admin'
+    location.href = '/'
    }
   };
 
@@ -108,7 +108,7 @@ const SignInForm = () => {
      
       <p className='text-center text-sm text-gray-600 mt-2'>
       Se ainda não tem uma conta, por favor&nbsp;
-      <Link className='text-blue-500 hover:underline' href='/sign-up'>
+      <Link className='text-blue-500 hover:underline' href='./pos/sign-up'>
           Registe-se
         </Link>
       </p>

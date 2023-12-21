@@ -17,7 +17,7 @@ export async function UserSignIn() {
   const user = await getUsers()
  return (
 
-  <div className="flex gap-5 items-center justify-center" >
+  <div className="flex flex-wrap  gap-5 items-center justify-center" >
   {user.user.map((user:User,index:any) => ( 
     <Link key={index} href={`/sign-in/${user.id}`}>
       <UserCard  name={user.username} id={user.id} email="" role={user.role}  />

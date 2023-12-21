@@ -53,12 +53,12 @@ const SignUpForm = () => {
       role: 'ADMIN', 
     },
   });
-  const router = useRouter()
+
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     values.pin = String(values.pin);
     values.confirmPin = String(values.confirmPin);
    
-    const response = await fetch('/api/auth/user',{
+    const response = await fetch('/api/user/createUser',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ const SignUpForm = () => {
     })
 
     if(response.ok){
-      router.push('/sign-in')
+      location.href = '/sign-in'
     }else{
       toast({
         title: 'Erro',
