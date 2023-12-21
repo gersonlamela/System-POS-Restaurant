@@ -32,7 +32,7 @@ export default function InactivityTimeoutComponent({ children }: InactivityTimeo
       inactiveTime += 1;
 
       // Verificar se o usuário está inativo por mais de 5 segundos
-      if (inactiveTime >= 20) {
+      if (inactiveTime >= 2000) {
         // Executar a função de logout fornecida
         router.push("/sign-in")
         signOut();

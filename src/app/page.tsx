@@ -6,6 +6,7 @@ import User from "@/components/user";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { UserSignIn } from "@/components/form/UserSignIn";
 
 
 
@@ -17,13 +18,8 @@ export default async function Home() {
   return (
     <div className="p-4">
       <h1 className="text-4xl">Home</h1>
-      <Link className={buttonVariants()} href={"/dashboard/admin"}>
-        Open my Admin
-      </Link>
-      <h2>Client Session</h2>
-      <User />
-      <h2>Server Session</h2>
-      <pre>{JSON.stringify(session)}</pre>
+      <UserSignIn/>
+     
     </div>
   );
 }

@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
         <main className='h-screen flex flex-col justify-center items-center'>
-          <Navbar />
+       
           {children}
         </main>
         <Toaster/>

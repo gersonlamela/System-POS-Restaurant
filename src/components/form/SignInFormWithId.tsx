@@ -19,6 +19,8 @@ import { signIn } from 'next-auth/react';
 import { useToast } from '../ui/use-toast';
 
 import { UserSignIn } from './UserSignIn';
+import UserById from '../UserById';
+
 
 
 const FormSchema = z.object({
@@ -30,16 +32,18 @@ const FormSchema = z.object({
     }),
 });
 
-const SignInForm = ({ params }: { params: { slug: string } }) => {
+const SignInForm = ({ params }: { params: { id: string } }) => {
 
  const {toast} = useToast()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      userId: params.slug,
+      userId: params.id,
       pin: '',
     },
   });
+
+
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
    const signInData = await signIn('credentials', {
@@ -62,22 +66,23 @@ const SignInForm = ({ params }: { params: { slug: string } }) => {
 
   return (
     <div>
+      <UserById userId={params.id}/>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
         <div className='space-y-2'>
-        <FormField
+      {/*   <FormField
             control={form.control}
             name='userId' // Alterar o nome do campo para userId
             render={({ field }) => (
               <FormItem>
                 <FormLabel>ID do Utilizador</FormLabel>
                 <FormControl>
-                  <Input placeholder='Insira o seu ID de utilizador' {...field}  value={params.slug} disabled/>
+                  <Input placeholder='Insira o seu ID de utilizador' {...field}  value={params.id} disabled/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         <FormField
             control={form.control}
             name='pin'
@@ -122,16 +127,6 @@ const SignInForm = ({ params }: { params: { slug: string } }) => {
           Limpar
         </Button>
             </div>
-      <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
-        or
-      </div>
-    
-      <p className='text-center text-sm text-gray-600 mt-2'>
-      Se ainda não tem uma conta, por favor&nbsp;
-      <Link className='text-blue-500 hover:underline' href='/sign-up'>
-          Registe-se
-        </Link>
-      </p>
     </Form>
 
 
