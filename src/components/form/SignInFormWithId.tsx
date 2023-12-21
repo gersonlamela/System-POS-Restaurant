@@ -20,6 +20,7 @@ import { useToast } from '../ui/use-toast';
 
 import { UserSignIn } from './UserSignIn';
 import UserById from '../UserById';
+import { error } from 'console';
 
 
 
@@ -51,7 +52,10 @@ const SignInForm = ({ params }: { params: { id: string } }) => {
     pin: values.pin,
     redirect: false,
    })
+
+
    if(signInData?.error) {
+    console.log(signInData?.error)
     toast({
       title: 'Erro',
       description: signInData.error,
@@ -65,8 +69,8 @@ const SignInForm = ({ params }: { params: { id: string } }) => {
   
 
   return (
-    <div>
-      <UserById userId={params.id}/>
+    <div className=''>
+       <UserById userId={params.id}/>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
         <div className='space-y-2'>

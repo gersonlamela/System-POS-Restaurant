@@ -41,8 +41,8 @@ const userSchema = z
       .string()
       .min(1, 'Pin is required')
       .min(4, 'Pin must have than 4 characters'),
-    role: z.enum(['ADMIN', 'COZINHEIRO', 'FUNCIONARIO'])
-      .refine((data) => ['ADMIN', 'COZINHEIRO', 'FUNCIONARIO'].includes(data), {
+    role: z.enum(['ADMIN', 'MANAGER', 'EMPLOYEE'])
+      .refine((data) => ['ADMIN', 'MANAGER', 'EMPLOYEE'].includes(data), {
         message: 'Role inválida'
       })
   })
@@ -50,14 +50,14 @@ const userSchema = z
 
 export async function POST(req:Request,res:Response) {
   try {
-    const isAuthenticatedAndAuthorized = await authenticateAndAuthorize(req);
+   const isAuthenticatedAndAuthorized = await authenticateAndAuthorize(req);
 
     if (!isAuthenticatedAndAuthorized) {
       return NextResponse.json(
         { user: null, message: 'Unauthorized. User must be logged in as an admin.' },
         { status: 401 }
       );
-    }
+    } 
     const body = await req.json();
 
     const { username, email, pin, role } = userSchema.parse(body);
@@ -92,7 +92,7 @@ export async function POST(req:Request,res:Response) {
         username,
         email: email,
         pin: hashedPin,
-        role: role,
+        role,
       },
     });
 

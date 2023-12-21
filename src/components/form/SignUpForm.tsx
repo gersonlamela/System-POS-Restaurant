@@ -32,7 +32,7 @@ const FormSchema = z
       .refine((data) => /^\d{1,4}$/.test(data), {
         message: 'A confirmação do pin deve ser um número com no máximo 4 dígitos',
       }),
-    role: z.enum(['ADMIN', 'COZINHEIRO', 'FUNCIONARIO']).refine((data) => data, {
+    role: z.enum(['ADMIN', 'MANAGER', 'EMPLOYEE']).refine((data) => data, {
       message: 'Selecione uma função',
     }),
   })
@@ -83,6 +83,7 @@ const SignUpForm = () => {
   };
 
   return (
+    <div>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
         <div className='space-y-2'>
@@ -157,8 +158,8 @@ const SignUpForm = () => {
                 <FormControl>
                   <select {...field} className='border rounded w-full p-2'>
                     <option value='ADMIN'>Admin</option>
-                    <option value='COZINHEIRO'>Cozinheiro</option>
-                    <option value='FUNCIONARIO'>Funcionário</option>
+                    <option value='MANAGER'>Gestor</option>
+                    <option value='EMPLOYEE'>Funcionário</option>
                   </select>
                 </FormControl>
                 <FormMessage />
@@ -180,6 +181,7 @@ const SignUpForm = () => {
         </Link>
       </p>
     </Form>
+    </div>
   );
 };
 

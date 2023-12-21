@@ -19,6 +19,6 @@ model User {
 
 enum UserRole {
   ADMIN
-  COZINHEIRO
-  FUNCIONARIO
+  MANAGER
+  EMPLOYEE
 }

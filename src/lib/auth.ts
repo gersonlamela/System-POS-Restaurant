@@ -29,11 +29,14 @@ export const authOptions: NextAuthOptions = {
           }
         });
 
+
+
         if (!existigUser) {
           throw new Error('Usuário não encontrado');
         }
 
         const pinMatch = await compare(credentials.pin, existigUser.pin);
+        console.log(pinMatch)
 
         if(!pinMatch) {
           throw new Error('Pin inválido');
