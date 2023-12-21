@@ -6,7 +6,7 @@ import Image from "next/image";
 
 export  function SideBar() {
  return (
-  <div className='w-[155px]  z-50 h-full inset-0 px-[14px] py-[20px]'>
+  <div className='w-[155px]  z-50 h-full inset-0  '>
     <div className="flex items-center justify-between flex-col  w-full h-full rounded-xl bg-white shadow-lg p-[20px]">
       <Image src="/logo.svg" alt="logo" width={100} height={100}/>
       <div>

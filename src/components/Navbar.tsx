@@ -1,32 +1,33 @@
-import Link from 'next/link';
-import { Button, buttonVariants } from './ui/button';
-import { HandMetal } from 'lucide-react';
-import { authOptions } from '@/lib/auth';
-import { getServerSession } from 'next-auth';
-import { signOut } from 'next-auth/react';
-import UserAccountnav from './UserAccountnav';
-import InactivityTimeoutComponent from './userInativaty';
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { HandMetal } from "lucide-react";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { signOut } from "next-auth/react";
+import UserAccountnav from "./UserAccountnav";
+import InactivityTimeoutComponent from "./userInativaty";
+import Image from "next/image";
 
-export default async function Navbar(){
-
-  const session = await getServerSession(authOptions)
+export default async function Navbar() {
+  const session = await getServerSession(authOptions);
   return (
     <InactivityTimeoutComponent>
-    <div className=' bg-red-500 py-2 border-b border-s-zinc-200  w-full h-[80px]  '>
-      <div className='container flex items-center justify-between'>
-        <Link href='/'>
-          <HandMetal />
-        </Link>
-      
-        {session?.user ? (
-          <UserAccountnav name={session.user.username} />
-        ): (
-            <Link className={buttonVariants()} href='/sign-in'>
-            Sign in
+      <div className="flex items-center bg-white  shadow-xl border-b border-s-zinc-200 w-full  rounded  h-[80px] ">
+        <div className="w-full flex items-center justify-between px-[20px]">
+          <Link href="/">
+            <Image src="/logo.svg" width={80} height={80} alt="logo"/>
           </Link>
-        )}
+
+          {session?.user ? (
+           
+              <UserAccountnav name={session.user.username} />
+           
+         
+          ) : (
+            <p>SYSTEM POS</p>
+          )}
+        </div>
       </div>
-    </div>
     </InactivityTimeoutComponent>
   );
-};
+}

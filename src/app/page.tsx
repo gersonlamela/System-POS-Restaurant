@@ -7,6 +7,7 @@ import User from "@/components/user";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { UserSignIn } from "@/components/form/UserSignIn";
+import Navbar from "@/components/Navbar";
 
 
 
@@ -16,7 +17,8 @@ export default async function Home() {
 
 
   return (
-    <div className="p-4">
+    <div>
+      <Navbar/>
       <h1 className="text-4xl">Home</h1>
       <UserSignIn/>
      
