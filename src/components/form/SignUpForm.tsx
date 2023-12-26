@@ -14,35 +14,41 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useToast } from '../ui/use-toast';
+import { toast } from 'sonner';
+import { json } from 'stream/consumers';
+
 
 
 const FormSchema = z
+  /**
+   * Validates the sign up form data using Zod:
+   * - username: required, min length 1, max length 100
+   * - email: required, valid email format
+   * - pin: required, numeric string up to 4 digits
+   * - confirmPin: required, numeric string up to 4 digits
+   * - role: required, enum of 'ADMIN', 'MANAGER', 'EMPLOYEE'
+   */
   .object({
-    username: z.string().min(1, 'Nome de utilizador é obrigatório').max(100),
-    email: z.string().min(1, 'Email é obrigatório').email('Email inválido'),  
-    pin: z
-      .string()
-      .refine((data) => /^\d{1,4}$/.test(data), {
-        message: 'O pin deve ser um número com no máximo 4 dígitos',
-      }),
-    confirmPin: z
-      .string()
-      .refine((data) => /^\d{1,4}$/.test(data), {
-        message: 'A confirmação do pin deve ser um número com no máximo 4 dígitos',
-      }),
-    role: z.enum(['ADMIN', 'MANAGER', 'EMPLOYEE']).refine((data) => data, {
-      message: 'Selecione uma função',
+    username: z.string().min(1, "Nome de utilizador é obrigatório").max(100),
+    email: z.string().min(1, "Email é obrigatório").email("Email inválido"),
+    pin: z.string().refine((data) => /^\d{1,4}$/.test(data), {
+      message: "O pin deve ser um número com no máximo 4 dígitos",
+    }),
+    confirmPin: z.string().refine((data) => /^\d{1,4}$/.test(data), {
+      message:
+        "A confirmação do pin deve ser um número com no máximo 4 dígitos",
+    }),
+    role: z.enum(["ADMIN", "MANAGER", "EMPLOYEE"]).refine((data) => data, {
+      message: "Selecione uma função",
     }),
   })
   .refine((data) => data.pin === data.confirmPin, {
-    path: ['confirmPin'],
-    message: 'Pin não coincide com a confirmação do pin',
+    path: ["confirmPin"],
+    message: "Pin não coincide com a confirmação do pin",
   });
 
 const SignUpForm = () => {
-  const {toast} = useToast()
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -57,6 +63,9 @@ const SignUpForm = () => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     values.pin = String(values.pin);
     values.confirmPin = String(values.confirmPin);
+
+
+    try {
    
     const response = await fetch('/api/user/createUser',{
       method: 'POST',
@@ -71,15 +80,17 @@ const SignUpForm = () => {
       })
     })
 
+    const data = await response.json();
     if(response.ok){
       location.href = '/sign-in'
-    }else{
-      toast({
-        title: 'Erro',
-        description: "OPS! Algo correu mal. Tente novamente mais tarde.",
-        variant: 'destructive'
-      })
     }
+
+    toast.error(data.message);
+  }catch (error) {
+     
+      console.log('There was an error', error);
+    }
+
   };
 
   return (

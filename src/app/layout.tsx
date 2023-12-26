@@ -1,8 +1,9 @@
 import '../styles/globals.css'
-import { Toaster } from '@/components/ui/toaster'
+
 import { Providers } from '@/components/Provider'
 import { Poppins } from 'next/font/google';
 import Navbar from '@/components/Navbar';
+import { Toaster } from '@/components/ui/sonner';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,13 +23,14 @@ export default function RootLayout({
 
 
   return (
+   
     <html lang='pt' className={`${poppins.variable}`}>
       <body>
         <Providers>
         <main className='h-screen flex flex-col font-poppins'>
           {children}
         </main>
-        <Toaster/>
+        <Toaster position="top-right"/>
         </Providers>
       </body>
     </html>

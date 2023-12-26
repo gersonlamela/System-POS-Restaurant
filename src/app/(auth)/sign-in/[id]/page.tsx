@@ -1,13 +1,22 @@
-import SignInFormWithId from "@/components/form/SignInFormWithId";
+import { getUserById } from "@/components/UserById";
+import SignInForm from "@/components/form/SignInForm";
 
 
+export default async function SignInPage({ params}: { params: { id: string}}) {
+  const {user} = await getUserById({userId:params.id})
 
-export default function SignInPage({ params }: { params: { id: string } }) {
-  
   return (
-    <div className='max-w-[450px] flex items-center justify-center'>
-      <SignInFormWithId params={params} />
+    <div className=' flex items-center justify-center w-full h-full'>
+
+    <SignInForm params={params} user={user}/>
     </div>
   );
 };
+
+
+
+
+
+
+
 

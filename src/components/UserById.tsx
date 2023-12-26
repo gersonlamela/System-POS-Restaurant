@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 
 interface userIdProps {
   userId:string
@@ -27,9 +26,6 @@ export async function getUserById(userIdProps: userIdProps) {
 
 export default async function UserById(userId:userIdProps) {
   const user = await getUserById(userId)
-
-
-
   
  return <div className="text-2xl w-full flex items-center justify-center"><h1>
   {user.user.username}</h1></div>;
