@@ -1,27 +1,19 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../ui/card";
+
+'use client'
+
+import { authOptions } from "@/lib/auth";
+import { LogOut } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 
 
-interface UserCardProps {
-  name: string;
-  id: string;
-  email: string; 
-  role: string;
-}
-
-export default function UserCard(user:UserCardProps) {
+export default  function UserCard() {
+  const { data: session } = useSession()
  return(
-  <Card>
-  <CardHeader>
-    <CardTitle>{user.name}</CardTitle>
-    <CardDescription>{user.id}</CardDescription>
-  </CardHeader>
-  <CardContent>
-    <p>{user.email}</p>
-  </CardContent>
-  <CardFooter>
-    <p>{user.role}</p>
-  </CardFooter>
- </Card>
+  <div className="flex flex-col items-center justify-center md:flex-row gap-2 ">
+  {session?.user.username}
+
+  <button onClick={()=> signOut() }><LogOut size={17}/></button>
+</div>
  )
 
 }
