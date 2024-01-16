@@ -1,14 +1,9 @@
-
-
-
-import SignUpForm from '@/components/form/SignUpForm';
-
+import SignUpForm from '@/components/form/SignUpForm'
 
 export default function SignUpPage() {
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <SignUpForm />
     </div>
-  );
-};
-
+  )
+}
