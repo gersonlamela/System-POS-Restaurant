@@ -22,9 +22,9 @@ export async function UserSignIn() {
 
   return (
     <div className="absolute flex h-full w-full flex-col items-center justify-center bg-[#FEF0E780]">
-      <div className="flex h-[790px] w-[1115px] flex-col items-center justify-between gap-10  rounded-[40px] bg-white p-10 shadow-lg">
+      <div className="px-25 flex h-[790px] w-[1115px] flex-col items-center justify-between gap-10  rounded-[40px] bg-white pb-12 shadow-lg">
         <h1 className="text-9xl font-semibold">Logo</h1>
-        <div className="flex h-full w-[870px] flex-wrap  gap-4 rounded-[25px] bg-primary p-4">
+        <div className="flex h-full w-[870px] flex-wrap  gap-4 rounded-[25px] bg-primary p-7">
           {user.user.map((user: User, index: any) => (
             <Link
               key={index}
