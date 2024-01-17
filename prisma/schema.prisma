@@ -9,24 +9,18 @@ datasource db {
 
 model User {
   id        String   @id @default(cuid())
-  name      String   @unique
   email     String   @unique
   pin       String
-  address   String
-  phone     String
-  role      UserRole
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Company   Company? @relation(fields: [companyId], references: [id])
+  address   String
+  name      String   @unique
+  phone     String
+  role      UserRole
   companyId String?
-  Orders    Orders?  @relation(fields: [ordersId], references: [id])
   ordersId  String?
-}
-
-enum UserRole {
-  ADMIN
-  MANAGER
-  EMPLOYEE
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Orders    Orders?  @relation(fields: [ordersId], references: [id])
 }
 
 model Company {
@@ -36,10 +30,10 @@ model Company {
   phone     String
   address   String
   logo      String
-  users     User[]
-  tables    Tables[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  tables    Tables[]
+  users     User[]
 }
 
 model Tables {
@@ -47,22 +41,22 @@ model Tables {
   number    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Company   Company? @relation(fields: [companyId], references: [id])
   companyId String?
-  Orders    Orders?  @relation(fields: [ordersId], references: [id])
   ordersId  String?
+  Company   Company? @relation(fields: [companyId], references: [id])
+  Orders    Orders?  @relation(fields: [ordersId], references: [id])
 }
 
 model Orders {
   id        String     @id @default(cuid())
-  users     User[]
-  tables    Tables[]
   price     Float
   nif       String
   tax       String
-  products  Products[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  products  Products[]
+  tables    Tables[]
+  users     User[]
 }
 
 model Products {
@@ -74,6 +68,12 @@ model Products {
   discont   Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Orders    Orders?  @relation(fields: [ordersId], references: [id])
   ordersId  String?
+  Orders    Orders?  @relation(fields: [ordersId], references: [id])
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EMPLOYEE
 }
