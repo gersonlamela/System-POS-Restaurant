@@ -1,4 +1,5 @@
 import { User } from '@prisma/client'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export async function getUsers() {
@@ -22,8 +23,14 @@ export async function UserSignIn() {
 
   return (
     <div className="absolute flex h-full w-full flex-col items-center justify-center bg-[#FEF0E780]">
-      <div className="px-25 flex h-[790px] w-[1115px] flex-col items-center justify-between gap-10  rounded-[40px] bg-white pb-12 shadow-lg">
-        <h1 className="text-9xl font-semibold">Logo</h1>
+      <div className="px-25 flex h-[790px] w-[1115px] flex-col items-center justify-between gap-10  rounded-[20px] bg-white pb-12 shadow-2xl">
+        <Image
+          src="/logo.png"
+          width={229}
+          height={159}
+          alt="logo"
+          className="mt-[21px]"
+        />
         <div className="flex h-full w-[870px] flex-wrap  gap-4 rounded-[25px] bg-primary p-7">
           {user.user.map((user: User, index: any) => (
             <Link

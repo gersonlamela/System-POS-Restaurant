@@ -12,13 +12,16 @@ import {
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { SignIn, XCircle } from '@phosphor-icons/react'
+
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+
 import { User } from '@prisma/client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 const FormSchema = z.object({
   userId: z.string().min(1, 'O ID do utilizador é obrigatório'),
@@ -34,7 +37,6 @@ const SignInForm = ({
   params: { id: string }
   user: User
 }) => {
-  const router = useRouter()
   const [pin, setPin] = useState(['', '', '', ''])
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -90,15 +92,20 @@ const SignInForm = ({
       return
     }
 
-    location.href = '/pos'
+    location.href = '/'
   }
 
   return (
-    <div className="max-w-[450px]">
-      {user.name && <h1 className="text-2xl">{user.name}</h1>}
+    <div className="flex h-[670px] w-[450px] flex-col items-center justify-between rounded-[30px] bg-white px-[50px] py-[30px]">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
-          <div className="space-y-2">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-[20px]"
+        >
+          {user.name && (
+            <h1 className="text-center text-3xl font-semibold">{user.name}</h1>
+          )}
+          <div className="flex flex-col ">
             {/*   <FormField
             control={form.control}
             name='userId' // Alterar o nome do campo para userId
@@ -112,20 +119,19 @@ const SignInForm = ({
               </FormItem>
             )}
           /> */}
+
             <FormField
               control={form.control}
               name="pin"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>PIN</FormLabel>
                   <FormControl>
                     <div className="flex space-x-3" data-hs-pin-input>
                       {pin.map((digit, index) => (
                         <input
                           key={index}
                           type="text"
-                          className="block h-[40px] w-[40px] rounded-md border-gray-200 bg-white text-center text-sm focus:border-blue-500 focus:ring-blue-500 disabled:cursor-default disabled:opacity-50 dark:border-gray-700 dark:bg-slate-900 dark:text-gray-400 dark:focus:ring-gray-600"
-                          placeholder="⚬"
+                          className=" flex h-[85px] w-[85px] items-center justify-center rounded-md border-gray-200 bg-white text-center text-3xl font-semibold shadow-lg "
                           disabled
                           data-hs-pin-input-item
                           value={digit}
@@ -133,43 +139,46 @@ const SignInForm = ({
                       ))}
                     </div>
                   </FormControl>
-
-                  <FormMessage className="absolute text-red-500" />
                 </FormItem>
               )}
             />
           </div>
-          <Button className="mt-6 w-full bg-gray-600 text-white" type="submit">
-            Sign in
-          </Button>
-        </form>
 
-        <div className="mt-4 space-y-2">
-          <div className="grid grid-cols-3 gap-2">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((number) => (
+          {/*    <Button className="mt-6 w-full bg-gray-600 text-white" type="submit">
+            Sign in
+          </Button> */}
+
+          <div className="grid  grid-cols-3 gap-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
               <Button
                 key={number}
-                className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-black shadow-md "
                 onClick={() => handleNumberPad(number.toString())}
               >
                 {number}
               </Button>
             ))}
+            <Button
+              className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary shadow-md "
+              onClick={handleClearNumberPad}
+            >
+              <XCircle size={36} />
+            </Button>
+            <Button
+              className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-black shadow-md "
+              onClick={() => handleNumberPad('0')}
+            >
+              0
+            </Button>
+
+            <Button
+              onClick={handleBackspace}
+              className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-primary text-3xl font-semibold text-white shadow-md "
+            >
+              <SignIn size={36} />
+            </Button>
           </div>
-          {/* Botão para Limpar */}
-          <Button
-            className="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
-            onClick={handleClearNumberPad}
-          >
-            Limpar
-          </Button>
-          <Button
-            className="rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
-            onClick={handleBackspace}
-          >
-            Backspace
-          </Button>
-        </div>
+        </form>
       </Form>
     </div>
   )

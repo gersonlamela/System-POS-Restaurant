@@ -17,10 +17,63 @@ model User {
   role      UserRole
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  Orders    Orders?  @relation(fields: [ordersId], references: [id])
+  ordersId  String?
 }
 
 enum UserRole {
   ADMIN
   MANAGER
   EMPLOYEE
+}
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  email     String   @unique
+  phone     String
+  address   String
+  logo      String
+  users     User[]
+  tables    Tables[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tables {
+  id        String   @id @default(cuid())
+  number    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Company   Company? @relation(fields: [companyId], references: [id])
+  companyId String?
+  Orders    Orders?  @relation(fields: [ordersId], references: [id])
+  ordersId  String?
+}
+
+model Orders {
+  id        String     @id @default(cuid())
+  users     User[]
+  tables    Tables[]
+  price     Float
+  nif       String
+  tax       String
+  products  Products[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Products {
+  id        String   @id @default(cuid())
+  name      String
+  price     Float
+  image     String
+  tax       String
+  discont   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Orders    Orders?  @relation(fields: [ordersId], references: [id])
+  ordersId  String?
 }
