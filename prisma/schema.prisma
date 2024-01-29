@@ -65,7 +65,7 @@ model Products {
   price     Float
   image     String
   tax       String
-  discont   Int
+  discount  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ordersId  String?

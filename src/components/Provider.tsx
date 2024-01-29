@@ -1,6 +1,6 @@
 'use client'
 
-import { SessionProvider, signOut } from 'next-auth/react'
+import { SessionProvider } from 'next-auth/react'
 import { ThemeProvider } from './theme-provider'
 
 type Props = {
