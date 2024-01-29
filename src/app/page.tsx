@@ -9,12 +9,15 @@ export default async function Home() {
 
   return (
     <div>
-      {!session?.user && <UserSignIn />}
-
       <Navbar />
-
-      <h1 className="text-4xl">Hello {session?.user.name}</h1>
-      <h1 className="text-4xl">Email: {session?.user.email}</h1>
+      {session?.user ? (
+        <div className=" flex flex-col">
+          <h1 className="text-4xl">Hello {session?.user.name}</h1>
+          <h1 className="text-4xl">Email: {session?.user.email}</h1>
+        </div>
+      ) : (
+        <UserSignIn />
+      )}
     </div>
   )
 }

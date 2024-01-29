@@ -22,7 +22,7 @@ export async function UserSignIn() {
   const user = await getUsers()
 
   return (
-    <div className="absolute flex h-full w-full flex-col items-center justify-center bg-[#FEF0E780]">
+    <div className="absolute inset-0 z-50  flex w-full flex-col items-center  justify-center bg-[#FEF0E780]">
       <div className="px-25 flex h-[790px] w-[1115px] flex-col items-center justify-between gap-10  rounded-[20px] bg-white pb-12 shadow-2xl">
         <Image
           src="/logo.png"
