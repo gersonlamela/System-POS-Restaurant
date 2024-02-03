@@ -84,7 +84,7 @@ const SignUpForm = () => {
 
       const data = await response.json()
       if (response.ok) {
-        location.href = '/sign-in'
+        location.href = '/'
       }
 
       toast.error(data.message)
