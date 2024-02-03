@@ -16,5 +16,5 @@ export default withAuth({
 
 // Define paths for which the middleware will run
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/pos/:path*', '/dashboard/:path*'],
 }

@@ -1,6 +1,10 @@
+import { Plus } from '@phosphor-icons/react'
 import { User } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Button } from '../ui/button'
+import SignInForm from './SignInForm'
+import { CardsUser } from '../ui/cardsUser'
 
 export async function getUsers() {
   try {
@@ -31,18 +35,16 @@ export async function UserSignIn() {
           alt="logo"
           className="mt-[21px]"
         />
-        <div className="flex h-full w-[870px] flex-wrap  gap-4 rounded-[25px] bg-primary p-7">
+        <div className="flex h-full w-[870px] flex-wrap  gap-3 rounded-[25px] bg-primary p-7">
           {user.user.map((user: User, index: any) => (
-            <Link
-              key={index}
-              href={`/sign-in/${user.id}`}
-              className="flex h-[160px] w-[270px] items-center justify-center  rounded-[20px] bg-white"
-            >
-              <span className="text-xl font-semibold text-black">
-                {user.name}
-              </span>
-            </Link>
+            <CardsUser key={index} user={user} />
           ))}
+          <Link
+            href={`/pos/sign-up`}
+            className="flex h-[160px] w-[270px] items-center justify-center  rounded-[20px] bg-white"
+          >
+            <span className="text-xl font-semibold text-black">+</span>
+          </Link>
         </div>
       </div>
     </div>
