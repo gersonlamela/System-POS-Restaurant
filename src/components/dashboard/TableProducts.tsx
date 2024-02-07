@@ -19,7 +19,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from '@/components/ui/pagination'
-import { User } from '@prisma/client'
+import { Products } from '@prisma/client'
 import {
   Select,
   SelectContent,
@@ -39,28 +39,33 @@ import {
 import { Button } from '../ui/button'
 import { MoreHorizontal } from 'lucide-react'
 
-interface TableUsersProps {
-  users: User[]
+interface TableProductsProps {
+  products: Products[]
 }
 
-export function TableUsers({ users }: TableUsersProps) {
+export function TableProducts({ products }: TableProductsProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredUsers = users.filter((user) => {
+  const filteredProducts = products.filter((product) => {
     const searchTermLowerCase = searchTerm.toLowerCase()
     return (
-      user.id.toString().includes(searchTermLowerCase) ||
-      user.name.toLowerCase().includes(searchTermLowerCase)
+      product.id.toString().includes(searchTermLowerCase) ||
+      product.name.toLowerCase().includes(searchTermLowerCase) ||
+      (product.ordersId !== null &&
+        product.ordersId.toString().includes(searchTermLowerCase))
     )
   })
 
-  const indexOfLastUser = currentPage * itemsPerPage
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
+  const indexOfLastProduct = currentPage * itemsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct,
+  )
 
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -120,74 +125,56 @@ export function TableUsers({ users }: TableUsersProps) {
         </div>
       </div>
 
-      <Table className="min-w-full  divide-gray-200">
-        <TableCaption>A list of your users.</TableCaption>
+      <Table className="">
+        <TableCaption>A list of your products.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableCell className="w-[100px] lg:w-[150px]">ID</TableCell>
-            <TableCell className="lg:w-[200px]">Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell className="hidden lg:table-cell">Address</TableCell>
-            <TableCell className="hidden lg:table-cell">Phone</TableCell>
-            <TableCell className="hidden lg:table-cell">Role</TableCell>
+            <TableCell className="w-[100px]">ID</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Price</TableCell>
+            <TableCell>Image</TableCell>
+            <TableCell>Tax</TableCell>
+            <TableCell>Discount</TableCell>
             <TableCell>Created At</TableCell>
             <TableCell>Updated At</TableCell>
-            <TableCell>Company ID</TableCell>
-            <TableCell>Orders ID</TableCell>
-            <TableCell className="w-[100px] lg:w-[120px]">Actions</TableCell>
+            <TableCell>Orders Id</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentUsers.map((user) => (
-            <TableRow key={user.id}>
+          {currentProducts.map((product) => (
+            <TableRow key={product.id}>
               <TableCell
-                className="max-w-[150px] cursor-pointer overflow-hidden overflow-ellipsis font-medium"
-                title={user.id}
-                onClick={() => navigator.clipboard.writeText(user.id)}
+                className="font-medium"
+                onClick={() => navigator.clipboard.writeText(product.id)}
               >
-                {user.id}
+                {product.id}
               </TableCell>
-              <TableCell className="overflow-hidden overflow-ellipsis lg:w-[200px]">
-                {user.name}
-              </TableCell>
-              <TableCell className="overflow-hidden overflow-ellipsis">
-                {user.email}
-              </TableCell>
-              <TableCell className="hidden overflow-hidden overflow-ellipsis lg:table-cell">
-                {user.address}
-              </TableCell>
-              <TableCell className="hidden overflow-hidden overflow-ellipsis lg:table-cell">
-                {user.phone}
-              </TableCell>
-              <TableCell className="hidden overflow-hidden overflow-ellipsis lg:table-cell">
-                {user.role}
+              <TableCell>{product.name}</TableCell>
+              <TableCell className="text-right">{product.price}</TableCell>
+              <TableCell>{product.image}</TableCell>
+              <TableCell>{product.tax}</TableCell>
+              <TableCell>{product.discount}</TableCell>
+              <TableCell>
+                {format(new Date(product.createdAt), 'dd-MM-yyyy HH:mm:ss')}
               </TableCell>
               <TableCell>
-                {format(new Date(user.createdAt), 'dd-MM-yyyy HH:mm:ss')}
+                {format(new Date(product.updatedAt), 'dd-MM-yyyy HH:mm:ss')}
               </TableCell>
+              <TableCell>{product.ordersId}</TableCell>
               <TableCell>
-                {format(new Date(user.updatedAt), 'dd-MM-yyyy HH:mm:ss')}
-              </TableCell>
-              <TableCell className="max-w-[150px] overflow-hidden overflow-ellipsis ">
-                {user.companyId}
-              </TableCell>
-              <TableCell className="max-w-[150px] overflow-hidden overflow-ellipsis ">
-                {user.ordersId}
-              </TableCell>
-              <TableCell className="w-[100px] lg:w-[120px]">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open Menu</span>
+                      <span className="sr-only">Abrir Menu</span>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>Ações</DropdownMenuLabel>
                     <DropdownMenuItem
-                      onClick={() => navigator.clipboard.writeText(user.id)}
+                      onClick={() => navigator.clipboard.writeText(product.id)}
                     >
-                      Copy User ID
+                      Copiar ID do produto
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>View customer</DropdownMenuItem>
@@ -197,18 +184,20 @@ export function TableUsers({ users }: TableUsersProps) {
               </TableCell>
             </TableRow>
           ))}
-          {currentUsers.length === 0 && (
+          {currentProducts.length === 0 && (
             <TableRow>
-              <TableCell colSpan={12} align="center">
-                No users found
+              <TableCell colSpan={9} align="center">
+                Nenhum produto encontrado
               </TableCell>
             </TableRow>
           )}
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={12}>Total Users</TableCell>
-            <TableCell className="text-right">{currentUsers.length}</TableCell>
+            <TableCell colSpan={9}>Total Produtos</TableCell>
+            <TableCell className="text-right">
+              {currentProducts.length}
+            </TableCell>
           </TableRow>
         </TableFooter>
       </Table>

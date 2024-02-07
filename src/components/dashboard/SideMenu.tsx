@@ -23,7 +23,7 @@ const menuItems = [
     title: 'Dashboard',
     href: '/dashboard21',
   },
-  { icon: <Users size={24} />, title: 'Users', href: '/dashboard/users21' },
+  { icon: <Users size={24} />, title: 'Products', href: '/dashboard/products' },
 ]
 
 export default function SideMenu() {

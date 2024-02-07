@@ -1,13 +1,5 @@
-"use client";
-
-import SideMenu from "@/components/dashboard/SideMenu";
-
-
-
-
+'use client'
 
 export default function AdminPage() {
-  return (
-<h1>dashboard</h1>
-  );
+  return <h1>dashboard</h1>
 }

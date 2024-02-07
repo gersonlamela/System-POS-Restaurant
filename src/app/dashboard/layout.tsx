@@ -1,13 +1,17 @@
-
-import SideMenu from "@/components/dashboard/SideMenu";
-import { FC, ReactNode } from "react";
+import SideMenu from '@/components/dashboard/SideMenu'
+import { FC, ReactNode } from 'react'
 
 interface DashboardLayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
-  return <div className="w-full h-full flex flex-row "><SideMenu/>{children}</div>;
-};
+  return (
+    <div className="flex h-full w-full flex-row ">
+      <SideMenu />
+      {children}
+    </div>
+  )
+}
 
-export default DashboardLayout;
+export default DashboardLayout
