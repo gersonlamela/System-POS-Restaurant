@@ -78,22 +78,24 @@ function main() {
                     company1 = _a.sent();
                     return [4 /*yield*/, prisma.products.create({
                             data: {
-                                name: 'Product E',
+                                name: 'Francesinha',
                                 price: 25.0,
                                 image: 'productE.png',
                                 tax: '5%',
                                 discount: '2%',
+                                category: client_1.ProductCategory.FOOD,
                             },
                         })];
                 case 3:
                     product1 = _a.sent();
                     return [4 /*yield*/, prisma.products.create({
                             data: {
-                                name: 'Product F',
+                                name: 'Coca Cola',
                                 price: 15.0,
                                 image: 'productF.png',
                                 tax: '5%',
                                 discount: '0%',
+                                category: client_1.ProductCategory.DRINK,
                             },
                         })
                         // Create tables
@@ -142,4 +144,17 @@ function main() {
         });
     });
 }
-main();
+main()
+    .catch(function (e) {
+    throw e;
+})
+    .finally(function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.$disconnect()];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); });

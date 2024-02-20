@@ -60,16 +60,23 @@ model Orders {
 }
 
 model Products {
-  id        String   @id @default(cuid())
+  id        String          @id @default(cuid())
   name      String
   price     Float
   image     String
   tax       String
   discount  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  category  ProductCategory
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
   ordersId  String?
-  Orders    Orders?  @relation(fields: [ordersId], references: [id])
+  Orders    Orders?         @relation(fields: [ordersId], references: [id])
+}
+
+enum ProductCategory {
+  DRINK
+  FOOD
+  DESSERT
 }
 
 enum UserRole {

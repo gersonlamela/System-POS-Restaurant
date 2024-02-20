@@ -1,16 +1,16 @@
 // seed.ts
 
-import { PrismaClient, UserRole } from '@prisma/client'
-import bcrypt from 'bcrypt'
-
+import { PrismaClient, UserRole, ProductCategory } from '@prisma/client'
+import { hash } from 'bcrypt'
 const prisma = new PrismaClient()
 async function main() {
   try {
+    const hashedPin = await hash('1234', 10)
     // Create users
     const user1 = await prisma.user.create({
       data: {
         email: 'user1@example.com',
-        pin: '1234',
+        pin: hashedPin,
         address: '123 Main St',
         name: 'User 1',
         phone: '123-456-7890',
@@ -35,21 +35,23 @@ async function main() {
     // Create products
     const product1 = await prisma.products.create({
       data: {
-        name: 'Product E',
+        name: 'Francesinha',
         price: 25.0,
         image: 'productE.png',
         tax: '5%',
         discount: '2%',
+        category: ProductCategory.FOOD,
       },
     })
 
     const product2 = await prisma.products.create({
       data: {
-        name: 'Product F',
+        name: 'Coca Cola',
         price: 15.0,
         image: 'productF.png',
         tax: '5%',
         discount: '0%',
+        category: ProductCategory.DRINK,
       },
     })
 

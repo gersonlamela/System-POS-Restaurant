@@ -45,7 +45,7 @@ interface TableUsersProps {
 
 export function TableUsers({ users }: TableUsersProps) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
 
   const filteredUsers = users.filter((user) => {
@@ -88,7 +88,7 @@ export function TableUsers({ users }: TableUsersProps) {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <label htmlFor="itemsPerPage" className="text-sm">
-            Itens por Página:{' '}
+            Itens por Página:
           </label>
           <Select
             defaultValue={itemsPerPage.toString()}
@@ -120,7 +120,7 @@ export function TableUsers({ users }: TableUsersProps) {
         </div>
       </div>
 
-      <Table className="min-w-full  divide-gray-200">
+      <Table className="table-auto divide-gray-200">
         <TableCaption>A list of your users.</TableCaption>
         <TableHeader>
           <TableRow>

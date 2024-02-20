@@ -33,7 +33,7 @@ export default async function page() {
   const products = await getProducts()
 
   return (
-    <div className="flex flex-1 items-center justify-center overflow-auto p-2 md:p-20">
+    <div className="flex flex-1 items-center justify-center overflow-auto p-2 ">
       <TableProducts products={products} />
     </div>
   )

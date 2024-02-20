@@ -1,4 +1,5 @@
 import { TableUsers } from '@/components/dashboard/TableUser'
+import { Suspense } from 'react'
 
 export async function getUsers() {
   try {
@@ -28,7 +29,7 @@ export async function getUsers() {
 export default async function page() {
   const users = await getUsers()
   return (
-    <div className="flex flex-1 items-center justify-center overflow-auto p-2 md:p-20">
+    <div className="flex flex-1 items-center justify-center overflow-auto p-2">
       <TableUsers users={users} />
     </div>
   )

@@ -1,15 +1,13 @@
 'use client'
 
-import { signOut } from 'next-auth/react'
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LayoutDashboard, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import ButtonDarkmode from '../ui/ButtonDarkmode'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 import UserCard from './UserCard'
+import { ForkKnife } from '@phosphor-icons/react'
 
 const menuItems = [
   {
@@ -19,11 +17,10 @@ const menuItems = [
   },
   { icon: <Users size={24} />, title: 'Users', href: '/dashboard/users' },
   {
-    icon: <LayoutDashboard size={24} />,
-    title: 'Dashboard',
-    href: '/dashboard21',
+    icon: <ForkKnife size={24} />,
+    title: 'Products',
+    href: '/dashboard/products',
   },
-  { icon: <Users size={24} />, title: 'Products', href: '/dashboard/products' },
 ]
 
 export default function SideMenu() {
@@ -50,7 +47,7 @@ export default function SideMenu() {
               {item.icon}
               <span
                 className={`${
-                  pathname === item.href ? 'font-semibold text-text' : ''
+                  pathname === item.href ? 'text-text' : ''
                 }  hidden text-lg  md:flex`}
               >
                 {item.title}
