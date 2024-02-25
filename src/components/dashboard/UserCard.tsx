@@ -1,19 +1,20 @@
-
 'use client'
 
-import { authOptions } from "@/lib/auth";
-import { LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { LogOut } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
 
-
-export default  function UserCard() {
+export default function UserCard() {
   const { data: session } = useSession()
- return(
-  <div className="flex flex-col items-center justify-center md:flex-row gap-2 ">
-  {session?.user.username}
+  return (
+    <div className="flex flex-col items-center justify-center gap-2 md:flex-row ">
+      <div className="flex flex-col items-center justify-center ">
+        <div>{session?.user.name}</div>
+        <div> {session?.user.email}</div>
+      </div>
 
-  <button onClick={()=> signOut() }><LogOut size={17}/></button>
-</div>
- )
-
+      <button onClick={() => signOut()}>
+        <LogOut size={17} />
+      </button>
+    </div>
+  )
 }

@@ -31,7 +31,7 @@ export default function SideMenu() {
       <div className="flex flex-col gap-[50px]">
         <div className="flex flex-col items-center justify-center gap-[10px] md:flex-row">
           <div className=" flex h-[50px] w-[50px] items-center justify-center rounded-full bg-primary-foreground">
-            <Image src="/logo.svg" alt="logo" width={50} height={50} />
+            <Image src="/logo.png" alt="logo" width={50} height={50} />
           </div>
           <h1 className="hidden  font-medium md:flex md:text-xl">POS</h1>
         </div>

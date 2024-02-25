@@ -1,4 +1,4 @@
-import { TableProducts } from '@/components/dashboard/TableProducts'
+import TableProducts from '@/components/dashboard/Table/TableProducts/TableProducts'
 
 export async function getProducts() {
   try {
@@ -33,8 +33,8 @@ export default async function page() {
   const products = await getProducts()
 
   return (
-    <div className="flex flex-1 items-center justify-center overflow-auto p-2 ">
-      <TableProducts products={products} />
+    <div className="flex flex-1 justify-center overflow-auto p-2 ">
+      <TableProducts Products={products} />
     </div>
   )
 }
