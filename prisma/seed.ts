@@ -1,6 +1,11 @@
 // seed.ts
 
-import { PrismaClient, UserRole, ProductCategory } from '@prisma/client'
+import {
+  PrismaClient,
+  UserRole,
+  ProductCategory,
+  UserStatus,
+} from '@prisma/client'
 import { hash } from 'bcrypt'
 const prisma = new PrismaClient()
 async function main() {
@@ -9,12 +14,13 @@ async function main() {
     // Create users
     const user1 = await prisma.user.create({
       data: {
-        email: 'user1@example.com',
+        email: 'gersonlamela@example.com',
         pin: hashedPin,
-        address: '123 Main St',
-        name: 'User 1',
-        phone: '123-456-7890',
-        role: UserRole.EMPLOYEE,
+        address: 'Vila Nova de Gaia',
+        name: 'Gerson Lamela',
+        phone: '930678098',
+        status: UserStatus.ACTIVE,
+        role: UserRole.ADMIN,
       },
     })
 

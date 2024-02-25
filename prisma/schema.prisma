@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String     @id @default(cuid())
+  email     String     @unique
   pin       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   address   String
-  name      String   @unique
+  name      String     @unique
   phone     String
   role      UserRole
   companyId String?
   ordersId  String?
-  Company   Company? @relation(fields: [companyId], references: [id])
-  Orders    Orders?  @relation(fields: [ordersId], references: [id])
+  status    UserStatus @default(ACTIVE)
+  Company   Company?   @relation(fields: [companyId], references: [id])
+  Orders    Orders?    @relation(fields: [ordersId], references: [id])
 }
 
 model Company {
@@ -83,4 +84,10 @@ enum UserRole {
   ADMIN
   MANAGER
   EMPLOYEE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }

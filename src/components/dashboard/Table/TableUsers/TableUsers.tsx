@@ -48,6 +48,16 @@ export default function TableUsers({ users }: UsersTableProps) {
   const indexOfFirstUser = indexOfLastUser - itemsPerPage
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
 
+  function getStatusStyle(status: User['status']) {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-950 text-green-400 font-bold'
+      case 'SUSPENDED':
+        return 'bg-yellow-950 text-yellow-400 font-bold'
+      case 'INACTIVE':
+        return 'bg-red-950 text-red-400 font-bold'
+    }
+  }
   return (
     <div>
       <SearchInput
@@ -87,6 +97,12 @@ export default function TableUsers({ users }: UsersTableProps) {
               scope="col"
               className=" TableRowacking-wider text-center text-xs font-medium uppercase text-gray-500"
             >
+              Status
+            </TableCell>
+            <TableCell
+              scope="col"
+              className=" TableRowacking-wider text-center text-xs font-medium uppercase text-gray-500"
+            >
               Ações
             </TableCell>
           </TableRow>
@@ -106,6 +122,13 @@ export default function TableUsers({ users }: UsersTableProps) {
                 </TableCell>
                 <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                   {user.role}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                  <div
+                    className={`rounded-xl px-2 py-1 ${getStatusStyle(user.status)}`}
+                  >
+                    {user.status}
+                  </div>
                 </TableCell>
                 <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                   <DropdownMenu>
@@ -141,7 +164,7 @@ export default function TableUsers({ users }: UsersTableProps) {
                 colSpan={5}
                 className="px-6 py-4 text-center text-sm text-gray-500"
               >
-                Nenhum utilizador enconTableRowado
+                Nenhum utilizador encontrado
               </TableCell>
             </TableRow>
           )}

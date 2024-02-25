@@ -27,6 +27,7 @@ export async function getUsers() {
 
 export default async function page() {
   const users = await getUsers()
+  console.log(users)
   return (
     <div className="flex flex-1 justify-center overflow-auto p-2">
       <TableUsers users={users} />
