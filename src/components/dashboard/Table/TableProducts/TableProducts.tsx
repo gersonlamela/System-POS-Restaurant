@@ -16,7 +16,6 @@ import { SearchInput } from '../TableSearchItem'
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHeader,
   TableRow,
@@ -66,92 +65,94 @@ export default function TableProducts({ Products }: ProductsTableProps) {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
       />
-      <Table className="w-[1200px] divide-y divide-gray-200 ">
-        <TableHeader className="bg-gray-50">
-          <TableRow>
-            <TableCell
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-            >
-              ID
-            </TableCell>
-            <TableCell
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-            >
-              Imagem
-            </TableCell>
-            <TableCell
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-            >
-              Nome
-            </TableCell>
-            <TableCell
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-            >
-              Preço
-            </TableCell>
-            <TableCell
-              scope="col"
-              className=" text-center text-xs font-medium uppercase tracking-wider text-gray-500"
-            >
-              Ações
-            </TableCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="divide-y divide-gray-200 bg-white">
-          {currentProducts.length ? (
-            currentProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                  {product.id}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {product.image}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {product.name}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {new Intl.NumberFormat('pt-PT', {
-                    style: 'currency',
-                    currency: 'EUR',
-                    minimumFractionDigits: 1, // Garante que sempre haja pelo menos 1 dígito fracionário
-                  }).format(product.price / 10)}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Abrir Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                      <DropdownMenuItem>Copiar ID</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>Ver Utilizador</DropdownMenuItem>
-                      <DropdownMenuItem>Editar Utilizador</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
+      <div className="overflow-x-auto">
+        <Table className="min-w-full divide-y divide-gray-200">
+          <TableHeader className="bg-gray-50">
             <TableRow>
               <TableCell
-                colSpan={5}
-                className="px-6 py-4 text-center text-sm text-gray-500"
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
               >
-                Nenhum produto encontrado
+                ID
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Imagem
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Nome
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Preço
+              </TableCell>
+              <TableCell
+                scope="col"
+                className=" text-center text-xs font-medium uppercase tracking-wider text-gray-500"
+              >
+                Ações
               </TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody className="divide-y divide-gray-200 bg-white">
+            {currentProducts.length ? (
+              currentProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                    {product.id}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    {product.image}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    {product.name}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    {new Intl.NumberFormat('pt-PT', {
+                      style: 'currency',
+                      currency: 'EUR',
+                      minimumFractionDigits: 1, // Garante que sempre haja pelo menos 1 dígito fracionário
+                    }).format(product.price / 10)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir Menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuItem>Copiar ID</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Ver Utilizador</DropdownMenuItem>
+                        <DropdownMenuItem>Editar Utilizador</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="px-6 py-4 text-center text-sm text-gray-500"
+                >
+                  Nenhum produto encontrado
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
       <TablePagination
         type="Produtos"
         itemsPerPage={itemsPerPage}

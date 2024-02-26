@@ -41,13 +41,13 @@ export default function SideMenu() {
               key={index}
               href={item.href}
               className={`${
-                pathname === item.href ? 'bg-primary text-white' : ''
+                pathname === item.href ? 'bg-primary ' : ''
               } flex h-[40px]  w-[40px] items-center justify-center gap-[24px] rounded-lg text-text md:w-full md:justify-start md:p-4`}
             >
               {item.icon}
               <span
                 className={`${
-                  pathname === item.href ? 'text-text' : ''
+                  pathname === item.href ? '' : ''
                 }  hidden text-lg  md:flex`}
               >
                 {item.title}

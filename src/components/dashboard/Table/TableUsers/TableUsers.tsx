@@ -14,6 +14,8 @@ import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { getStatus, getStatusStyle } from '@/functions/user/user'
+import AddUserModal from './AddUserModal'
 
 interface UsersTableProps {
   users: User[]
@@ -48,128 +50,125 @@ export default function TableUsers({ users }: UsersTableProps) {
   const indexOfFirstUser = indexOfLastUser - itemsPerPage
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
 
-  function getStatusStyle(status: User['status']) {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-green-950 text-green-400 font-bold'
-      case 'SUSPENDED':
-        return 'bg-yellow-950 text-yellow-400 font-bold'
-      case 'INACTIVE':
-        return 'bg-red-950 text-red-400 font-bold'
-    }
-  }
   return (
     <div>
-      <SearchInput
-        searchPlaceholder="Pesquisar pelo Utilizador"
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-      />
-      <Table className="w-[1200px] divide-y divide-gray-200 ">
-        {/* Cabeçalhos da tabela */}
-        <TableHeader className="bg-gray-50">
-          <TableRow>
-            <TableCell
-              scope="col"
-              className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase text-gray-500"
-            >
-              ID
-            </TableCell>
-            <TableCell
-              scope="col"
-              className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase text-gray-500"
-            >
-              Name
-            </TableCell>
-            <TableCell
-              scope="col"
-              className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase text-gray-500"
-            >
-              Email
-            </TableCell>
-            <TableCell
-              scope="col"
-              className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase text-gray-500"
-            >
-              Role
-            </TableCell>
-            <TableCell
-              scope="col"
-              className=" TableRowacking-wider text-center text-xs font-medium uppercase text-gray-500"
-            >
-              Status
-            </TableCell>
-            <TableCell
-              scope="col"
-              className=" TableRowacking-wider text-center text-xs font-medium uppercase text-gray-500"
-            >
-              Ações
-            </TableCell>
-          </TableRow>
-        </TableHeader>
-        <tbody className="divide-y divide-gray-200 bg-white">
-          {currentUsers.length ? (
-            currentUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                  {user.id}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {user.name}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {user.email}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {user.role}
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                  <div
-                    className={`rounded-xl px-2 py-1 ${getStatusStyle(user.status)}`}
-                  >
-                    {user.status}
-                  </div>
-                </TableCell>
-                <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Abrir Menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                      <DropdownMenuItem /* onClick={() => handleCopyUserId(user.id)} */
-                      >
-                        Copiar ID
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem /* onClick={() => handleViewUser(user.id)} */
-                      >
-                        Ver Utilizador
-                      </DropdownMenuItem>
-                      <DropdownMenuItem /* onClick={() => handleViewUser(user.id)} */
-                      >
-                        Editar Utilizador
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
+      <div className="flex w-full items-center justify-between">
+        <SearchInput
+          searchPlaceholder="Pesquisar pelo Utilizador"
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
+        <AddUserModal />
+      </div>
+
+      <div className="overflow-x-auto">
+        <Table className="min-w-full ">
+          {/* Cabeçalhos da tabela */}
+          <TableHeader className="">
             <TableRow>
               <TableCell
-                colSpan={5}
-                className="px-6 py-4 text-center text-sm text-gray-500"
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
               >
-                Nenhum utilizador encontrado
+                ID
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Name
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Email
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Role
+              </TableCell>
+              <TableCell
+                scope="col"
+                className=" TableRowacking-wider text-center text-xs font-medium uppercase "
+              >
+                Status
+              </TableCell>
+              <TableCell
+                scope="col"
+                className=" TableRowacking-wider text-center text-xs font-medium uppercase "
+              >
+                Ações
               </TableCell>
             </TableRow>
-          )}
-        </tbody>
-      </Table>
+          </TableHeader>
+          <tbody className="">
+            {currentUsers.length ? (
+              currentUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {user.id}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                    {user.name}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                    {user.email}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                    {user.role}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4  text-sm ">
+                    <div className="flex flex-row items-center  justify-center gap-2">
+                      <div
+                        className={` h-[10px] w-[10px] rounded-full ${getStatusStyle(user.status)}`}
+                      />
+                      {getStatus(user.status)}
+                    </div>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir Menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                        <DropdownMenuItem /* onClick={() => handleCopyUserId(user.id)} */
+                        >
+                          Copiar ID
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem /* onClick={() => handleViewUser(user.id)} */
+                        >
+                          Ver Utilizador
+                        </DropdownMenuItem>
+                        <DropdownMenuItem /* onClick={() => handleViewUser(user.id)} */
+                        >
+                          Editar Utilizador
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="px-6 py-4 text-center text-sm "
+                >
+                  Nenhum utilizador encontrado
+                </TableCell>
+              </TableRow>
+            )}
+          </tbody>
+        </Table>
+      </div>
       <TablePagination
         type="Utilizadores"
         itemsPerPage={itemsPerPage}
