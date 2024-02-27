@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { LayoutDashboard, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import ButtonDarkmode from '../ui/ButtonDarkmode'
 import UserCard from './UserCard'
 import { ForkKnife } from '@phosphor-icons/react'
 
@@ -27,7 +26,7 @@ export default function SideMenu() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-[90px] transform flex-col items-center justify-between p-[50px] shadow-md md:w-[200px]">
+    <div className="flex h-full w-[90px] transform flex-col justify-between px-[12px] shadow-md md:w-[250px]">
       <div className="flex flex-col gap-[50px]">
         <div className="flex flex-col items-center justify-center gap-[10px] md:flex-row">
           <div className=" flex h-[50px] w-[50px] items-center justify-center rounded-full bg-primary-foreground">
@@ -41,7 +40,7 @@ export default function SideMenu() {
               key={index}
               href={item.href}
               className={`${
-                pathname === item.href ? 'bg-primary ' : ''
+                pathname === item.href ? 'bg-black text-white ' : ''
               } flex h-[40px]  w-[40px] items-center justify-center gap-[24px] rounded-lg text-text md:w-full md:justify-start md:p-4`}
             >
               {item.icon}
@@ -58,7 +57,6 @@ export default function SideMenu() {
       </div>
 
       <div className="flex flex-col items-center justify-center gap-[30px]">
-        <ButtonDarkmode />
         <UserCard />
       </div>
     </div>

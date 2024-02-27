@@ -21,3 +21,14 @@ export function getStatus(status: User['status']) {
       return 'Inativo'
   }
 }
+
+export function getRole(role: User['role']) {
+  switch (role) {
+    case 'ADMIN':
+      return 'Admin'
+    case 'EMPLOYEE':
+      return 'Funcionário'
+    case 'MANAGER':
+      return 'Gestor'
+  }
+}

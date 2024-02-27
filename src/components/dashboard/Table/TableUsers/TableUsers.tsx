@@ -16,6 +16,7 @@ import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 import { getStatus, getStatusStyle } from '@/functions/user/user'
 import AddUserModal from './AddUserModal'
+import SeeUserModal from './SeeUserModal'
 
 interface UsersTableProps {
   users: User[]
@@ -51,10 +52,11 @@ export default function TableUsers({ users }: UsersTableProps) {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
 
   return (
-    <div>
-      <div className="flex w-full items-center justify-between">
+    <div className="w-full">
+      <h1 className="mb-5 text-xl font-bold">Utilizadores</h1>
+      <div className="mb-5 flex w-full items-center justify-between">
         <SearchInput
-          searchPlaceholder="Pesquisar pelo Utilizador"
+          searchPlaceholder="Pesquisar pelo Utilizador (id / nome)"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
@@ -63,15 +65,8 @@ export default function TableUsers({ users }: UsersTableProps) {
 
       <div className="overflow-x-auto">
         <Table className="min-w-full ">
-          {/* Cabeçalhos da tabela */}
           <TableHeader className="">
             <TableRow>
-              <TableCell
-                scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
-              >
-                ID
-              </TableCell>
               <TableCell
                 scope="col"
                 className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
@@ -83,6 +78,12 @@ export default function TableUsers({ users }: UsersTableProps) {
                 className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
               >
                 Email
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Telemóvel
               </TableCell>
               <TableCell
                 scope="col"
@@ -108,14 +109,14 @@ export default function TableUsers({ users }: UsersTableProps) {
             {currentUsers.length ? (
               currentUsers.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
-                    {user.id}
-                  </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     {user.name}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     {user.email}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {user.phone}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     {user.role}
@@ -129,30 +130,7 @@ export default function TableUsers({ users }: UsersTableProps) {
                     </div>
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Abrir Menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                        <DropdownMenuItem /* onClick={() => handleCopyUserId(user.id)} */
-                        >
-                          Copiar ID
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem /* onClick={() => handleViewUser(user.id)} */
-                        >
-                          Ver Utilizador
-                        </DropdownMenuItem>
-                        <DropdownMenuItem /* onClick={() => handleViewUser(user.id)} */
-                        >
-                          Editar Utilizador
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <SeeUserModal user={user} />
                   </TableCell>
                 </TableRow>
               ))
