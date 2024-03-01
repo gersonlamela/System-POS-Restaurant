@@ -3,7 +3,7 @@ import TableProducts from '@/components/dashboard/Table/TableProducts/TableProdu
 export async function getProducts() {
   try {
     const result = await fetch(
-      'http://localhost:3000/api/products/getProducts',
+      'http://localhost:3000/api/product/getProducts',
       {
         method: 'GET',
         headers: {

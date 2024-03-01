@@ -14,7 +14,7 @@ import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
-import { getStatus, getStatusStyle } from '@/functions/user/user'
+import { getRole, getStatus, getStatusStyle } from '@/functions/user/user'
 import AddUserModal from './AddUserModal'
 import SeeUserModal from './SeeUserModal'
 
@@ -89,6 +89,12 @@ export default function TableUsers({ users }: UsersTableProps) {
                 scope="col"
                 className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
               >
+                Morada
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
                 Role
               </TableCell>
               <TableCell
@@ -118,8 +124,11 @@ export default function TableUsers({ users }: UsersTableProps) {
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
                     {user.phone}
                   </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {user.address}
+                  </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
-                    {user.role}
+                    {getRole(user.role)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4  text-sm ">
                     <div className="flex flex-row items-center  justify-center gap-2">

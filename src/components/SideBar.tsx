@@ -1,25 +1,22 @@
 'use client'
 
-import { signOut } from "next-auth/react";
-import Image from "next/image";
+import { signOut } from 'next-auth/react'
+import Image from 'next/image'
 
-
-export  function SideBar() {
- return (
-  <div className='w-[155px]  z-50 h-full inset-0  '>
-    <div className="flex items-center justify-between flex-col  w-full h-full rounded-xl bg-white shadow-lg p-[20px]">
-      <Image src="/logo.svg" alt="logo" width={100} height={100}/>
-      <div>
-      <Image src="/Menu-Icons.png" alt="logo" width={100} height={100}/>
-      </div>
-      <div>
-        <button onClick={() => signOut()}>
-        <Image src="/Logout-Icon.png" alt="logo" width={20} height={20}/>
-        </button>
-   
+export function SideBar() {
+  return (
+    <div className="inset-0  z-50 h-full w-[155px]  ">
+      <div className="flex h-full w-full flex-col  items-center justify-between rounded-xl bg-white p-[20px] shadow-lg">
+        <Image src="/logo.svg" alt="logo" width={100} height={100} />
+        <div>
+          <Image src="/Menu-Icons.png" alt="logo" width={100} height={100} />
+        </div>
+        <div>
+          <button onClick={() => signOut()}>
+            <Image src="/Logout-Icon.png" alt="logo" width={20} height={20} />
+          </button>
+        </div>
       </div>
     </div>
-</div>
-
- )
+  )
 }

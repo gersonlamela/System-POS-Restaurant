@@ -21,6 +21,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
+import AddProductModal from './AddProductModal'
+import SeeProductModal from './SeeProductModal'
+import { getCategory, getTax } from '@/functions/Product/product'
+import Image from 'next/image'
+
 interface ProductsTableProps {
   Products: Products[]
 }
@@ -33,9 +38,9 @@ export default function TableProducts({ Products }: ProductsTableProps) {
   console.log(Products)
   // Calculate total pages based on the filtered Products
   const filteredProducts = Products.filter(
-    (user) =>
-      user.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    (product) =>
+      product.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
 
@@ -51,15 +56,134 @@ export default function TableProducts({ Products }: ProductsTableProps) {
   }
 
   // Slice the filtered Products array to only include Products for the current page
-  const indexOfLastUser = currentPage * itemsPerPage
-  const indexOfFirstUser = indexOfLastUser - itemsPerPage
+  const indexOfLastProduct = currentPage * itemsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage
   const currentProducts = filteredProducts.slice(
-    indexOfFirstUser,
-    indexOfLastUser,
+    indexOfFirstProduct,
+    indexOfLastProduct,
   )
 
   return (
-    <div>
+    <div className="w-full">
+      <h1 className="mb-5 text-xl font-bold">Produtos</h1>
+      <div className="mb-5 flex w-full items-center justify-between">
+        <SearchInput
+          searchPlaceholder="Pesquisar pelo Produto (id / nome)"
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
+        <AddProductModal />
+      </div>
+
+      <div className="overflow-x-auto">
+        <Table className="min-w-full ">
+          <TableHeader className="">
+            <TableRow>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Imagem
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Name
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Price
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Desconto
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Categoria
+              </TableCell>
+
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Imposto
+              </TableCell>
+
+              <TableCell
+                scope="col"
+                className=" TableRowacking-wider text-center text-xs font-medium uppercase "
+              >
+                Ações
+              </TableCell>
+            </TableRow>
+          </TableHeader>
+          <tbody className="">
+            {currentProducts.length ? (
+              currentProducts.map((Product) => (
+                <TableRow key={Product.id}>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                    <img
+                      src={`/uploads/${Product.image}`}
+                      alt={Product.name}
+                      width={50}
+                      height={50}
+                    />
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                    {Product.name}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {new Intl.NumberFormat('pt-PT', {
+                      style: 'currency',
+                      currency: 'EUR',
+                      minimumFractionDigits: 1,
+                    }).format(Product.price)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {Product.discount}%
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {getCategory(Product.category)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {getTax(Product.tax)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                    <SeeProductModal Product={Product} />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="px-6 py-4 text-center text-sm "
+                >
+                  Nenhum produto encontrado
+                </TableCell>
+              </TableRow>
+            )}
+          </tbody>
+        </Table>
+      </div>
+      <TablePagination
+        type="Produtos"
+        itemsPerPage={itemsPerPage}
+        setItemsPerPage={handleItemsPerPageChange}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        handlePageChange={handlePageChange}
+        filteredItemsTotal={filteredProducts.length}
+      />
+      {/* <div>
       <SearchInput
         searchPlaceholder={'Pesquisar pelo Produto'}
         searchTerm={searchTerm}
@@ -162,6 +286,7 @@ export default function TableProducts({ Products }: ProductsTableProps) {
         handlePageChange={handlePageChange}
         filteredItemsTotal={filteredProducts.length}
       />
+    </div> */}
     </div>
   )
 }
