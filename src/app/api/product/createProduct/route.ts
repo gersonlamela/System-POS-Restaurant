@@ -7,6 +7,8 @@ import image from 'next/image'
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import { any, z } from 'zod'
+import cuid from 'cuid'
+import { buffer } from 'stream/consumers'
 
 const ProductSchema = z.object({
   name: z.string().min(1, 'O nome do produto é obrigatório.'),
@@ -35,18 +37,34 @@ export async function POST(request: NextRequest) {
     const category = data.get('category') as ProductCategory
     const file = data.get('file') as File
 
+    const cuidValue = cuid() // Generate cuid value
+
+    // Define the category-specific directory
+    let categoryDirectory = ''
+    if (category === 'FOOD') {
+      categoryDirectory = 'food'
+    } else if (category === 'DRINK') {
+      categoryDirectory = 'drinks'
+    } else if (category === 'DESSERT') {
+      categoryDirectory = 'desserts'
+    }
+
+    // Generate the image path based on category
+    const imagePath = `./public/uploads/${categoryDirectory}/${cuidValue}.${file.name.split('.').pop()}`
+
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const imagePath = `./public/uploads/${file.name}`
+
+    const ImageName = `${cuidValue}.${file.name.split('.').pop()}`
+
     await writeFile(imagePath, buffer)
-    console.log(`open ${imagePath} to see the uploaded file`)
 
     const newProduct = await prisma.products.create({
       data: {
         name,
         category,
         price,
-        image: file.name,
+        image: ImageName,
         tax,
         discount,
       },

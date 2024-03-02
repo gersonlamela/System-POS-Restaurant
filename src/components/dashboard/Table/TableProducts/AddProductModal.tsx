@@ -102,10 +102,16 @@ export default function AddProductModal() {
     }
   }
 
+  const { reset } = form
   return (
     <>
       <Dialog>
-        <DialogTrigger className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white">
+        <DialogTrigger
+          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          onClick={() => {
+            reset()
+          }}
+        >
           <Plus size={16} weight="bold" />
           Adicionar Produto
         </DialogTrigger>

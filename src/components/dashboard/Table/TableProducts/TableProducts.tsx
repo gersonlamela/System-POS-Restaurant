@@ -23,7 +23,11 @@ import {
 
 import AddProductModal from './AddProductModal'
 import SeeProductModal from './SeeProductModal'
-import { getCategory, getTax } from '@/functions/Product/product'
+import {
+  getCategory,
+  getCategoryDirectory,
+  getTax,
+} from '@/functions/Product/product'
 import Image from 'next/image'
 
 interface ProductsTableProps {
@@ -131,7 +135,7 @@ export default function TableProducts({ Products }: ProductsTableProps) {
                 <TableRow key={Product.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     <img
-                      src={`/uploads/${Product.image}`}
+                      src={`/uploads/${getCategoryDirectory(Product.category)}/${Product.image}`}
                       alt={Product.name}
                       width={50}
                       height={50}

@@ -43,69 +43,69 @@ export default function SeeProductModal({ Product }: SeeProductModalProps) {
             <hr />
             <DialogDescription className=" w-full ">
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
-                <div>
-                  <Label className="text-black">Id</Label>
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={Product.id}
-                    disabled
+                <div className="flex h-full items-center justify-center">
+                  <img
+                    src={`/uploads/${Product.image}`}
+                    alt={Product.name}
+                    width={200}
+                    height={200}
                   />
                 </div>
-                <div>
-                  <Label className="text-black">Nome</Label>
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={Product.name}
-                    disabled
-                  />
-                </div>
+                <div className="mb-5">
+                  <div>
+                    <Label className="text-black">Id</Label>
+                    <Input
+                      className=" text-black  disabled:opacity-100"
+                      value={Product.id}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-black">Nome</Label>
+                    <Input
+                      className=" text-black  disabled:opacity-100"
+                      value={Product.name}
+                      disabled
+                    />
+                  </div>
 
-                <div>
-                  <Label className="text-black">Imagem</Label>
+                  <div>
+                    <Label className="text-black">Preço</Label>
 
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={Product.image}
-                    disabled
-                  />
-                </div>
+                    <Input
+                      className=" text-black  disabled:opacity-100"
+                      value={Product.price}
+                      disabled
+                    />
+                  </div>
 
-                <div>
-                  <Label className="text-black">Preço</Label>
+                  <div>
+                    <Label className="text-black">Categoria</Label>
 
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={Product.price}
-                    disabled
-                  />
-                </div>
+                    <Input
+                      className=" text-black  disabled:opacity-100"
+                      value={getCategory(Product.category)}
+                      disabled
+                    />
+                  </div>
 
-                <div>
-                  <Label className="text-black">Categoria</Label>
+                  <div>
+                    <Label className="text-black">Imposto</Label>
 
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={getCategory(Product.category)}
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-black">Imposto</Label>
-
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={getTax(Product.tax)}
-                    disabled
-                  />
-                </div>
-                <div>
-                  <Label className="text-black">Criado em</Label>
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={date && format(date, 'dd/MM/yyyy  h:mm')}
-                    disabled
-                  />
+                    <Input
+                      className=" text-black  disabled:opacity-100"
+                      value={getTax(Product.tax)}
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-black">Criado em</Label>
+                    <Input
+                      className=" text-black  disabled:opacity-100"
+                      value={date && format(date, 'dd/MM/yyyy  h:mm')}
+                      disabled
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex w-full justify-end gap-2">

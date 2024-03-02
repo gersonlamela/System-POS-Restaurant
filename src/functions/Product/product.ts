@@ -21,3 +21,16 @@ export function getCategory(role: Products['category']) {
       return 'comida'
   }
 }
+
+export function getCategoryDirectory(category: Products['category']) {
+  switch (category) {
+    case 'FOOD':
+      return 'food'
+    case 'DRINK':
+      return 'drinks'
+    case 'DESSERT':
+      return 'desserts'
+    default:
+      return '' // handle default or unknown category
+  }
+}
