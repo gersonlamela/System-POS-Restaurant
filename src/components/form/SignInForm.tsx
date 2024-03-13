@@ -5,13 +5,14 @@ import { Form, FormControl, FormField, FormItem } from '../ui/form'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { SignIn, XCircle } from '@phosphor-icons/react'
+import { Backspace, SignIn, XCircle } from '@phosphor-icons/react'
 
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { signIn } from 'next-auth/react'
 
 import { User } from '@prisma/client'
+import { useState } from 'react'
 
 const FormSchema = z.object({
   userId: z.string().min(1, 'O ID do utilizador é obrigatório'),
@@ -26,6 +27,8 @@ interface SignInFormProps {
 }
 
 const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
+  const [pinError, setPinError] = useState<string | null>(null)
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -42,9 +45,14 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
     }
   }
 
-  const { dirtyFields } = form.formState
-
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    if (values.pin.length !== 4) {
+      setPinError('O PIN deve ter exatamente 4 dígitos.')
+      return
+    }
+
+    setPinError(null)
+
     const signInData = await signIn('credentials', {
       id: values.userId,
       pin: values.pin,
@@ -89,7 +97,10 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div className="flex space-x-3" data-hs-pin-input>
+                      <div
+                        className={`flex space-x-3 ${pinError ? 'animate-shake' : ''}`}
+                        data-hs-pin-input
+                      >
                         {[0, 1, 2, 3].map((index) => (
                           <input
                             key={index}
@@ -120,7 +131,7 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                 </Button>
               ))}
               <Button
-                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary shadow-md"
+                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-secondary shadow-md"
                 onClick={() => form.setValue('pin', '')}
               >
                 <XCircle size={36} />
@@ -137,11 +148,12 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                 onClick={() =>
                   form.setValue('pin', form.getValues('pin').slice(0, -1))
                 }
-                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-primary text-3xl font-semibold text-white shadow-md"
+                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-secondary shadow-md"
               >
-                <SignIn size={36} />
+                <Backspace size={36} />
               </Button>
             </div>
+            {pinError && <p className="text-red-500">{pinError}</p>}
           </form>
         </Form>
       </div>

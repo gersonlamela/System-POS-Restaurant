@@ -1,6 +1,6 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { Products } from '@prisma/client'
+import { Product } from '@prisma/client'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,7 +31,7 @@ import {
 import Image from 'next/image'
 
 interface ProductsTableProps {
-  Products: Products[]
+  Products: Product[]
 }
 
 export default function TableProducts({ Products }: ProductsTableProps) {

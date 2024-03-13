@@ -1,6 +1,6 @@
-import { Products } from '@prisma/client'
+import { Product } from '@prisma/client'
 
-export function getTax(role: Products['tax']) {
+export function getTax(role: Product['tax']) {
   switch (role) {
     case 'REDUCED':
       return '6%'
@@ -11,7 +11,7 @@ export function getTax(role: Products['tax']) {
   }
 }
 
-export function getCategory(role: Products['category']) {
+export function getCategory(role: Product['category']) {
   switch (role) {
     case 'DESSERT':
       return 'sobremesas'
@@ -22,7 +22,7 @@ export function getCategory(role: Products['category']) {
   }
 }
 
-export function getCategoryDirectory(category: Products['category']) {
+export function getCategoryDirectory(category: Product['category']) {
   switch (category) {
     case 'FOOD':
       return 'food'

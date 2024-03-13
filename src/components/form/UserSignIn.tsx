@@ -1,9 +1,7 @@
-import { Plus } from '@phosphor-icons/react'
 import { User } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Button } from '../ui/button'
-import SignInForm from './SignInForm'
+
 import { CardsUser } from '../ui/cardsUser'
 
 export async function getUsers() {
@@ -23,7 +21,9 @@ export async function getUsers() {
 }
 
 export async function UserSignIn() {
-  const user = await getUsers()
+  const userData = await getUsers()
+
+  const users = userData?.user || []
 
   return (
     <div className="absolute inset-0 z-50  flex w-full flex-col items-center  justify-center bg-[#FEF0E780]">
@@ -35,10 +35,14 @@ export async function UserSignIn() {
           alt="logo"
           className="mt-[21px]"
         />
-        <div className="flex h-full w-[870px] flex-wrap  gap-3 rounded-[25px] bg-primary p-7">
-          {user.user.map((user: User, index: any) => (
-            <CardsUser key={index} user={user} />
-          ))}
+        <div className="flex h-full w-[870px] flex-wrap  gap-3 rounded-[25px] bg-secondary p-7">
+          {users ? (
+            users.map((user: User, index: number) => (
+              <CardsUser key={index} user={user} />
+            ))
+          ) : (
+            <div> Não existe utilizadores </div>
+          )}
           <Link
             href={`/pos/sign-up`}
             className="flex h-[160px] w-[270px] items-center justify-center  rounded-[20px] bg-white"

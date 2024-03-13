@@ -23,7 +23,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import image from 'next/image'
 
 const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
@@ -38,7 +37,6 @@ const FormSchema = z.object({
 })
 
 export default function AddProductModal() {
-  const { handleSubmit, formState } = useForm()
   const [file, setFile] = useState<File>()
   const [imagePreview, setImagePreview] = useState<string>('')
 

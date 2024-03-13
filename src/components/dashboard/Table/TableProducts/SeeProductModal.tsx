@@ -14,13 +14,17 @@ import { Input } from '@/components/ui/input'
 
 import { Label } from '@/components/ui/label'
 import { Binoculars } from '@phosphor-icons/react'
-import { Products } from '@prisma/client'
+import { Product } from '@prisma/client'
 
 import { parseISO, format } from 'date-fns'
-import { getCategory, getTax } from '@/functions/Product/product'
+import {
+  getCategory,
+  getCategoryDirectory,
+  getTax,
+} from '@/functions/Product/product'
 
 interface SeeProductModalProps {
-  Product: Products
+  Product: Product
 }
 
 export default function SeeProductModal({ Product }: SeeProductModalProps) {
@@ -45,10 +49,10 @@ export default function SeeProductModal({ Product }: SeeProductModalProps) {
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
                   <img
-                    src={`/uploads/${Product.image}`}
+                    src={`/uploads/${getCategoryDirectory(Product.category)}/${Product.image}`}
                     alt={Product.name}
-                    width={200}
-                    height={200}
+                    width={300}
+                    height={300}
                   />
                 </div>
                 <div className="mb-5">

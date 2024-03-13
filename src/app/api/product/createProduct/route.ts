@@ -1,14 +1,11 @@
-import { prisma } from '@/lib/prisma'
 import { ProductCategory, Tax } from '@prisma/client'
 import { writeFile } from 'fs/promises'
-import { request } from 'http'
-import error from 'next/error'
-import image from 'next/image'
+
 import { NextRequest, NextResponse } from 'next/server'
-import path from 'path'
-import { any, z } from 'zod'
+
+import { z } from 'zod'
 import cuid from 'cuid'
-import { buffer } from 'stream/consumers'
+import { prisma } from '@/lib/prisma'
 
 const ProductSchema = z.object({
   name: z.string().min(1, 'O nome do produto é obrigatório.'),
@@ -59,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     await writeFile(imagePath, buffer)
 
-    const newProduct = await prisma.products.create({
+    const newProduct = await prisma.product.create({
       data: {
         name,
         category,
