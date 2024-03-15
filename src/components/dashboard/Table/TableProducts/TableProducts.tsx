@@ -1,25 +1,11 @@
 'use client'
-import { Button } from '@/components/ui/button'
+
 import { Product } from '@prisma/client'
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
-import { MoreHorizontal } from 'lucide-react'
+
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
 import AddProductModal from './AddProductModal'
 import SeeProductModal from './SeeProductModal'
@@ -27,8 +13,11 @@ import {
   getCategory,
   getCategoryDirectory,
   getTax,
+  handleGetProducts,
 } from '@/functions/Product/product'
-import Image from 'next/image'
+import { Trash } from '@phosphor-icons/react'
+import { useRouter } from 'next/navigation'
+import EditProductModal from './EditProduct'
 
 interface ProductsTableProps {
   Products: Product[]
@@ -38,10 +27,13 @@ export default function TableProducts({ Products }: ProductsTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
+  const [products, setProducts] = useState(Products)
+
+  const router = useRouter()
 
   console.log(Products)
   // Calculate total pages based on the filtered Products
-  const filteredProducts = Products.filter(
+  const filteredProducts = products.filter(
     (product) =>
       product.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -66,6 +58,34 @@ export default function TableProducts({ Products }: ProductsTableProps) {
     indexOfFirstProduct,
     indexOfLastProduct,
   )
+
+  async function handleDelete(id: string) {
+    try {
+      console.log('delete')
+      // Faz uma solicitação DELETE para a rota apropriada, passando o ID do produto
+      const response = await fetch(`/api/product/deleteProduct?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      // Verifica se a resposta é bem-sucedida
+      if (response.ok) {
+        const newProducts = await handleGetProducts()
+        setProducts(newProducts)
+        console.log('Produto eliminado com sucesso')
+        // Faça qualquer outra manipulação de dados ou feedback visual necessário aqui
+      } else {
+        const data = await response.json()
+        console.error('Erro ao deletar produto:', data.message)
+        // Lida com erros ou exibe mensagens de erro para o usuário
+      }
+    } catch (error: any) {
+      console.error('Erro ao deletar produto:', error.message)
+      // Lida com erros de rede ou outros erros
+    }
+  }
 
   return (
     <div className="w-full">
@@ -137,8 +157,9 @@ export default function TableProducts({ Products }: ProductsTableProps) {
                     <img
                       src={`/uploads/${getCategoryDirectory(Product.category)}/${Product.image}`}
                       alt={Product.name}
-                      width={50}
-                      height={50}
+                      width={70}
+                      height={70}
+                      className="object-cover"
                     />
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
@@ -161,7 +182,16 @@ export default function TableProducts({ Products }: ProductsTableProps) {
                     {getTax(Product.tax)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                    <SeeProductModal Product={Product} />
+                    <div className="flex flex-row items-center gap-2 ">
+                      <SeeProductModal Product={Product} />
+                      <div
+                        className="rounded-lg bg-black px-2 py-2  text-white"
+                        onClick={() => handleDelete(Product.id)}
+                      >
+                        <Trash size={16} weight="bold" />
+                      </div>
+                      <EditProductModal product={Product} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

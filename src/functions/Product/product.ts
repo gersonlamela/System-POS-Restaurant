@@ -34,3 +34,23 @@ export function getCategoryDirectory(category: Product['category']) {
       return '' // handle default or unknown category
   }
 }
+
+export async function handleGetProducts() {
+  const result = await fetch('http://localhost:3000/api/product/getProducts', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (result.ok) {
+    const data = await result.json()
+
+    // Ensure that data is an array, if not, return an empty array
+    return data.product
+  }
+
+  // Handle non-ok response
+  console.error('Error fetching users:', result.statusText)
+  return []
+}

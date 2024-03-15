@@ -13,6 +13,12 @@ import { signIn } from 'next-auth/react'
 
 import { User } from '@prisma/client'
 import { useState } from 'react'
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from '../ui/input-otp'
 
 const FormSchema = z.object({
   userId: z.string().min(1, 'O ID do utilizador é obrigatório'),
@@ -108,6 +114,7 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                             className="flex h-[85px] w-[85px] items-center justify-center rounded-md border-gray-200 bg-white text-center text-3xl font-semibold shadow-lg"
                             disabled
                             data-hs-pin-input-item
+                            maxLength={4} // Limita o campo a 4 caracteres
                             value={field.value[index] || ''} // Use o valor do campo se disponível, caso contrário, use uma string vazia
                           />
                         ))}
@@ -123,9 +130,12 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                 <Button
                   key={number}
                   className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-black shadow-md"
-                  onClick={() =>
-                    form.setValue('pin', form.getValues('pin') + number)
-                  }
+                  onClick={() => {
+                    const pinLength = form.getValues('pin').length
+                    if (pinLength < 4) {
+                      form.setValue('pin', form.getValues('pin') + number)
+                    }
+                  }}
                 >
                   {number}
                 </Button>
@@ -159,18 +169,6 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
       </div>
     </div>
   )
-}
-
-export async function getServerSideProps() {
-  // Aqui você pode implementar a lógica para obter os dados do usuário.
-  // Estou usando um objeto de exemplo para simular o nome do usuário.
-  const user = { name: 'Usuário de Exemplo' }
-
-  return {
-    props: {
-      user,
-    },
-  }
 }
 
 export default SignInForm

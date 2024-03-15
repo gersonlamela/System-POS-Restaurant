@@ -23,13 +23,20 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 
 const FormSchema = z
   .object({
     name: z.string().min(1, 'Nome de utilizador é obrigatório').max(100),
     email: z.string().min(1, 'Email é obrigatório').email('Email inválido'),
-    address: z.string().min(1, 'Address is required'),
-    phone: z.string().min(9, 'Phone de utilizador é obrigatório').max(9),
+    address: z.string().min(1, 'Morada é obrigatória'),
+    phone: z.string().min(9, 'Nº telemóvel do utilizador é obrigatório').max(9),
     pin: z.string().refine((data) => /^\d{1,4}$/.test(data), {
       message: 'O pin deve ser um número com no máximo 4 dígitos',
     }),
@@ -122,11 +129,17 @@ export default function AddUserModal() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">Nome</FormLabel>
+                          <FormLabel className="font-medium text-black">
+                            Nome
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="johndoe" {...field} />
+                            <Input
+                              className="bg-zinc-50 text-black"
+                              placeholder="johndoe"
+                              {...field}
+                            />
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className="mt-2 text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -135,11 +148,17 @@ export default function AddUserModal() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">Email</FormLabel>
+                          <FormLabel className="font-medium text-black">
+                            Email
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="mail@example.com" {...field} />
+                            <Input
+                              className="bg-zinc-50 text-black"
+                              placeholder="mail@example.com"
+                              {...field}
+                            />
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className="mt-2 text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -148,14 +167,17 @@ export default function AddUserModal() {
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">Morada</FormLabel>
+                          <FormLabel className="font-medium text-black">
+                            Morada
+                          </FormLabel>
                           <FormControl>
                             <Input
+                              className="bg-zinc-50 text-black"
                               placeholder="Aliados nº211 1ºdireito"
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className="mt-2 text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -165,18 +187,19 @@ export default function AddUserModal() {
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">
+                          <FormLabel className="font-medium text-black">
                             Telemóvel
                           </FormLabel>
                           <FormControl>
                             <Input
+                              className="bg-zinc-50 text-black"
                               {...field}
                               placeholder="912345678"
                               type="tel"
                               maxLength={9}
                             />
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className="mt-2 text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -185,16 +208,19 @@ export default function AddUserModal() {
                       name="pin"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">Pin</FormLabel>
+                          <FormLabel className="font-medium text-black">
+                            Pin
+                          </FormLabel>
                           <FormControl>
                             <Input
+                              className="bg-zinc-50 text-black"
                               type="tel"
                               placeholder="****"
                               maxLength={4}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className=" mt-2 w-1/2 text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -203,18 +229,19 @@ export default function AddUserModal() {
                       name="confirmPin"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">
+                          <FormLabel className="font-medium text-black">
                             Confirmar o pin
                           </FormLabel>
                           <FormControl>
                             <Input
+                              className="bg-zinc-50 text-black"
                               placeholder="****"
                               type="tel"
                               maxLength={4}
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className="mt-2 text-red-500" />
                         </FormItem>
                       )}
                     />
@@ -223,25 +250,43 @@ export default function AddUserModal() {
                       name="role"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-black">Função</FormLabel>
+                          <FormLabel className="font-medium text-black">
+                            Função
+                          </FormLabel>
                           <FormControl>
-                            <select
+                            <Select>
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder={field.value} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="ADMIN">Admin</SelectItem>
+                                <SelectItem value="MANAGER">Gestor</SelectItem>
+                                <SelectItem value="EMPLOYEE">
+                                  Funcionário
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {/*   <select
                               {...field}
-                              className="w-full rounded border p-2"
+                              className="w-full rounded border bg-zinc-50 p-2 text-black"
                             >
                               <option value="ADMIN">Admin</option>
                               <option value="MANAGER">Gestor</option>
                               <option value="EMPLOYEE">Funcionário</option>
-                            </select>
+                            </select> */}
                           </FormControl>
-                          <FormMessage className="absolute text-red-500" />
+                          <FormMessage className="mt-2 text-red-500" />
                         </FormItem>
                       )}
                     />
                   </div>
                   <div className="flex w-full justify-end gap-2">
                     <DialogClose asChild>
-                      <Button type="button" variant="secondary">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="text-white hover:bg-red-500 "
+                      >
                         Close
                       </Button>
                     </DialogClose>
@@ -249,11 +294,12 @@ export default function AddUserModal() {
                       type="submit"
                       disabled={form.formState.isSubmitting}
                       variant={'outline'}
+                      className="hover:bg-green-500 hover:text-white"
                     >
                       {form.formState.isSubmitting ? (
                         <span className="spinner-border spinner-border-sm mr-1"></span>
                       ) : (
-                        <span>Criar utilizador</span>
+                        <span className="  ">Criar Utilizador</span>
                       )}
                     </Button>
                   </div>

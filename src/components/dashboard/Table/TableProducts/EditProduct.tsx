@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Plus, Trash } from '@phosphor-icons/react'
+import { Pencil, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -24,6 +24,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
+import { Product } from '@prisma/client'
+import { getCategoryDirectory } from '@/functions/Product/product'
+import { set } from 'date-fns'
 
 const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
@@ -37,30 +40,40 @@ const FormSchema = z.object({
   category: ProductCategoryEnum,
 })
 
-export default function AddProductModal() {
+interface EditProductModalProps {
+  product: Product
+}
+
+export default function EditProductModal({ product }: EditProductModalProps) {
   const [file, setFile] = useState<File>()
-  const [imagePreview, setImagePreview] = useState<string>('')
+  const [imagePreview, setImagePreview] = useState<string>(
+    `/uploads/${getCategoryDirectory(product.category)}/${product.image}`,
+  )
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: '',
-      price: 0.0,
-      tax: 'INTERMEDIATE',
-      image: '',
-      discount: 0,
-      category: 'FOOD',
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      tax: product.tax,
+      discount: product.discount || 0,
+      category: product.category,
     },
   })
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     console.log(values)
-    if (!file) return
+
     try {
       const formData = new FormData()
-      formData.append('file', file)
 
-      // Add other fields to the FormData as needed
+      if (file) {
+        // Adiciona a imagem do produto ao FormData
+        formData.append('file', file)
+      }
+
+      // Adiciona os outros campos ao FormData conforme necessário
       formData.append('name', values.name)
       formData.append('price', values.price.toString())
       formData.append('tax', values.tax)
@@ -69,19 +82,24 @@ export default function AddProductModal() {
       }
       formData.append('category', values.category)
 
-      const response = await fetch('/api/product/createProduct', {
-        method: 'POST',
-        body: formData,
-      })
+      const response = await fetch(
+        `/api/product/editProduct?id=${product.id}`,
+        {
+          method: 'PUT',
+          body: formData,
+        },
+      )
 
       const data = await response.json()
       if (response.ok) {
         location.href = '/dashboard/products'
+        // Atualização bem-sucedida, você pode redirecionar ou fazer outra coisa
+        toast.success('Produto atualizado com sucesso!')
+      } else {
+        toast.error(data.message)
       }
-
-      toast.error(data.message)
     } catch (error) {
-      console.log('There was an error', error)
+      console.error('Houve um erro:', error)
     }
   }
 
@@ -101,7 +119,13 @@ export default function AddProductModal() {
     }
   }
 
+  const handleFileDelete = () => {
+    setImagePreview('') // Clear the image preview
+    setFile(undefined) // Reset the file state
+  }
+
   const { reset } = form
+
   return (
     <>
       <Dialog>
@@ -111,19 +135,19 @@ export default function AddProductModal() {
             reset()
           }}
         >
-          <Plus size={16} weight="bold" />
-          Adicionar Produto
+          <Pencil size={16} weight="bold" />
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
-              Adicionar Produto
+              Editar Produto
             </DialogTitle>
             <hr />
             <DialogDescription className=" w-full ">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="">
                   <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
+                    {/* Campos do formulário */}
                     <FormField
                       control={form.control}
                       name="name"
@@ -143,10 +167,9 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
-                      name="price"
                       control={form.control}
+                      name="price"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="font-medium text-black">
@@ -169,8 +192,8 @@ export default function AddProductModal() {
                     />
 
                     <FormField
-                      name="discount"
                       control={form.control}
+                      name="discount"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="font-medium text-black">
@@ -190,6 +213,7 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="tax"
@@ -235,6 +259,7 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="image"
@@ -249,28 +274,25 @@ export default function AddProductModal() {
                               <div className="relative my-4 flex h-[200px] w-[200px] cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 text-center">
                                 <img
                                   src={imagePreview}
-                                  alt="Preview"
-                                  className=" h-[150px] w-[150px] object-cover "
-                                  style={{ maxHeight: '200px' }} // opcional: definindo uma altura máxima
+                                  alt={form.getValues('name')}
+                                  className="h-[150px] w-[150px] object-cover"
+                                  style={{ maxHeight: '200px' }}
                                 />
-                                <button
+                                <Button
+                                  type="button"
                                   className="absolute right-0 top-0 rounded-full p-1 text-red-500 transition duration-300 hover:text-red-600"
                                   onClick={() => {
-                                    setImagePreview('')
-                                    setFile(undefined)
+                                    handleFileDelete()
                                   }}
                                 >
                                   <Trash size={20} weight="bold" />
-                                </button>
+                                </Button>
                               </div>
                             ) : (
-                              <div
-                                className={`relative my-4 flex h-[200px] max-w-full   flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 ${form.formState.errors.image ? 'border-red-500' : ''}`}
-                              >
+                              <div className="relative my-4 flex h-[200px] max-w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4">
                                 <input
                                   type="file"
                                   required
-                                  {...field}
                                   accept=".svg, .png, .jpg, .jpeg"
                                   className="absolute inset-0 h-full w-full opacity-0"
                                   onChange={handleFileChange}
@@ -295,7 +317,7 @@ export default function AddProductModal() {
                       <Button
                         type="button"
                         variant="secondary"
-                        className="text-white hover:bg-red-500 "
+                        className="text-white hover:bg-red-500"
                       >
                         Close
                       </Button>
@@ -309,12 +331,7 @@ export default function AddProductModal() {
                       {form.formState.isSubmitting ? (
                         <span className="spinner-border spinner-border-sm mr-1"></span>
                       ) : (
-                        <Button
-                          className="  "
-                          onClick={() => console.log(form.getValues())}
-                        >
-                          Criar Produto
-                        </Button>
+                        'Salvar Alterações'
                       )}
                     </Button>
                   </div>
