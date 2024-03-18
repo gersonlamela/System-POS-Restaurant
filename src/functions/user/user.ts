@@ -32,3 +32,23 @@ export function getRole(role: User['role']) {
       return 'Gestor'
   }
 }
+
+export async function handleGetUsers() {
+  const result = await fetch('http://localhost:3000/api/user/getUsers', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (result.ok) {
+    const data = await result.json()
+
+    // Ensure that data is an array, if not, return an empty array
+    return data.user
+  }
+
+  // Handle non-ok response
+  console.error('Error fetching users:', result.statusText)
+  return []
+}

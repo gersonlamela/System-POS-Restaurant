@@ -145,7 +145,7 @@ export default function EditProductModal({ product }: EditProductModalProps) {
             <DialogDescription className=" w-full ">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="">
-                  <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
+                  <div className="mt-2 grid w-full  items-start gap-6 md:grid-cols-2">
                     {/* Campos do formulário */}
                     <FormField
                       control={form.control}

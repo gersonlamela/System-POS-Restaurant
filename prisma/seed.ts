@@ -20,7 +20,7 @@ async function main() {
         pin: hashedPin,
         address: 'Vila Nova de Gaia',
         name: 'Gerson Lamela',
-        phone: '+351930678098', // Adicionando prefixo de código de país para Portugal
+        phone: '930678098', // Adicionando prefixo de código de país para Portugal
         status: UserStatus.ACTIVE,
         role: UserRole.ADMIN,
       },
@@ -31,7 +31,7 @@ async function main() {
         pin: hashedPin,
         address: 'Porto',
         name: 'Eva Cruz',
-        phone: '+351930678098', // Adicionando prefixo de código de país para Portugal
+        phone: '930678098', // Adicionando prefixo de código de país para Portugal
         status: UserStatus.ACTIVE,
         role: UserRole.MANAGER,
       },
@@ -43,7 +43,7 @@ async function main() {
         pin: hashedPin,
         address: 'Gondomar',
         name: 'José Silva',
-        phone: '+351930678098', // Adicionando prefixo de código de país para Portugal
+        phone: '930678098', // Adicionando prefixo de código de país para Portugal
         status: UserStatus.ACTIVE,
         role: UserRole.EMPLOYEE,
       },
@@ -54,7 +54,7 @@ async function main() {
       data: {
         name: 'Empresa 1', // Nome da empresa em português
         email: 'empresa1@example.com',
-        phone: '+351111222333', // Adicionando prefixo de código de país para Portugal
+        phone: '930678098', // Adicionando prefixo de código de país para Portugal
         address: 'Rua Elm, 789', // Adaptação do endereço para o formato português
         logo: 'logo1.png',
         users: {
