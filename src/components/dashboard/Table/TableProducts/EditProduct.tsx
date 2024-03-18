@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -26,7 +26,6 @@ import {
 import { UploadCloud } from 'lucide-react'
 import { Product } from '@prisma/client'
 import { getCategoryDirectory } from '@/functions/Product/product'
-import { set } from 'date-fns'
 
 const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
@@ -263,7 +262,7 @@ export default function EditProductModal({ product }: EditProductModalProps) {
                     <FormField
                       control={form.control}
                       name="image"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel className="mt-4 font-medium text-black">
                             Imagem

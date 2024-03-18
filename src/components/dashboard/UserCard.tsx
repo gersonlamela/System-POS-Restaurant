@@ -1,7 +1,7 @@
 'use client'
 
 import { getRole } from '@/functions/user/user'
-import { get } from 'http'
+
 import { LogOut } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 
