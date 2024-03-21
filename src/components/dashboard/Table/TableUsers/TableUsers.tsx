@@ -14,16 +14,12 @@ import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
-import {
-  getRole,
-  getStatus,
-  getStatusStyle,
-  handleGetUsers,
-} from '@/functions/user/user'
+import { getRole, getStatus, getStatusStyle } from '@/functions/user/user'
 import AddUserModal from './AddUserModal'
 import SeeUserModal from './SeeUserModal'
-import { Trash } from '@phosphor-icons/react'
+
 import EditUserModal from './EditUserModal'
+import { DeleteUserModal } from './DeleteUserModal'
 
 interface UsersTableProps {
   users: User[]
@@ -52,34 +48,6 @@ export default function TableUsers({ users }: UsersTableProps) {
   const handleItemsPerPageChange = (value: number) => {
     setItemsPerPage(value)
     setCurrentPage(1) // Reset to TableCelle first page
-  }
-
-  async function handleDelete(id: string) {
-    try {
-      console.log('delete')
-      // Faz uma solicitação DELETE para a rota apropriada, passando o ID do produto
-      const response = await fetch(`/api/product/deleteProduct?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      // Verifica se a resposta é bem-sucedida
-      if (response.ok) {
-        const newUsers = await handleGetUsers()
-        setUsers(newUsers)
-        console.log('Produto eliminado com sucesso')
-        // Faça qualquer outra manipulação de dados ou feedback visual necessário aqui
-      } else {
-        const data = await response.json()
-        console.error('Erro ao deletar produto:', data.message)
-        // Lida com erros ou exibe mensagens de erro para o usuário
-      }
-    } catch (error: any) {
-      console.error('Erro ao deletar produto:', error.message)
-      // Lida com erros de rede ou outros erros
-    }
   }
 
   // Slice TableCelle filtered users array to only include users for TableCelle current page
@@ -177,12 +145,7 @@ export default function TableUsers({ users }: UsersTableProps) {
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                     <div className="flex flex-row items-center gap-2 ">
                       <SeeUserModal user={user} />
-                      <div
-                        className="rounded-lg bg-black px-2 py-2  text-white"
-                        onClick={() => handleDelete(user.id)}
-                      >
-                        <Trash size={16} weight="bold" />
-                      </div>
+                      <DeleteUserModal userId={user.id} />
                       <EditUserModal user={user} />
                     </div>
                   </TableCell>

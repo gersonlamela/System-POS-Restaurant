@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate the image path based on category
-    const imagePath = `./public/uploads/${categoryDirectory}/${cuidValue}.${file.name.split('.').pop()}`
+    const imagePath = `./public/uploads/products/${categoryDirectory}/${cuidValue}.${file.name.split('.').pop()}`
 
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)

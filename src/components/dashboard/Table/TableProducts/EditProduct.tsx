@@ -46,7 +46,7 @@ interface EditProductModalProps {
 export default function EditProductModal({ product }: EditProductModalProps) {
   const [file, setFile] = useState<File>()
   const [imagePreview, setImagePreview] = useState<string>(
-    `/uploads/${getCategoryDirectory(product.category)}/${product.image}`,
+    `/uploads/products/${getCategoryDirectory(product.category)}/${product.image}`,
   )
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -92,7 +92,7 @@ export default function EditProductModal({ product }: EditProductModalProps) {
       const data = await response.json()
       if (response.ok) {
         location.href = '/dashboard/products'
-        // Atualização bem-sucedida, você pode redirecionar ou fazer outra coisa
+
         toast.success('Produto atualizado com sucesso!')
       } else {
         toast.error(data.message)

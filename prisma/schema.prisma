@@ -47,11 +47,13 @@ model Table {
 }
 
 model Ingredient {
-  id       String    @id @default(cuid())
-  name     String
-  price    Float
-  products Product[]
-  orders   Order[]
+  id        String    @id @default(cuid())
+  name      String
+  price     Float
+  image     String
+  createdAt DateTime  @default(now())
+  products  Product[]
+  orders    Order[]
 }
 
 model Order {

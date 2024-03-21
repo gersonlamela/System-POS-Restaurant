@@ -55,7 +55,7 @@ export async function PUT(request: NextRequest) {
       // Caminho da imagem
       const extIndex = file.name.lastIndexOf('.')
       const ext = extIndex >= 0 ? file.name.slice(extIndex) : ''
-      const imagePath = `./public/uploads/${categoryDirectory}/${cuidValue}${ext}`
+      const imagePath = `./public/uploads/products/${categoryDirectory}/${cuidValue}${ext}`
       const bytes = await file.arrayBuffer()
       const buffer = Buffer.from(bytes)
 

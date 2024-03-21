@@ -93,7 +93,7 @@ export default function AddUserModal() {
 
       const data = await response.json()
       if (response.ok) {
-        location.href = '/'
+        location.href = '/dashboard/users'
       }
 
       toast.error(data.message)

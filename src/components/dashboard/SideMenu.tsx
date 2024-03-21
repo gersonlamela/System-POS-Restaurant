@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { LayoutDashboard, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import UserCard from './UserCard'
-import { ForkKnife } from '@phosphor-icons/react'
+import { Carrot, ForkKnife } from '@phosphor-icons/react'
 
 const menuItems = [
   {
@@ -19,6 +19,11 @@ const menuItems = [
     icon: <ForkKnife size={24} />,
     title: 'Products',
     href: '/dashboard/products',
+  },
+  {
+    icon: <Carrot size={24} />,
+    title: 'Ingredients',
+    href: '/dashboard/ingredients',
   },
 ]
 

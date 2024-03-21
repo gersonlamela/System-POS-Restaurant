@@ -49,7 +49,7 @@ export default function SeeProductModal({ Product }: SeeProductModalProps) {
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
                   <img
-                    src={`/uploads/${getCategoryDirectory(Product.category)}/${Product.image}`}
+                    src={`/uploads/products/${getCategoryDirectory(Product.category)}/${Product.image}`}
                     alt={Product.name}
                     width={300}
                     height={300}

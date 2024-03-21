@@ -1,10 +1,10 @@
 import {
   PrismaClient,
-  UserRole,
-  ProductCategory,
   UserStatus,
   Tax,
   OrderStatus,
+  UserRole,
+  ProductCategory,
 } from '@prisma/client'
 import { hash } from 'bcrypt'
 const prisma = new PrismaClient()
@@ -74,8 +74,8 @@ async function main() {
         category: ProductCategory.DESSERT, // Utilizando a categoria em português
         ingredients: {
           create: [
-            { name: 'Pão', price: 5.0 },
-            { name: 'Carne', price: 10.0 },
+            { name: 'Pão', price: 5.0, image: 'pao.png' }, // Adicionando imagem do ingrediente
+            { name: 'Carne', price: 10.0, image: 'pao.png' },
           ], // Adicionando ingredientes
         },
       },
@@ -91,8 +91,8 @@ async function main() {
         category: ProductCategory.DRINK, // Utilizando a categoria em português
         ingredients: {
           create: [
-            { name: 'Coca Cola', price: 5.0 },
-            { name: 'Gelo', price: 2.0 },
+            { name: 'Coca Cola', price: 5.0, image: 'pao.png' },
+            { name: 'Gelo', price: 2.0, image: 'pao.png' },
           ], // Adicionando ingredientes
         },
       },
