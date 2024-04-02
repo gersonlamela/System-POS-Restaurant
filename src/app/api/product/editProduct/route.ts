@@ -9,8 +9,6 @@ export async function PUT(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const file: File | null = data.get('file') as unknown as File
 
-  console.log(data)
-
   try {
     const id = searchParams.get('id') as string
     const name = data.get('name') as string
@@ -18,6 +16,10 @@ export async function PUT(request: NextRequest) {
     const tax = data.get('tax') as Tax
     const discount = parseInt(data.get('discount') as string) || undefined
     const category = data.get('category') as ProductCategory
+    const ingredients = JSON.parse(
+      data.get('ingredients') as string,
+    ) as string[]
+
     const existingProduct = await prisma.product.findUnique({ where: { id } })
 
     if (!existingProduct) {
@@ -27,53 +29,38 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Se não há arquivo enviado ou a imagem enviada é igual à imagem existente
-    if (!file || !file.name) {
-      await prisma.product.update({
-        where: { id },
-        data: {
-          name,
-          price,
-          tax,
-          discount,
-          category,
+    // Verifique se os ingredientes são IDs válidos e correspondem aos ingredientes existentes no banco de dados
+    const validIngredients = await prisma.ingredient.findMany({
+      where: {
+        id: {
+          in: ingredients,
         },
-      })
-    } else {
-      const cuidValue = cuid() // Generate cuid value
+      },
+    })
 
-      // Define o diretório baseado na categoria
-      let categoryDirectory = ''
-      if (category === 'FOOD') {
-        categoryDirectory = 'food'
-      } else if (category === 'DRINK') {
-        categoryDirectory = 'drinks'
-      } else if (category === 'DESSERT') {
-        categoryDirectory = 'desserts'
-      }
-
-      // Caminho da imagem
-      const extIndex = file.name.lastIndexOf('.')
-      const ext = extIndex >= 0 ? file.name.slice(extIndex) : ''
-      const imagePath = `./public/uploads/products/${categoryDirectory}/${cuidValue}${ext}`
-      const bytes = await file.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-
-      await writeFile(imagePath, buffer)
-
-      // Atualiza o produto com a nova imagem
-      await prisma.product.update({
-        where: { id },
-        data: {
-          name,
-          price,
-          image: `${cuidValue}${ext}`,
-          tax,
-          discount,
-          category,
-        },
-      })
+    // Se algum dos ingredientes fornecidos não for válido, retorne um erro
+    if (validIngredients.length !== ingredients.length) {
+      return NextResponse.json(
+        { message: 'Um ou mais ingredientes fornecidos não são válidos' },
+        { status: 400 },
+      )
     }
+
+    await prisma.product.update({
+      where: { id },
+      data: {
+        name,
+        price,
+        tax,
+        discount,
+        category,
+        ingredients: {
+          set: ingredients.map((ingredientId) => ({ id: ingredientId })),
+        },
+      },
+    })
+
+    // Resto do código para atualizar a imagem do produto...
 
     return NextResponse.json(
       { message: 'Produto atualizado com sucesso' },

@@ -14,6 +14,7 @@ const ProductSchema = z.object({
   tax: z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD']),
   discount: z.number().optional(),
   category: z.enum(['DRINK', 'FOOD', 'DESSERT']),
+  ingredients: z.array(z.string()),
 })
 
 export async function POST(request: NextRequest) {
@@ -32,6 +33,9 @@ export async function POST(request: NextRequest) {
     const tax = data.get('tax') as Tax
     const discount = parseInt(data.get('discount') as string) || undefined
     const category = data.get('category') as ProductCategory
+    const ingredients = JSON.parse(
+      data.get('ingredients') as string,
+    ) as string[]
     const file = data.get('file') as File
 
     const cuidValue = cuid() // Generate cuid value
@@ -64,6 +68,9 @@ export async function POST(request: NextRequest) {
         image: ImageName,
         tax,
         discount,
+        ingredients: {
+          connect: ingredients.map((ingredientId) => ({ id: ingredientId })),
+        },
       },
     })
 

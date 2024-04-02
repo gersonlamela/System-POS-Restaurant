@@ -297,7 +297,7 @@ export default function AddUserModal() {
                       className="hover:bg-green-500 hover:text-white"
                     >
                       {form.formState.isSubmitting ? (
-                        <span className="spinner-border spinner-border-sm mr-1"></span>
+                       <CircleNotch size={16} className="animate-spin" />
                       ) : (
                         <span className="  ">Criar Utilizador</span>
                       )}

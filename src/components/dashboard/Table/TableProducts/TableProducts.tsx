@@ -1,6 +1,6 @@
 'use client'
 
-import { Product } from '@prisma/client'
+import { Ingredient, Product as PrismaProduct } from '@prisma/client'
 
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
@@ -15,24 +15,25 @@ import {
   getTax,
   handleGetProducts,
 } from '@/functions/Product/product'
-import { Trash } from '@phosphor-icons/react'
-import { useRouter } from 'next/navigation'
+
 import EditProductModal from './EditProduct'
 import { DeleteProductModal } from './DeleteProductModal'
 
-interface ProductsTableProps {
-  Products: Product[]
+// Defina uma interface para representar um produto
+interface Product extends PrismaProduct {
+  ingredients: Ingredient[] // Adicione a propriedade 'ingredients' que é um array de Ingredient
 }
 
-export default function TableProducts({ Products }: ProductsTableProps) {
+// Defina a interface para representar os produtos com ingredientes
+export interface ProductWithIngredients {
+  Products: Product[] // Use a interface Product em ProductWithIngredients
+}
+export default function TableProducts({ Products }: ProductWithIngredients) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
   const [products, setProducts] = useState(Products)
 
-  const router = useRouter()
-
-  console.log(Products)
   // Calculate total pages based on the filtered Products
   const filteredProducts = products.filter(
     (product) =>
@@ -184,9 +185,15 @@ export default function TableProducts({ Products }: ProductsTableProps) {
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                     <div className="flex flex-row items-center gap-2 ">
-                      <SeeProductModal Product={Product} />
+                      <SeeProductModal
+                        Product={Product}
+                        ingredients={Product.ingredients}
+                      />
                       <DeleteProductModal productId={Product.id} />
-                      <EditProductModal product={Product} />
+                      <EditProductModal
+                        product={Product}
+                        Ingredients={Product.ingredients}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>

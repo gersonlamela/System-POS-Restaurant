@@ -12,9 +12,6 @@ export async function handleGetIngredients() {
   if (result.ok) {
     const data = await result.json()
 
-    console.log(data)
-
-    // Ensure that data is an array, if not, return an empty array
     return data.ingredients
   }
 

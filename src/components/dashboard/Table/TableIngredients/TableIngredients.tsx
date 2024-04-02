@@ -7,8 +7,6 @@ import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
-import { Trash } from '@phosphor-icons/react'
-
 import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
 
 import EditIngredientModal from './EditIngredientModal'
@@ -150,7 +148,7 @@ export default function TableIngredients({
                   </TableCell>
 
                   <TableCell className="whitespace-nowrap px-6 py-4  text-sm font-medium">
-                    <div className="flex flex-row items-center gap-2 ">
+                    <div className="flex flex-row items-center justify-center gap-2 ">
                       <SeeIngredientModal Ingredient={Ingredient} />
 
                       <DeleteIngredientModal ingredientId={Ingredient.id} />

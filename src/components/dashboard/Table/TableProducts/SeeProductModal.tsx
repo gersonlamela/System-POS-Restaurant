@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 
 import { Label } from '@/components/ui/label'
 import { Binoculars } from '@phosphor-icons/react'
-import { Product } from '@prisma/client'
+import { Ingredient, Product } from '@prisma/client'
 
 import { parseISO, format } from 'date-fns'
 import {
@@ -22,12 +22,17 @@ import {
   getCategoryDirectory,
   getTax,
 } from '@/functions/Product/product'
+import IngredientsList from '@/components/IngredientsList'
 
 interface SeeProductModalProps {
   Product: Product
+  ingredients: Ingredient[]
 }
 
-export default function SeeProductModal({ Product }: SeeProductModalProps) {
+export default function SeeProductModal({
+  Product,
+  ingredients,
+}: SeeProductModalProps) {
   if (!Product) return null
 
   const date = parseISO(Product.createdAt.toString())
@@ -112,6 +117,7 @@ export default function SeeProductModal({ Product }: SeeProductModalProps) {
                   </div>
                 </div>
               </div>
+              <IngredientsList ingredients={ingredients} />
               <div className="flex w-full justify-end gap-2">
                 <DialogClose asChild>
                   <Button type="button" variant="secondary">

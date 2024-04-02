@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Pencil, Trash } from '@phosphor-icons/react'
+import { CircleNotch, Pencil, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -24,8 +24,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
-import { Product } from '@prisma/client'
+import { Ingredient, Product } from '@prisma/client'
 import { getCategoryDirectory } from '@/functions/Product/product'
+import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
 
 const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
@@ -34,6 +35,7 @@ const FormSchema = z.object({
   name: z.string().min(1, 'O nome do produto é obrigatório.'),
   price: z.number().positive('O preço deve ser um valor positivo.'),
   image: z.any(),
+  ingredients: z.any(),
   tax: TaxEnum,
   discount: z.number().optional(),
   category: ProductCategoryEnum,
@@ -41,13 +43,30 @@ const FormSchema = z.object({
 
 interface EditProductModalProps {
   product: Product
+  Ingredients: Ingredient[]
 }
 
-export default function EditProductModal({ product }: EditProductModalProps) {
+export default function EditProductModal({
+  product,
+  Ingredients,
+}: EditProductModalProps) {
   const [file, setFile] = useState<File>()
   const [imagePreview, setImagePreview] = useState<string>(
     `/uploads/products/${getCategoryDirectory(product.category)}/${product.image}`,
   )
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>(
+    () => (Ingredients ? Ingredients.map((ingredient) => ingredient.id) : []),
+  )
+
+  const [searchValue, setSearchValue] = useState('')
+
+  const [ingredients, setIngredients] = useState<Ingredient[]>([])
+
+  useEffect(() => {
+    handleGetIngredients().then((data) => {
+      setIngredients(data)
+    })
+  }, [])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -56,6 +75,7 @@ export default function EditProductModal({ product }: EditProductModalProps) {
       price: product.price,
       image: product.image,
       tax: product.tax,
+      ingredients: selectedIngredients,
       discount: product.discount || 0,
       category: product.category,
     },
@@ -80,6 +100,7 @@ export default function EditProductModal({ product }: EditProductModalProps) {
         formData.append('discount', values.discount.toString())
       }
       formData.append('category', values.category)
+      formData.append('ingredients', JSON.stringify(selectedIngredients))
 
       const response = await fetch(
         `/api/product/editProduct?id=${product.id}`,
@@ -189,7 +210,6 @@ export default function EditProductModal({ product }: EditProductModalProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="discount"
@@ -212,7 +232,6 @@ export default function EditProductModal({ product }: EditProductModalProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="tax"
@@ -235,7 +254,6 @@ export default function EditProductModal({ product }: EditProductModalProps) {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="category"
@@ -258,7 +276,72 @@ export default function EditProductModal({ product }: EditProductModalProps) {
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="ingredients"
+                      render={({ field }) => (
+                        <div className="relative ">
+                          <label className="block font-medium text-black">
+                            Ingredientes
+                          </label>
+                          <Input
+                            type="text"
+                            placeholder="Pesquisar ingredientes..."
+                            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                            value={searchValue}
+                            onChange={(e) => {
+                              setSearchValue(e.target.value.toLowerCase())
+                            }}
+                          />
 
+                          <div className="absolute left-0 top-full z-10 mt-1 grid max-h-[250px] w-full grid-cols-2  overflow-auto rounded-md bg-gray-100 ">
+                            {ingredients
+                              .filter((ingredient) =>
+                                ingredient.name
+                                  .toLowerCase()
+                                  .includes(searchValue),
+                              )
+                              .map((ingredient) => (
+                                <>
+                                  <label
+                                    key={ingredient.id}
+                                    className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
+                                  >
+                                    <Input
+                                      className="mr-2 h-4 w-4"
+                                      type="checkbox"
+                                      name={ingredient.name}
+                                      value={ingredient.id}
+                                      checked={selectedIngredients.includes(
+                                        ingredient.id,
+                                      )}
+                                      onChange={(e) => {
+                                        const isChecked = e.target.checked
+                                        const ingredientId = ingredient.id
+                                        const updatedIngredients = isChecked
+                                          ? [
+                                              ...selectedIngredients,
+                                              ingredientId,
+                                            ]
+                                          : selectedIngredients.filter(
+                                              (id) => id !== ingredientId,
+                                            )
+                                        setSelectedIngredients(
+                                          updatedIngredients,
+                                        )
+                                        field.onChange(updatedIngredients) // Atualiza o valor do campo de entrada controlado pelo FormField
+                                      }}
+                                    />
+                                    <span className="text-sm">
+                                      {ingredient.name}
+                                    </span>
+                                  </label>
+                                </>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="image"
@@ -328,7 +411,7 @@ export default function EditProductModal({ product }: EditProductModalProps) {
                       className="hover:bg-green-500 hover:text-white"
                     >
                       {form.formState.isSubmitting ? (
-                        <span className="spinner-border spinner-border-sm mr-1"></span>
+                        <CircleNotch size={16} className="animate-spin" />
                       ) : (
                         'Salvar Alterações'
                       )}

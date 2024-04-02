@@ -1,4 +1,7 @@
+import { authOptions } from '@/lib/auth'
 import { User } from '@prisma/client'
+import { getServerSession } from 'next-auth'
+import { useRouter } from 'next/navigation'
 
 export function getStatusStyle(status: User['status']) {
   switch (status) {
@@ -51,4 +54,25 @@ export async function handleGetUsers() {
   // Handle non-ok response
   console.error('Error fetching users:', result.statusText)
   return []
+}
+
+export async function handleVerifyUserExist(userId: string) {
+  if (!userId) {
+    return false
+  } else {
+    const result = await fetch(
+      `http://localhost:3000/api/user/verifyUserExist?id=${userId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+    if (result.ok) {
+      const data = await result.json()
+      return data
+    }
+  }
 }

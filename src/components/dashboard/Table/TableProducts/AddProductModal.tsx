@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Plus, Trash } from '@phosphor-icons/react'
+import { CircleNotch, Plus, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -24,6 +24,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
+import { Ingredient } from '@prisma/client'
+import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
 
 const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
@@ -33,13 +35,33 @@ const FormSchema = z.object({
   price: z.number().positive('O preço deve ser um valor positivo.'),
   image: z.any(),
   tax: TaxEnum,
+  ingredients: z.any(),
   discount: z.number().optional(),
   category: ProductCategoryEnum,
 })
 
 export default function AddProductModal() {
   const [file, setFile] = useState<File>()
+  const [ingredients, setIngredients] = useState<Ingredient[]>()
   const [imagePreview, setImagePreview] = useState<string>('')
+  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
+  const [searchValue, setSearchValue] = useState('')
+
+  const toggleIngredient = (ingredientId: Ingredient['id']) => {
+    if (selectedIngredients.includes(ingredientId)) {
+      setSelectedIngredients(
+        selectedIngredients.filter((id) => id !== ingredientId),
+      )
+    } else {
+      setSelectedIngredients([...selectedIngredients, ingredientId])
+    }
+  }
+
+  useEffect(() => {
+    handleGetIngredients().then((data) => {
+      setIngredients(data)
+    })
+  }, [])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -47,6 +69,7 @@ export default function AddProductModal() {
       name: '',
       price: 0.0,
       tax: 'INTERMEDIATE',
+      ingredients: selectedIngredients,
       image: '',
       discount: 0,
       category: 'FOOD',
@@ -60,7 +83,7 @@ export default function AddProductModal() {
       const formData = new FormData()
       formData.append('file', file)
 
-      // Add other fields to the FormData as needed
+      // Adicione outros campos ao FormData conforme necessário
       formData.append('name', values.name)
       formData.append('price', values.price.toString())
       formData.append('tax', values.tax)
@@ -68,6 +91,9 @@ export default function AddProductModal() {
         formData.append('discount', values.discount.toString())
       }
       formData.append('category', values.category)
+
+      // Adicione os ingredientes selecionados ao FormData
+      formData.append('ingredients', JSON.stringify(selectedIngredients))
 
       const response = await fetch('/api/product/createProduct', {
         method: 'POST',
@@ -123,7 +149,7 @@ export default function AddProductModal() {
             <DialogDescription className=" w-full ">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="">
-                  <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
+                  <div className="mt-2 grid grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="name"
@@ -143,7 +169,6 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       name="price"
                       control={form.control}
@@ -167,7 +192,6 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       name="discount"
                       control={form.control}
@@ -212,7 +236,6 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="category"
@@ -237,14 +260,85 @@ export default function AddProductModal() {
                     />
                     <FormField
                       control={form.control}
+                      name="ingredients"
+                      render={({ field }) => (
+                        <div className="relative ">
+                          <label className="block font-medium text-black">
+                            Ingredientes
+                          </label>
+                          <Input
+                            type="text"
+                            placeholder="Pesquisar ingredientes..."
+                            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                            value={searchValue}
+                            onChange={(e) => {
+                              setSearchValue(e.target.value.toLowerCase())
+                            }}
+                          />
+
+                          <div className="absolute left-0 top-full z-10 mt-1 grid max-h-[250px] w-full grid-cols-2 overflow-auto rounded-md bg-gray-100">
+                            {ingredients ? (
+                              ingredients
+                                .filter((ingredient) =>
+                                  ingredient.name
+                                    .toLowerCase()
+                                    .includes(searchValue),
+                                )
+                                .map((ingredient) => (
+                                  <label
+                                    key={ingredient.id}
+                                    className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
+                                  >
+                                    <Input
+                                      className="mr-2 h-4 w-4"
+                                      type="checkbox"
+                                      name={ingredient.name}
+                                      value={ingredient.id}
+                                      checked={selectedIngredients.includes(
+                                        ingredient.id,
+                                      )}
+                                      onChange={(e) => {
+                                        const isChecked = e.target.checked
+                                        const ingredientId = ingredient.id
+                                        const updatedIngredients = isChecked
+                                          ? [
+                                              ...selectedIngredients,
+                                              ingredientId,
+                                            ]
+                                          : selectedIngredients.filter(
+                                              (id) => id !== ingredientId,
+                                            )
+                                        setSelectedIngredients(
+                                          updatedIngredients,
+                                        )
+                                        field.onChange(updatedIngredients) // Atualiza o valor do campo de entrada controlado pelo FormField
+                                      }}
+                                    />
+                                    <span className="text-sm">
+                                      {ingredient.name}
+                                    </span>
+                                  </label>
+                                ))
+                            ) : (
+                              <div>Sem Ingredientes</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
                       name="image"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="relative mt-6">
                           <FormLabel className="mt-4 font-medium text-black">
                             Imagem
                           </FormLabel>
                           <FormMessage className="absolute text-red-500" />
-                          <FormControl>
+                          <FormControl className="">
                             {imagePreview ? (
                               <div className="relative my-4 flex h-[200px] w-[200px] cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 text-center">
                                 <img
@@ -265,7 +359,7 @@ export default function AddProductModal() {
                               </div>
                             ) : (
                               <div
-                                className={`relative my-4 flex h-[200px] max-w-full   flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 ${form.formState.errors.image ? 'border-red-500' : ''}`}
+                                className={` my-4 flex h-[200px] max-w-full   flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 ${form.formState.errors.image ? 'border-red-500' : ''}`}
                               >
                                 <input
                                   type="file"
@@ -290,7 +384,7 @@ export default function AddProductModal() {
                     />
                   </div>
 
-                  <div className="flex w-full justify-end gap-2">
+                  <div className="mt-4 flex w-full justify-end gap-2">
                     <DialogClose asChild>
                       <Button
                         type="button"
@@ -307,14 +401,9 @@ export default function AddProductModal() {
                       className="hover:bg-green-500 hover:text-white"
                     >
                       {form.formState.isSubmitting ? (
-                        <span className="spinner-border spinner-border-sm mr-1"></span>
+                        <CircleNotch size={16} className="animate-spin" />
                       ) : (
-                        <Button
-                          className="  "
-                          onClick={() => console.log(form.getValues())}
-                        >
-                          Criar Produto
-                        </Button>
+                        'Criar Produto'
                       )}
                     </Button>
                   </div>

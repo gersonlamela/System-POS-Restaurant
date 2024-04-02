@@ -5,7 +5,11 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany()
+    const products = await prisma.product.findMany({
+      include: {
+        ingredients: true, // incluir os ingredientes associados a cada produto
+      },
+    })
 
     return NextResponse.json(
       { product: products, message: 'Produtos encontrados com sucesso' },
