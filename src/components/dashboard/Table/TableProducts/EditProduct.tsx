@@ -150,7 +150,7 @@ export default function EditProductModal({
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex flex-row items-center justify-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
           onClick={() => {
             reset()
           }}

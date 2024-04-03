@@ -6,7 +6,8 @@ export default async function page() {
 
   return (
     <div className="flex flex-1 justify-center overflow-auto p-10">
-      <TableProducts Products={products} />
+      <TableProducts Products={products} />{' '}
+      {/* Confirme se Products está sendo passado corretamente */}
     </div>
   )
 }

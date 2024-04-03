@@ -18,6 +18,8 @@ import {
 
 import EditProductModal from './EditProduct'
 import { DeleteProductModal } from './DeleteProductModal'
+import { Button } from '@/components/ui/button'
+import { FilterIcon } from 'lucide-react'
 
 // Defina uma interface para representar um produto
 interface Product extends PrismaProduct {
@@ -28,18 +30,44 @@ interface Product extends PrismaProduct {
 export interface ProductWithIngredients {
   Products: Product[] // Use a interface Product em ProductWithIngredients
 }
+
 export default function TableProducts({ Products }: ProductWithIngredients) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
   const [products, setProducts] = useState(Products)
+  const [showOnlyInStock, setShowOnlyInStock] = useState(false)
 
-  // Calculate total pages based on the filtered Products
-  const filteredProducts = products.filter(
-    (product) =>
-      product.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filterProductsInStock = () => {
+    setShowOnlyInStock(!showOnlyInStock)
+  }
+
+  const filteredProducts = Products
+    ? Products.filter((product) => {
+        const stock = product.stock ?? 0 // Usa 0 como valor padrão se product.stock for null
+
+        // Função para remover caracteres especiais de uma string
+        const removeSpecialChars = (str: any) => str.replace(/[^\w\s]/g, '')
+
+        // Convertendo a string de pesquisa e o nome do produto para minúsculas e removendo caracteres especiais
+        const searchTermCleaned = removeSpecialChars(
+          searchTerm.toLowerCase().trim(),
+        )
+        const productNameCleaned = removeSpecialChars(
+          product.name.toLowerCase(),
+        )
+
+        if (showOnlyInStock && stock !== 0) return false
+        if (searchTermCleaned === '') return true // Se o termo de pesquisa estiver vazio, inclui todos os produtos
+
+        // Realizando a comparação entre a string de pesquisa e o nome do produto
+        return (
+          product.id.toString().includes(searchTermCleaned) ||
+          productNameCleaned.includes(searchTermCleaned)
+        )
+      })
+    : []
+
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
 
   // Function to handle page change
@@ -98,6 +126,13 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
+        <Button
+          onClick={filterProductsInStock}
+          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+        >
+          {showOnlyInStock ? 'Mostrar Todos' : 'Mostrar produtos sem stock'}
+          <FilterIcon />
+        </Button>
         <AddProductModal />
       </div>
 
@@ -142,6 +177,12 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
               >
                 Imposto
               </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+              >
+                Stock
+              </TableCell>
 
               <TableCell
                 scope="col"
@@ -161,7 +202,7 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
                       alt={Product.name}
                       width={70}
                       height={70}
-                      className="object-cover"
+                      className="h-[70px] w-[70px] object-contain"
                     />
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
@@ -182,6 +223,9 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
                     {getTax(Product.tax)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                    {Product.stock}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                     <div className="flex flex-row items-center gap-2 ">

@@ -80,6 +80,7 @@ model Product {
   tax         Tax
   discount    Int?            @default(0)
   category    ProductCategory
+  stock       Int?            @default(0)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   ingredients Ingredient[] // Relacionamento com os ingredientes do produto

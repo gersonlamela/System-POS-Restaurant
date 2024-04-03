@@ -46,11 +46,12 @@ export async function handleGetProducts() {
   if (result.ok) {
     const data = await result.json()
 
-    // Ensure that data is an array, if not, return an empty array
+    console.log('data:', data)
+
     return data.product
   }
 
   // Handle non-ok response
-  console.error('Error fetching users:', result.statusText)
+  console.error('Error fetching products:', result.statusText)
   return []
 }

@@ -133,7 +133,7 @@ export default function TableIngredients({
                       alt={Ingredient.name}
                       width={70}
                       height={70}
-                      className="object-cover"
+                      className="h-[70px] w-[70px] object-contain"
                     />
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">

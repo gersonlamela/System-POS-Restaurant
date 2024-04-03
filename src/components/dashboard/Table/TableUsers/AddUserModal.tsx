@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button' // Certifique-se de ter importado o componente Button corretamente.
-import { Plus } from '@phosphor-icons/react'
+import { CircleNotch, Plus } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -297,7 +297,7 @@ export default function AddUserModal() {
                       className="hover:bg-green-500 hover:text-white"
                     >
                       {form.formState.isSubmitting ? (
-                       <CircleNotch size={16} className="animate-spin" />
+                        <CircleNotch size={16} className="animate-spin" />
                       ) : (
                         <span className="  ">Criar Utilizador</span>
                       )}

@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
     const price = parseFloat(data.get('price') as string)
     const tax = data.get('tax') as Tax
     const discount = parseInt(data.get('discount') as string) || undefined
+    const stock = parseInt(data.get('stock') as string) || undefined
+
     const category = data.get('category') as ProductCategory
     const ingredients = JSON.parse(
       data.get('ingredients') as string,
@@ -60,6 +62,8 @@ export async function POST(request: NextRequest) {
 
     await writeFile(imagePath, buffer)
 
+    console.log('Stock ', stock)
+
     const newProduct = await prisma.product.create({
       data: {
         name,
@@ -68,6 +72,7 @@ export async function POST(request: NextRequest) {
         image: ImageName,
         tax,
         discount,
+        stock,
         ingredients: {
           connect: ingredients.map((ingredientId) => ({ id: ingredientId })),
         },

@@ -40,10 +40,8 @@ export function DeleteProductModal({ productId }: { productId: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>
-          <div className="rounded-lg bg-black px-2 py-2  text-white">
-            <Trash size={16} weight="bold" />
-          </div>
+        <Button size={'icon'} className="bg-black">
+          <Trash size={16} weight="bold" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

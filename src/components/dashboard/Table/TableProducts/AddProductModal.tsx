@@ -37,6 +37,7 @@ const FormSchema = z.object({
   tax: TaxEnum,
   ingredients: z.any(),
   discount: z.number().optional(),
+  stock: z.number().optional(),
   category: ProductCategoryEnum,
 })
 
@@ -46,16 +47,6 @@ export default function AddProductModal() {
   const [imagePreview, setImagePreview] = useState<string>('')
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
   const [searchValue, setSearchValue] = useState('')
-
-  const toggleIngredient = (ingredientId: Ingredient['id']) => {
-    if (selectedIngredients.includes(ingredientId)) {
-      setSelectedIngredients(
-        selectedIngredients.filter((id) => id !== ingredientId),
-      )
-    } else {
-      setSelectedIngredients([...selectedIngredients, ingredientId])
-    }
-  }
 
   useEffect(() => {
     handleGetIngredients().then((data) => {
@@ -69,6 +60,7 @@ export default function AddProductModal() {
       name: '',
       price: 0.0,
       tax: 'INTERMEDIATE',
+      stock: 0,
       ingredients: selectedIngredients,
       image: '',
       discount: 0,
@@ -79,6 +71,7 @@ export default function AddProductModal() {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     console.log(values)
     if (!file) return
+
     try {
       const formData = new FormData()
       formData.append('file', file)
@@ -89,6 +82,9 @@ export default function AddProductModal() {
       formData.append('tax', values.tax)
       if (values.discount) {
         formData.append('discount', values.discount.toString())
+      }
+      if (values.stock) {
+        formData.append('stock', values.stock.toString())
       }
       formData.append('category', values.category)
 
@@ -214,6 +210,7 @@ export default function AddProductModal() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="tax"
@@ -324,6 +321,28 @@ export default function AddProductModal() {
                             )}
                           </div>
                         </div>
+                      )}
+                    />
+                    <FormField
+                      name="stock"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-medium text-black">
+                            Quantidade
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="bg-zinc-50 text-black"
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseInt(e.target.value))
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage className="absolute text-red-500" />
+                        </FormItem>
                       )}
                     />
                   </div>

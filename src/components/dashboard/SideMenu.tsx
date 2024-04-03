@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { LayoutDashboard, Users } from 'lucide-react'
@@ -34,7 +34,7 @@ export default function SideMenu() {
     <div className="flex h-full w-[90px] transform flex-col justify-between px-[12px] shadow-md md:w-[250px]">
       <div className="flex flex-col gap-[50px]">
         <div className="flex flex-col items-center justify-center gap-[10px] md:flex-row">
-          <div className=" flex h-[50px] w-[50px] items-center justify-center rounded-full bg-primary-foreground">
+          <div className=" bg-black-foreground flex h-[50px] w-[50px] items-center justify-center rounded-full">
             <Image src="/logo.png" alt="logo" width={50} height={50} />
           </div>
           <h1 className="hidden  font-medium md:flex md:text-xl">POS</h1>
