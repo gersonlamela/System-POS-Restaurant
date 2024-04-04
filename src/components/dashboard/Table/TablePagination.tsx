@@ -89,6 +89,7 @@ export default function TablePagination({
                 <PaginationLink
                   onClick={() => handlePageChange(index + 1)}
                   isActive={currentPage === index + 1}
+                  className="text-black"
                 >
                   {index + 1}
                 </PaginationLink>

@@ -3,11 +3,11 @@ import { Product } from '@prisma/client'
 export function getTax(role: Product['tax']) {
   switch (role) {
     case 'REDUCED':
-      return '6%'
+      return 6
     case 'INTERMEDIATE':
-      return '13%'
+      return 13
     case 'STANDARD':
-      return '23%'
+      return 23
   }
 }
 
