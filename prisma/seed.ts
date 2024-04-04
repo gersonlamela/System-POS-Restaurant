@@ -13,7 +13,7 @@ async function main() {
   try {
     const hashedPin = await hash('1234', 10)
 
-    // Create users
+    // Criar usuários
     const user1 = await prisma.user.create({
       data: {
         email: 'gersonlamela@example.com',
@@ -49,7 +49,7 @@ async function main() {
       },
     })
 
-    // Create company
+    // Criar empresa
     const company1 = await prisma.company.create({
       data: {
         name: 'Empresa 1', // Nome da empresa em português
@@ -58,12 +58,45 @@ async function main() {
         address: 'Rua Elm, 789', // Adaptação do endereço para o formato português
         logo: 'logo1.png',
         users: {
-          connect: { id: user1.id },
+          connect: [{ id: user1.id }, { id: user2.id }, { id: user3.id }],
         },
       },
     })
 
-    // Create products
+    // Criar ingredientes
+    const ingredient1 = await prisma.ingredient.create({
+      data: {
+        name: 'Pão',
+        price: 5.0,
+        image: 'pao.png',
+      },
+    })
+
+    const ingredient2 = await prisma.ingredient.create({
+      data: {
+        name: 'Carne',
+        price: 10.0,
+        image: 'carne.png',
+      },
+    })
+
+    const ingredient3 = await prisma.ingredient.create({
+      data: {
+        name: 'Coca Cola',
+        price: 5.0,
+        image: 'coca-cola.png',
+      },
+    })
+
+    const ingredient4 = await prisma.ingredient.create({
+      data: {
+        name: 'Gelo',
+        price: 2.0,
+        image: 'gelo.png',
+      },
+    })
+
+    // Criar produtos
     const product1 = await prisma.product.create({
       data: {
         name: 'Francesinha',
@@ -72,11 +105,11 @@ async function main() {
         tax: Tax.INTERMEDIATE, // Adaptação da taxa para o português
         discount: 2,
         category: ProductCategory.DESSERT, // Utilizando a categoria em português
-        ingredients: {
+        productIngredients: {
           create: [
-            { name: 'Pão', price: 5.0, image: 'pao.png' }, // Adicionando imagem do ingrediente
-            { name: 'Carne', price: 10.0, image: 'pao.png' },
-          ], // Adicionando ingredientes
+            { ingredientId: ingredient1.id, quantity: 1, maxQuantity: 5 },
+            { ingredientId: ingredient2.id, quantity: 1, maxQuantity: 2 },
+          ],
         },
       },
     })
@@ -87,18 +120,17 @@ async function main() {
         price: 15.0,
         image: 'produtoF.png', // Nome do arquivo de imagem em português
         tax: Tax.INTERMEDIATE, // Adaptação da taxa para o português
-        discount: 0,
         category: ProductCategory.DRINK, // Utilizando a categoria em português
-        ingredients: {
+        productIngredients: {
           create: [
-            { name: 'Coca Cola', price: 5.0, image: 'pao.png' },
-            { name: 'Gelo', price: 2.0, image: 'pao.png' },
-          ], // Adicionando ingredientes
+            { ingredientId: ingredient3.id, quantity: 1, maxQuantity: 3 },
+            { ingredientId: ingredient4.id, quantity: 1, maxQuantity: 2 },
+          ],
         },
       },
     })
 
-    // Create tables
+    // Criar mesas
     const table1 = await prisma.table.create({
       data: {
         number: 1,
@@ -108,7 +140,7 @@ async function main() {
       },
     })
 
-    // Create order with products
+    // Criar pedido com produtos
     const order1 = await prisma.order.create({
       data: {
         totalPrice: 50.0,
@@ -122,6 +154,12 @@ async function main() {
         },
         User: {
           connect: { id: user1.id },
+        },
+        OrderIngredient: {
+          create: [
+            { ingredientId: ingredient3.id, quantity: 1, maxQuantity: 3 },
+            { ingredientId: ingredient4.id, quantity: 1, maxQuantity: 2 },
+          ],
         },
       },
     })

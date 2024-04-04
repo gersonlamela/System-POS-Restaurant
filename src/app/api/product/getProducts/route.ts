@@ -6,7 +6,11 @@ export async function GET() {
   try {
     const products = await prisma.product.findMany({
       include: {
-        ingredients: true, // incluir os ingredientes associados a cada produto
+        productIngredients: {
+          include: {
+            ingredient: true,
+          },
+        }, // incluir os ingredientes associados a cada produto
       },
     })
 

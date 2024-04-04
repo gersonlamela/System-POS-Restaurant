@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -24,22 +24,58 @@ import {
 } from '@/components/ui/form'
 
 import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
-import { Ingredient, Product } from '@prisma/client'
+import { Order, ProductCategory, ProductIngredient, Tax } from '@prisma/client'
 import { handleGetProducts } from '@/functions/Product/product'
 import { useSession } from 'next-auth/react'
 import { z } from 'zod'
+import NumberInputWithIcons from '../../NumberInputQuantity'
+import { max } from 'date-fns'
 
 const OrderSchema = z.object({
   productId: z.string(),
-  ingredientIds: z.array(z.string()),
+  ingredient: z.array(
+    z.object({
+      ingredientId: z.string(),
+      quantity: z.number(),
+    }),
+  ),
 })
 
 const FormSchema = z.object({
-  nif: z.string().optional(), // Defina como opcional se necessário
-  status: z.string().optional(), // Defina como opcional se necessário
+  nif: z.string().optional(),
+  status: z.string().optional(),
 
   orders: z.array(OrderSchema),
 })
+
+interface Product {
+  id: string
+  name: string
+  price: number
+  image: string
+  tax: Tax
+  discount: number | null
+  category: ProductCategory
+  stock: number | null
+  createdAt: Date
+  updatedAt: Date
+  productIngredients: ProductIngredient[] // Adicionando a propriedade productIngredients
+}
+
+export interface Ingredient {
+  id: string
+  name: string
+  price: number
+  image: string
+  createdAt: Date
+  orders: Order[]
+  products: ProductIngredient[]
+}
+
+interface DefaultOrder {
+  productId: string
+  ingredient: { ingredientId: string; quantity: number }[]
+}
 
 const AddOrderModal = () => {
   const { data: session, status } = useSession()
@@ -48,7 +84,10 @@ const AddOrderModal = () => {
   >([])
   const [availableProducts, setAvailableProducts] = useState<Product[]>([])
 
-  const defaultOrder = { productId: '', ingredientIds: [] as string[] }
+  const defaultOrder: DefaultOrder = {
+    productId: '',
+    ingredient: [{ ingredientId: '', quantity: 0 }],
+  }
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -67,19 +106,24 @@ const AddOrderModal = () => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     const formData = {
       ...values,
+      status: 'PENDING',
       userId: session?.user.id,
-      tableId: 'clu1l5i6m000az7s5a18kqryu',
+      tableId: 'clulirt2g000g72jnyq7m7eed',
     }
+    console.log(formData)
     try {
-      const response = await fetch('/api/order/createOrder', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
+      const response = await fetch(
+        'http://localhost:3000/api/order/createOrder',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        },
+      )
 
       const data = await response.json()
       if (response.ok) {
-        location.href = '/dashboard/orders'
+        /*  location.href = '/dashboard/orders' */
       } else {
         toast.error(data.message)
       }
@@ -94,6 +138,14 @@ const AddOrderModal = () => {
   }, [])
 
   const addOrder = () => {
+    const defaultOrder: DefaultOrder = availableProducts.map((product) => ({
+      productId: product.id,
+      ingredient: product.productIngredients.map((ingredient) => ({
+        ingredientId: ingredient.ingredientId,
+        quantity: ingredient.quantity || 0, // Use a quantidade padrão do ingrediente, ou 0 se não houver
+      })),
+    }))[0] // Obtém apenas o primeiro elemento de defaultOrders
+
     append(defaultOrder)
   }
 
@@ -146,10 +198,22 @@ const AddOrderModal = () => {
                         className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
                         value={order.productId}
                         onChange={(e) => {
+                          const productId = e.target.value
                           const updatedOrders = [...form.getValues('orders')]
+                          const selectedProduct = availableProducts.find(
+                            (product) => product.id === productId,
+                          )
+                          const productIngredients =
+                            selectedProduct?.productIngredients.map(
+                              (ingredient) => ({
+                                ingredientId: ingredient.ingredientId,
+                                quantity: ingredient.quantity || 0, // Quantidade inicial do ingrediente
+                              }),
+                            ) || []
                           updatedOrders[index] = {
                             ...order,
-                            productId: e.target.value,
+                            productId,
+                            ingredient: productIngredients,
                           }
                           setValue('orders', updatedOrders, {
                             shouldDirty: true,
@@ -174,57 +238,49 @@ const AddOrderModal = () => {
                       </Button>
                     </div>
                     {order.productId && (
-                      <div>
-                        {availableIngredients.map((ingredient) => (
-                          <div
-                            key={ingredient.id}
-                            className="flex items-center space-x-2"
-                          >
-                            <input
-                              type="checkbox"
-                              id={`ingredient-${order.id}-${ingredient.id}`}
-                              value={ingredient.id}
-                              onChange={(e) => {
-                                const isChecked = e.target.checked
-                                const ingredientId = ingredient.id
+                      <div className="grid grid-cols-2 gap-4">
+                        {order.ingredient.map((ingredient, ingredientIndex) => {
+                          const productIngredient = availableProducts
+                            .find((product) => product.id === order.productId)
+                            ?.productIngredients.find(
+                              (productIngredient) =>
+                                productIngredient.ingredientId ===
+                                ingredient.ingredientId,
+                            )
+                          const minQuantity = productIngredient?.quantity || 0
+                          const maxQuantity =
+                            productIngredient?.maxQuantity || 9999
+                          const ingredientName = availableIngredients.find(
+                            (Ingredient) =>
+                              Ingredient.id ===
+                              order.ingredient[ingredientIndex].ingredientId,
+                          )?.name
 
-                                const updatedOrders = [
-                                  ...form.getValues('orders'),
-                                ]
-                                const currentIngredientIds =
-                                  updatedOrders[index].ingredientIds
-
-                                let updatedIngredientIds: string[] // Define o tipo explicitamente como um array de strings
-
-                                if (isChecked) {
-                                  updatedIngredientIds = [
-                                    ...currentIngredientIds,
-                                    ingredientId,
-                                  ]
-                                } else {
-                                  updatedIngredientIds =
-                                    currentIngredientIds.filter(
-                                      (id) => id !== ingredientId,
-                                    )
-                                }
-
-                                updatedOrders[index] = {
-                                  ...order,
-                                  ingredientIds: updatedIngredientIds,
-                                }
-
-                                setValue('orders', updatedOrders, {
-                                  shouldDirty: true,
-                                })
-                              }}
-                            />
-                            <label
-                              htmlFor={`ingredient-${order.id}-${ingredient.id}`}
-                            >
-                              {ingredient.name}
-                            </label>
-                          </div>
-                        ))}
+                          return (
+                            <div key={ingredientIndex}>
+                              <NumberInputWithIcons
+                                label={ingredientName || ''}
+                                min={0}
+                                max={maxQuantity}
+                                value={ingredient.quantity}
+                                onChange={(updatedQuantity) => {
+                                  if (
+                                    updatedQuantity >= 0 &&
+                                    updatedQuantity <= maxQuantity
+                                  ) {
+                                    const updatedOrders = [
+                                      ...form.getValues('orders'),
+                                    ]
+                                    updatedOrders[index].ingredient[
+                                      ingredientIndex
+                                    ].quantity = updatedQuantity
+                                    form.reset({ orders: updatedOrders })
+                                  }
+                                }}
+                              />
+                            </div>
+                          )
+                        })}
                       </div>
                     )}
                   </div>
