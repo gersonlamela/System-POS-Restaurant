@@ -14,18 +14,24 @@ import { Input } from '@/components/ui/input'
 
 import { Label } from '@/components/ui/label'
 import { Binoculars } from '@phosphor-icons/react'
-import { User } from '@prisma/client'
+
 import { getRole } from '@/functions/user/user'
 import { parseISO, format } from 'date-fns'
+import { Order } from '@/types/Order'
+import result from 'postcss/lib/result'
 
-interface SeeUserModalProps {
-  user: User
+interface SeeOrderModalProps {
+  order: Order
 }
 
-export default function SeeUserModal({ user }: SeeUserModalProps) {
-  if (!user) return null
+export default function SeeOrderModal({ order }: SeeOrderModalProps) {
+  if (!order) return null
 
-  const date = parseISO(user.createdAt.toString())
+  const parede = order.OrderIngredient.map((product) =>
+    console.log('order', product.product),
+  )
+
+  const date = parseISO(order.createdAt.toString())
 
   console.log(format(date, 'dd/MM/yyyy  h:mm a'))
   return (
@@ -46,57 +52,84 @@ export default function SeeUserModal({ user }: SeeUserModalProps) {
                   <Label className="text-black">Id</Label>
                   <Input
                     className=" text-black  disabled:opacity-100"
-                    value={user.id}
+                    value={order.id}
                     disabled
                   />
                 </div>
                 <div>
-                  <Label className="text-black">Nome</Label>
+                  <Label className="text-black">ID</Label>
                   <Input
                     className=" text-black  disabled:opacity-100"
-                    value={user.name}
-                    disabled
-                  />
-                </div>
-
-                <div>
-                  <Label className="text-black">Email</Label>
-
-                  <Input
-                    className=" text-black  disabled:opacity-100"
-                    value={user.email}
+                    value={order.orderId}
                     disabled
                   />
                 </div>
 
                 <div>
-                  <Label className="text-black">Morada</Label>
+                  <Label className="text-black">NIF</Label>
 
                   <Input
                     className=" text-black  disabled:opacity-100"
-                    value={user.address}
+                    value={order.nif?.toString()}
+                    type="number"
                     disabled
                   />
                 </div>
 
                 <div>
-                  <Label className="text-black">Telemóvel</Label>
+                  <Label className="text-black">Mesa</Label>
 
                   <Input
                     className=" text-black  disabled:opacity-100"
-                    value={user.phone}
+                    value={order.Table?.number}
                     disabled
                   />
                 </div>
 
                 <div>
-                  <Label className="text-black">Função</Label>
+                  <Label className="text-black">Criado Por</Label>
 
                   <Input
                     className=" text-black  disabled:opacity-100"
-                    value={getRole(user.role)}
+                    value={order.User?.name?.toString()}
                     disabled
                   />
+                </div>
+
+                <div>
+                  <Label className="text-black">Ingredients</Label>
+                  {Object.values(
+                    order.OrderIngredient.reduce(
+                      (acc, orderIngredient) => {
+                        // Group order ingredients by productId
+                        const productId = orderIngredient.product?.id
+                        if (!acc[productId]) {
+                          acc[productId] = {
+                            product: orderIngredient.product,
+                            ingredients: [],
+                          }
+                        }
+                        acc[productId].ingredients.push(orderIngredient)
+                        return acc
+                      },
+                      {} as {
+                        [key: string]: { product: any; ingredients: any[] }
+                      },
+                    ),
+                  ).map((groupedOrderIngredient, index) => (
+                    <div key={index}>
+                      <div className="font-bold">
+                        {groupedOrderIngredient.product?.name}
+                      </div>
+                      {groupedOrderIngredient.ingredients.map(
+                        (ingredient, ingredientIndex) => (
+                          <div key={ingredientIndex}>
+                            {ingredient.ingredient.name} = {ingredient.quantity}
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  ))}
                 </div>
                 <div>
                   <Label className="text-black">Criado em</Label>

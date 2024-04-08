@@ -1,29 +1,28 @@
 import React from 'react'
-import { Ingredient } from '@prisma/client'
-import { Label } from './ui/label'
+
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel'
+import { ProductProps } from '@/types/Product'
 
-interface IngredientsListProps {
-  ingredients: Ingredient[]
-}
-
-const IngredientsList: React.FC<IngredientsListProps> = ({ ingredients }) => {
+export default function IngredientsList({ Product }: ProductProps) {
   return (
     <Carousel orientation="horizontal" className="w-full rounded-lg  ">
       <CarouselContent>
-        {ingredients ? (
-          ingredients.map((ingredient) => (
+        {Product ? (
+          Product.ProductIngredient.map((productIngredients) => (
             <CarouselItem
-              key={ingredient.id}
+              key={productIngredients.ingredient.id}
               className=" flex max-w-[100px] basis-1/2 flex-col  items-center justify-center gap-2 "
             >
               <img
-                src={`/uploads/ingredients/${ingredient.image}`}
-                alt={ingredient.name}
+                src={`/uploads/products/${productIngredients.ingredient.name.replace(/\s+/g, '')}/${productIngredients.ingredient.image}`}
+                alt={productIngredients.ingredient.name}
                 className="h-[40px] object-contain "
               />
 
-              <Label className="text-center ">{ingredient.name}</Label>
+              <div className="flex flex-col items-center gap-2 text-center ">
+                <span> {productIngredients.ingredient.name}</span>
+                <span> Qtd. {productIngredients.quantity} </span>
+              </div>
             </CarouselItem>
           ))
         ) : (
@@ -33,5 +32,3 @@ const IngredientsList: React.FC<IngredientsListProps> = ({ ingredients }) => {
     </Carousel>
   )
 }
-
-export default IngredientsList

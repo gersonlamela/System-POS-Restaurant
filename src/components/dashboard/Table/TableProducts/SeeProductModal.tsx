@@ -14,25 +14,13 @@ import { Input } from '@/components/ui/input'
 
 import { Label } from '@/components/ui/label'
 import { Binoculars } from '@phosphor-icons/react'
-import { Ingredient, Product } from '@prisma/client'
 
 import { parseISO, format } from 'date-fns'
-import {
-  getCategory,
-  getCategoryDirectory,
-  getTax,
-} from '@/functions/Product/product'
+import { getTax } from '@/functions/Product/product'
 import IngredientsList from '@/components/IngredientsList'
+import { ProductProps } from '@/types/Product'
 
-interface SeeProductModalProps {
-  Product: Product
-  ingredients: Ingredient[]
-}
-
-export default function SeeProductModal({
-  Product,
-  ingredients,
-}: SeeProductModalProps) {
+export default function SeeProductModal({ Product }: ProductProps) {
   if (!Product) return null
 
   const date = parseISO(Product.createdAt.toString())
@@ -54,10 +42,11 @@ export default function SeeProductModal({
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
                   <img
-                    src={`/uploads/products/${getCategoryDirectory(Product.category)}/${Product.image}`}
+                    src={`/uploads/products/${Product.ProductCategory.name.replace(/\s+/g, '')}/${Product.image}`}
                     alt={Product.name}
-                    width={300}
-                    height={300}
+                    width={200}
+                    height={200}
+                    className="h-[200px] w-[200px] object-contain"
                   />
                 </div>
                 <div className="mb-5">
@@ -93,7 +82,7 @@ export default function SeeProductModal({
 
                     <Input
                       className=" text-black  disabled:opacity-100"
-                      value={getCategory(Product.category)}
+                      value={Product.name}
                       disabled
                     />
                   </div>
@@ -117,7 +106,8 @@ export default function SeeProductModal({
                   </div>
                 </div>
               </div>
-              <IngredientsList ingredients={ingredients} />
+              <IngredientsList Product={Product} />
+
               <div className="flex w-full justify-end gap-2">
                 <DialogClose asChild>
                   <Button type="button" variant="secondary">

@@ -24,10 +24,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
-import { Ingredient } from '@prisma/client'
+import { Ingredient, ProductCategory } from '@prisma/client'
 import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
 
-const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
+import { handleGetProductsCategory } from '@/functions/Product/product'
+
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
 
 const FormSchema = z.object({
@@ -38,15 +39,22 @@ const FormSchema = z.object({
   ingredients: z.any(),
   discount: z.number().optional(),
   stock: z.number().optional(),
-  category: ProductCategoryEnum,
+  category: z.string(),
 })
+type SelectedIngredient = {
+  id: string
+  quantity: number
+}
 
 export default function AddProductModal() {
   const [file, setFile] = useState<File>()
   const [ingredients, setIngredients] = useState<Ingredient[]>()
   const [imagePreview, setImagePreview] = useState<string>('')
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([])
+  const [selectedIngredients, setSelectedIngredients] = useState<
+    SelectedIngredient[]
+  >([])
   const [searchValue, setSearchValue] = useState('')
+  const [category, setCategory] = useState<ProductCategory[]>([])
 
   useEffect(() => {
     handleGetIngredients().then((data) => {
@@ -64,9 +72,15 @@ export default function AddProductModal() {
       ingredients: selectedIngredients,
       image: '',
       discount: 0,
-      category: 'FOOD',
+      category: '',
     },
   })
+
+  useEffect(() => {
+    handleGetProductsCategory().then((data) => {
+      setCategory(data)
+    })
+  }, [])
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     console.log(values)
@@ -246,15 +260,23 @@ export default function AddProductModal() {
                               {...field}
                               className="w-full rounded border bg-zinc-50 p-2 text-black"
                             >
-                              <option value="DRINK">Bebidas</option>
-                              <option value="FOOD">Comida</option>
-                              <option value="DESSERT">Sobremesa</option>
+                              {/* Adicionando um valor padrão */}
+                              <option value="" disabled selected>
+                                Selecione uma categoria
+                              </option>
+                              {/* Mapeando as categorias */}
+                              {category.map((cat) => (
+                                <option key={cat.id} value={cat.id}>
+                                  {cat.name}
+                                </option>
+                              ))}
                             </select>
                           </FormControl>
                           <FormMessage className="absolute text-red-500" />
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="ingredients"
@@ -291,29 +313,65 @@ export default function AddProductModal() {
                                       type="checkbox"
                                       name={ingredient.name}
                                       value={ingredient.id}
-                                      checked={selectedIngredients.includes(
-                                        ingredient.id,
+                                      checked={selectedIngredients.some(
+                                        (selected) =>
+                                          selected.id === ingredient.id,
                                       )}
                                       onChange={(e) => {
                                         const isChecked = e.target.checked
                                         const ingredientId = ingredient.id
+                                        const ingredientQuantity = parseInt(
+                                          prompt('Enter the quantity') || '0',
+                                        )
                                         const updatedIngredients = isChecked
                                           ? [
                                               ...selectedIngredients,
-                                              ingredientId,
+                                              {
+                                                id: ingredientId,
+                                                quantity: ingredientQuantity,
+                                              },
                                             ]
                                           : selectedIngredients.filter(
-                                              (id) => id !== ingredientId,
+                                              (selected) =>
+                                                selected.id !== ingredientId,
                                             )
                                         setSelectedIngredients(
                                           updatedIngredients,
                                         )
-                                        field.onChange(updatedIngredients) // Atualiza o valor do campo de entrada controlado pelo FormField
+                                        field.onChange(updatedIngredients)
                                       }}
                                     />
                                     <span className="text-sm">
                                       {ingredient.name}
                                     </span>
+                                    {/* Campo de entrada para quantidade */}
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      value={
+                                        selectedIngredients.find(
+                                          (selected) =>
+                                            selected.id === ingredient.id,
+                                        )?.quantity
+                                      }
+                                      onChange={(e) => {
+                                        const updatedQuantity =
+                                          parseInt(e.target.value) || 0
+                                        const updatedIngredients =
+                                          selectedIngredients.map((selected) =>
+                                            selected.id === ingredient.id
+                                              ? {
+                                                  ...selected,
+                                                  quantity: updatedQuantity,
+                                                }
+                                              : selected,
+                                          )
+                                        setSelectedIngredients(
+                                          updatedIngredients,
+                                        )
+                                        field.onChange(updatedIngredients)
+                                      }}
+                                    />
                                   </label>
                                 ))
                             ) : (

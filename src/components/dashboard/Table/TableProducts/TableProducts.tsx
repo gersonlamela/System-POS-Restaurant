@@ -1,6 +1,11 @@
 'use client'
 
-import { Ingredient, Product as PrismaProduct } from '@prisma/client'
+import {
+  Ingredient,
+  Product as PrismaProduct,
+  ProductCategory,
+  ProductIngredient,
+} from '@prisma/client'
 
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
@@ -9,12 +14,7 @@ import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
 import AddProductModal from './AddProductModal'
 import SeeProductModal from './SeeProductModal'
-import {
-  getCategory,
-  getCategoryDirectory,
-  getTax,
-  handleGetProducts,
-} from '@/functions/Product/product'
+import { getTax, handleGetProducts } from '@/functions/Product/product'
 
 import EditProductModal from './EditProduct'
 import { DeleteProductModal } from './DeleteProductModal'
@@ -23,19 +23,22 @@ import { FilterIcon } from 'lucide-react'
 
 // Defina uma interface para representar um produto
 interface Product extends PrismaProduct {
-  ingredients: Ingredient[] // Adicione a propriedade 'ingredients' que é um array de Ingredient
+  ProductIngredient: {
+    ingredient: Ingredient
+    quantity: ProductIngredient['quantity']
+  }[]
+  ProductCategory: ProductCategory
 }
 
 // Defina a interface para representar os produtos com ingredientes
-export interface ProductWithIngredients {
+export interface Products {
   Products: Product[] // Use a interface Product em ProductWithIngredients
 }
 
-export default function TableProducts({ Products }: ProductWithIngredients) {
+export default function TableProducts({ Products }: Products) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
-  const [products, setProducts] = useState(Products)
   const [showOnlyInStock, setShowOnlyInStock] = useState(false)
 
   const filterProductsInStock = () => {
@@ -102,8 +105,7 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
 
       // Verifica se a resposta é bem-sucedida
       if (response.ok) {
-        const newProducts = await handleGetProducts()
-        setProducts(newProducts)
+        location.href = '/'
         console.log('Produto eliminado com sucesso')
         // Faça qualquer outra manipulação de dados ou feedback visual necessário aqui
       } else {
@@ -198,7 +200,7 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
                 <TableRow key={Product.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     <img
-                      src={`/uploads/products/${getCategoryDirectory(Product.category)}/${Product.image}`}
+                      src={`/uploads/products/${Product.ProductCategory.name.replace(/\s+/g, '')}/${Product.image}`}
                       alt={Product.name}
                       width={70}
                       height={70}
@@ -219,7 +221,7 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
                     {Product.discount}%
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
-                    {getCategory(Product.category)}
+                    {Product.ProductCategory.name}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
                     {getTax(Product.tax)}
@@ -229,15 +231,9 @@ export default function TableProducts({ Products }: ProductWithIngredients) {
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                     <div className="flex flex-row items-center gap-2 ">
-                      <SeeProductModal
-                        Product={Product}
-                        ingredients={Product.ingredients}
-                      />
+                      <SeeProductModal Product={Product} />
                       <DeleteProductModal productId={Product.id} />
-                      <EditProductModal
-                        product={Product}
-                        Ingredients={Product.ingredients}
-                      />
+                      <EditProductModal Product={Product} />
                     </div>
                   </TableCell>
                 </TableRow>

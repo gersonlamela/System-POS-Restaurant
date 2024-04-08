@@ -1,44 +1,19 @@
 'use client'
 
-import {
-  Order as PrismaOrder,
-  Table as table,
-  User,
-  ProductIngredient,
-  Ingredient,
-  OrderIngredient,
-} from '@prisma/client'
 import { getStatusOrder, getStatusStyleOrder } from '@/functions/Order/order'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import TablePagination from '../TablePagination'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { FilterIcon } from 'lucide-react'
-import AddProductModal from '../TableProducts/AddProductModal'
 import AddOrderModal from './AddOrderModal'
-
-interface Order extends PrismaOrder {
-  User?: User
-  Table?: table
-  products: {
-    id: string
-    name: string
-    ingredients: ProductIngredient[]
-    quantity: number
-  }[]
-  OrderIngredient: {
-    ingredient: Ingredient
-    quantity: number
-  }[] // Aqui está a correção para definir OrderIngredient como uma matriz
-}
+import { Order } from '@/types/Order'
+import SeeOrderModal from './SeeOrderModal'
 
 export interface OrdersTableProps {
   Order: Order[]
-  Ingredient: Ingredient[]
 }
 
-export default function TableOrders({ Order, Ingredient }: OrdersTableProps) {
+export default function TableOrders({ Order }: OrdersTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
@@ -180,6 +155,11 @@ export default function TableOrders({ Order, Ingredient }: OrdersTableProps) {
                           </ul>
                         </div>
                       ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
+                    <div className="flex flex-row items-center gap-2 ">
+                      <SeeOrderModal order={order} />
                     </div>
                   </TableCell>
                 </TableRow>

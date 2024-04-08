@@ -74,23 +74,25 @@ model Order {
 }
 
 model Product {
-  id                 String              @id @default(cuid())
-  name               String
-  price              Float
-  image              String
-  tax                Tax
-  discount           Int?                @default(0)
-  category           ProductCategory
-  stock              Int?                @default(0)
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  productIngredients ProductIngredient[]
-  orders             Order[] // Relacionamento com as ordens em que o produto foi incluído
+  id                String              @id @default(cuid())
+  name              String
+  price             Float
+  image             String
+  tax               Tax
+  discount          Int?                @default(0)
+  stock             Int?                @default(0)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  orders            Order[] // Relacionamento com as ordens em que o produto foi incluído
+  OrderIngredient   OrderIngredient[]
+  productCategoryId String?
+  ProductCategory   ProductCategory?    @relation(fields: [productCategoryId], references: [id])
+  ProductIngredient ProductIngredient[]
 }
 
 model ProductIngredient {
   id           String     @id @default(cuid())
-  product      Product    @relation(fields: [productId], references: [id])
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId    String
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId String
@@ -104,22 +106,27 @@ model OrderIngredient {
   id           String     @id @default(cuid())
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId String
+  product      Product?   @relation(fields: [productId], references: [id])
+  productId    String?
   quantity     Int // Quantidade do ingrediente no produto
   maxQuantity  Int? // Quantidade máxima permitida
-  Order        Order?     @relation(fields: [orderId], references: [id])
+  order        Order?     @relation(fields: [orderId], references: [id])
   orderId      String?
 }
 
-enum ProductCategory {
-  DRINK
-  FOOD
-  DESSERT
+model ProductCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  icon      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
 }
 
 enum Tax {
-  REDUCED // Taxa reduzida, geralmente 6%
-  INTERMEDIATE // Taxa intermédia, geralmente 13%
-  STANDARD // Taxa normal, geralmente 23%
+  REDUCED // Taxa reduzida, 6%
+  INTERMEDIATE // Taxa intermédia, 13%
+  STANDARD // Taxa normal, 23%
 }
 
 enum UserRole {

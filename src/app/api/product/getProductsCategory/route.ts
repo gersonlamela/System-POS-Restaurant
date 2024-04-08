@@ -4,19 +4,13 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany({
-      include: {
-        ProductIngredient: {
-          include: {
-            ingredient: true,
-          },
-        },
-        ProductCategory: true,
-      },
-    })
+    const CategoryProducts = await prisma.productCategory.findMany()
 
     return NextResponse.json(
-      { product: products, message: 'Produtos encontrados com sucesso' },
+      {
+        CategoryProducts,
+        message: 'Categoria de produtos encontrados com sucesso',
+      },
       { status: 201 },
     )
   } catch (error: any) {

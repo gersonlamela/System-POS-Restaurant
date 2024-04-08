@@ -9,7 +9,7 @@ export default async function page() {
 
   return (
     <div className="flex flex-1 justify-center overflow-auto p-10">
-      <TableOrders Order={orders} Ingredient={ingrediets} />
+      <TableOrders Order={orders} />
     </div>
   )
 }

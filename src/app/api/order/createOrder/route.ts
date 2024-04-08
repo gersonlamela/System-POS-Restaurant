@@ -4,7 +4,6 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { Ingredient, Product, ProductIngredient } from '@prisma/client'
 import { getTax } from '@/functions/Product/product'
-import console from 'console'
 
 const calculateTotalPrice = (
   product: Product,
@@ -35,22 +34,24 @@ const calculateTotalPrice = (
   return 0
 }
 
-const OrderSchema = z.object({
-  productId: z.string(),
-  ingredient: z.array(
-    z.object({
-      ingredientId: z.string(),
-      quantity: z.number(),
-    }),
-  ),
-})
-
 const orderSchema = z.object({
   nif: z.string().optional(),
   status: z.enum(['PENDING', 'COMPLETED', 'CANCELLED']),
   userId: z.string().optional(),
   tableId: z.string().optional(),
-  orders: z.array(OrderSchema),
+  orders: z.array(
+    z.object({
+      productId: z.string(),
+      ingredient: z
+        .array(
+          z.object({
+            ingredientId: z.string(),
+            quantity: z.number(),
+          }),
+        )
+        .optional(),
+    }),
+  ),
 })
 
 export async function POST(req: Request, res: Response) {
@@ -58,8 +59,7 @@ export async function POST(req: Request, res: Response) {
     const body = await req.json()
     const { nif, status, userId, tableId, orders } = orderSchema.parse(body)
 
-    console.log(orders.map((order) => order.ingredient))
-
+    // Cria a ordem principal
     const mainOrder = await prisma.order.create({
       data: {
         totalPrice: 0,
@@ -83,50 +83,63 @@ export async function POST(req: Request, res: Response) {
 
       const totalPrice = calculateTotalPrice(product, ingredient || [])
 
-      const orderData = {
-        orderId: mainOrder.orderId,
-        totalPrice,
-        nif,
-        status,
-        userId,
-        tableId,
-        products: {
-          connect: { id: product.id },
-        },
-      }
-
+      // Cria uma entrada de pedido para cada produto
       const order = await prisma.order.create({
-        data: orderData,
+        data: {
+          orderId: mainOrder.orderId, // Utiliza o ID real da ordem principal
+          totalPrice,
+          nif,
+          status,
+          userId,
+          tableId,
+          products: {
+            connect: { id: product.id },
+          },
+        },
       })
 
       createdOrders.push(order)
 
-      if (orders.length > 0) {
-        const productIngredients = []
-        // Iterar sobre cada pedido
-        for (const { ingredient } of orders) {
-          // Iterar sobre cada ingrediente do pedido
-          for (const { ingredientId, quantity } of ingredient || []) {
-            // Adicionar os dados do ingrediente ao array de productIngredients
-            productIngredients.push({
-              ingredientId,
-              quantity,
-            })
-          }
+      // Cria entradas de ingredientes associadas a cada produto
+      for (const { productId, ingredient } of orders) {
+        const product = await prisma.product.findUnique({
+          where: { id: productId },
+        })
+
+        if (!product) {
+          throw new Error(`Product with ID ${productId} not found`)
         }
 
-        const orderIngredientsData = productIngredients.map(
-          (productIngredient) => ({
-            orderId: order.id,
-            ingredientId: productIngredient.ingredientId,
-            quantity: productIngredient.quantity,
-            // Inclua outros campos conforme necessário
-          }),
-        )
+        const totalPrice = calculateTotalPrice(product, ingredient || [])
 
-        const orderIngredients = await prisma.orderIngredient.createMany({
-          data: orderIngredientsData,
+        // Cria uma entrada de pedido para o produto
+        const order = await prisma.order.create({
+          data: {
+            orderId: mainOrder.orderId, // Utiliza o ID real da ordem principal
+            totalPrice,
+            nif,
+            status,
+            userId,
+            tableId,
+            products: {
+              connect: { id: product.id },
+            },
+          },
         })
+
+        createdOrders.push(order)
+
+        // Cria entradas de ingredientes associadas ao produto
+        for (const { productId, ingredientId, quantity } of order || []) {
+          await prisma.orderIngredient.create({
+            data: {
+              orderId: order.orderId.toString(), // Utiliza o ID real da ordem criada acima
+              productId,
+              ingredientId
+              quantity,
+            },
+          })
+        }
       }
     }
 
