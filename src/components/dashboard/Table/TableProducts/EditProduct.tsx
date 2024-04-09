@@ -426,7 +426,7 @@ export default function EditProductModal({ Product }: ProductProps) {
                                 />
                                 <Button
                                   type="button"
-                                  className="absolute right-0 top-0 rounded-full p-1 text-red-500 transition duration-300 hover:text-red-600"
+                                  className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
                                   onClick={() => {
                                     handleFileDelete()
                                   }}

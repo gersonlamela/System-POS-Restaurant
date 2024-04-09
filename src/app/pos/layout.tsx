@@ -1,5 +1,5 @@
 import Navbar from '@/components/Navbar'
-import { SideBar } from '@/components/SideBar'
+import { SideBar } from '@/components/pos/SideBar'
 import { FC, ReactNode } from 'react'
 
 interface POSLayoutProps {

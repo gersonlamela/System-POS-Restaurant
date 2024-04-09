@@ -14,16 +14,25 @@ const menuItems = [
     title: 'Dashboard',
     href: '/dashboard',
   },
-  { icon: <Users size={24} />, title: 'Users', href: '/dashboard/users' },
+  {
+    icon: <Users size={24} />,
+    title: 'Utilizadores',
+    href: '/dashboard/users',
+  },
   {
     icon: <ForkKnife size={24} />,
-    title: 'Products',
+    title: 'Produtos',
     href: '/dashboard/products',
   },
   {
     icon: <Carrot size={24} />,
-    title: 'Ingredients',
+    title: 'Ingredientes',
     href: '/dashboard/ingredients',
+  },
+  {
+    icon: <LayoutDashboard size={24} />,
+    title: 'Categorias',
+    href: '/dashboard/categories',
   },
 ]
 
@@ -33,11 +42,8 @@ export default function SideMenu() {
   return (
     <div className="flex h-full w-[90px] transform flex-col justify-between px-[12px] shadow-md md:w-[250px]">
       <div className="flex flex-col gap-[50px]">
-        <div className="flex flex-col items-center justify-center gap-[10px] md:flex-row">
-          <div className=" bg-black-foreground flex h-[50px] w-[50px] items-center justify-center rounded-full">
-            <Image src="/logo.png" alt="logo" width={50} height={50} />
-          </div>
-          <h1 className="hidden  font-medium md:flex md:text-xl">POS</h1>
+        <div className="mt-4 flex flex-col items-center justify-center gap-[10px] md:flex-row">
+          <h1 className="text-xl font-semibold leading-tight">POSLamela</h1>
         </div>
         <div className=" flex flex-col items-center justify-start  gap-[20px]">
           {menuItems.map((item, index) => (

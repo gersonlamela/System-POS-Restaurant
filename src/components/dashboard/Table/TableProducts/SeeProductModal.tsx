@@ -19,6 +19,8 @@ import { parseISO, format } from 'date-fns'
 import { getTax } from '@/functions/Product/product'
 import IngredientsList from '@/components/IngredientsList'
 import { ProductProps } from '@/types/Product'
+import { Edit } from 'lucide-react'
+import EditProductModal from './EditProduct'
 
 export default function SeeProductModal({ Product }: ProductProps) {
   if (!Product) return null
@@ -110,7 +112,11 @@ export default function SeeProductModal({ Product }: ProductProps) {
 
               <div className="flex w-full justify-end gap-2">
                 <DialogClose asChild>
-                  <Button type="button" variant="secondary">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="text-white hover:bg-red-500"
+                  >
                     Close
                   </Button>
                 </DialogClose>

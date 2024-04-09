@@ -14,20 +14,18 @@ import { Input } from '@/components/ui/input'
 
 import { Label } from '@/components/ui/label'
 import { Binoculars } from '@phosphor-icons/react'
-import { Ingredient } from '@prisma/client'
+import { Ingredient, ProductCategory } from '@prisma/client'
 
 import { parseISO, format } from 'date-fns'
 
-interface SeeIngreintModalProps {
-  Ingredient: Ingredient
+interface SeeCategoryModalProps {
+  Category: ProductCategory
 }
 
-export default function SeeIngredientModal({
-  Ingredient,
-}: SeeIngreintModalProps) {
-  if (!Ingredient.createdAt) return
+export default function SeeCategoryModal({ Category }: SeeCategoryModalProps) {
+  if (!Category.createdAt) return
 
-  const date = parseISO(Ingredient?.createdAt.toString())
+  const date = parseISO(Category?.createdAt.toString())
 
   console.log(format(date, 'dd/MM/yyyy  h:mm a'))
   return (
@@ -39,15 +37,15 @@ export default function SeeIngredientModal({
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
-              Ver Ingredient
+              Ver Categoria
             </DialogTitle>
             <hr />
             <DialogDescription className=" w-full ">
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
                   <img
-                    src={`/uploads/ingredients/${Ingredient.image}`}
-                    alt={Ingredient.name}
+                    src={`/uploads/icons/${Category.icon}`}
+                    alt={Category.name}
                     width={300}
                     height={300}
                   />
@@ -57,7 +55,7 @@ export default function SeeIngredientModal({
                     <Label className="text-black">Id</Label>
                     <Input
                       className=" text-black  disabled:opacity-100"
-                      value={Ingredient.id}
+                      value={Category.id}
                       disabled
                     />
                   </div>
@@ -65,17 +63,7 @@ export default function SeeIngredientModal({
                     <Label className="text-black">Nome</Label>
                     <Input
                       className=" text-black  disabled:opacity-100"
-                      value={Ingredient.name}
-                      disabled
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-black">Preço</Label>
-
-                    <Input
-                      className=" text-black  disabled:opacity-100"
-                      value={Ingredient.price}
+                      value={Category.name}
                       disabled
                     />
                   </div>
@@ -101,7 +89,7 @@ export default function SeeIngredientModal({
                       </Button>
                 </DialogClose>
                 <Button variant={'outline'}>
-                  <span>Editar Ingredient</span>
+                  <span>Editar Categoria</span>
                 </Button>
               </div>
             </DialogDescription>

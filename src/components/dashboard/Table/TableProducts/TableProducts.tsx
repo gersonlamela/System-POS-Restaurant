@@ -14,7 +14,7 @@ import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
 import AddProductModal from './AddProductModal'
 import SeeProductModal from './SeeProductModal'
-import { getTax, handleGetProducts } from '@/functions/Product/product'
+import { getTax } from '@/functions/Product/product'
 
 import EditProductModal from './EditProduct'
 import { DeleteProductModal } from './DeleteProductModal'
@@ -91,33 +91,6 @@ export default function TableProducts({ Products }: Products) {
     indexOfFirstProduct,
     indexOfLastProduct,
   )
-
-  async function handleDelete(id: string) {
-    try {
-      console.log('delete')
-      // Faz uma solicitação DELETE para a rota apropriada, passando o ID do produto
-      const response = await fetch(`/api/product/deleteProduct?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      // Verifica se a resposta é bem-sucedida
-      if (response.ok) {
-        location.href = '/'
-        console.log('Produto eliminado com sucesso')
-        // Faça qualquer outra manipulação de dados ou feedback visual necessário aqui
-      } else {
-        const data = await response.json()
-        console.error('Erro ao deletar produto:', data.message)
-        // Lida com erros ou exibe mensagens de erro para o usuário
-      }
-    } catch (error: any) {
-      console.error('Erro ao deletar produto:', error.message)
-      // Lida com erros de rede ou outros erros
-    }
-  }
 
   return (
     <div className="w-full">
@@ -224,7 +197,7 @@ export default function TableProducts({ Products }: Products) {
                     {Product.ProductCategory.name}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
-                    {getTax(Product.tax)}
+                    {getTax(Product.tax)}%
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
                     {Product.stock}

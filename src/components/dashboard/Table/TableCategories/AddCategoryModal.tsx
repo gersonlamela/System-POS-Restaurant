@@ -26,12 +26,11 @@ import {
 import { UploadCloud } from 'lucide-react'
 
 const FormSchema = z.object({
-  name: z.string().min(1, 'O nome do ingrediente é obrigatório.'),
-  price: z.number().positive('O preço deve ser um valor positivo.'),
+  name: z.string().min(1, 'O nome da categoria é obrigatório.'),
   image: z.any(),
 })
 
-export default function AddIngredientModal() {
+export default function AddCategoryModal() {
   const [file, setFile] = useState<File>()
   const [imagePreview, setImagePreview] = useState<string>('')
 
@@ -39,7 +38,6 @@ export default function AddIngredientModal() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
-      price: 0.0,
       image: '',
     },
   })
@@ -53,16 +51,15 @@ export default function AddIngredientModal() {
 
       // Add other fields to the FormData as needed
       formData.append('name', values.name)
-      formData.append('price', values.price.toString())
 
-      const response = await fetch('/api/ingredient/createIngredient', {
+      const response = await fetch('/api/category/createCategory', {
         method: 'POST',
         body: formData,
       })
 
       const data = await response.json()
       if (response.ok) {
-        location.href = '/dashboard/ingredients'
+        location.href = '/dashboard/categories'
       }
 
       toast.error(data.message)
@@ -98,12 +95,12 @@ export default function AddIngredientModal() {
           }}
         >
           <Plus size={16} weight="bold" />
-          Adicionar Ingrediente
+          Adicionar Categoria
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
-              Adicionar Ingrediente
+              Adicionar Categoria
             </DialogTitle>
             <hr />
             <DialogDescription className=" w-full ">
@@ -131,30 +128,6 @@ export default function AddIngredientModal() {
                     />
 
                     <FormField
-                      name="price"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-black">
-                            Preço
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className="bg-zinc-50 text-black"
-                              type="number"
-                              step="0.01"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value))
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage className="absolute text-red-500" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
                       control={form.control}
                       name="image"
                       render={({ field }) => (
@@ -173,7 +146,7 @@ export default function AddIngredientModal() {
                                   style={{ maxHeight: '200px' }} // opcional: definindo uma altura máxima
                                 />
                                 <button
-                               className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
+                                  className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
                                   onClick={() => {
                                     setImagePreview('')
                                     setFile(undefined)
@@ -232,7 +205,7 @@ export default function AddIngredientModal() {
                           className="  "
                           onClick={() => console.log(form.getValues())}
                         >
-                          Criar Ingrediente
+                          Criar categoria
                         </Button>
                       )}
                     </Button>

@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { CircleNotch, Plus, Trash } from '@phosphor-icons/react'
+import { CircleNotch, Pencil, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -24,50 +24,65 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
+import { ProductCategory } from '@prisma/client'
 
 const FormSchema = z.object({
-  name: z.string().min(1, 'O nome do ingrediente é obrigatório.'),
-  price: z.number().positive('O preço deve ser um valor positivo.'),
+  name: z.string().min(1, 'O nome do produto é obrigatório.'),
   image: z.any(),
 })
 
-export default function AddIngredientModal() {
+interface EditCategoryModalProps {
+  productCategory: ProductCategory
+}
+
+export default function EditCategoryModal({
+  productCategory,
+}: EditCategoryModalProps) {
   const [file, setFile] = useState<File>()
-  const [imagePreview, setImagePreview] = useState<string>('')
+  const [imagePreview, setImagePreview] = useState<string>(
+    `/uploads/icons/${productCategory.icon}`,
+  )
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: '',
-      price: 0.0,
-      image: '',
+      name: productCategory.name,
+      image: productCategory.icon,
     },
   })
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     console.log(values)
-    if (!file) return
+
     try {
       const formData = new FormData()
-      formData.append('file', file)
 
-      // Add other fields to the FormData as needed
+      if (file) {
+        // Adiciona a imagem do produto ao FormData
+        formData.append('file', file)
+      }
+
+      // Adiciona os outros campos ao FormData conforme necessário
       formData.append('name', values.name)
-      formData.append('price', values.price.toString())
 
-      const response = await fetch('/api/ingredient/createIngredient', {
-        method: 'POST',
-        body: formData,
-      })
+      const response = await fetch(
+        `/api/category/editCategory?id=${productCategory.id}`,
+        {
+          method: 'PUT',
+          body: formData,
+        },
+      )
 
       const data = await response.json()
       if (response.ok) {
-        location.href = '/dashboard/ingredients'
+        location.href = '/dashboard/categories'
+        // Atualização bem-sucedida, você pode redirecionar ou fazer outra coisa
+        toast.success('Categoria atualizada com sucesso!')
+      } else {
+        toast.error(data.message)
       }
-
-      toast.error(data.message)
     } catch (error) {
-      console.log('There was an error', error)
+      console.error('Houve um erro:', error)
     }
   }
 
@@ -87,7 +102,13 @@ export default function AddIngredientModal() {
     }
   }
 
+  const handleFileDelete = () => {
+    setImagePreview('') // Clear the image preview
+    setFile(undefined) // Reset the file state
+  }
+
   const { reset } = form
+
   return (
     <>
       <Dialog>
@@ -97,19 +118,18 @@ export default function AddIngredientModal() {
             reset()
           }}
         >
-          <Plus size={16} weight="bold" />
-          Adicionar Ingrediente
+          <Pencil size={16} weight="bold" />
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
-              Adicionar Ingrediente
+              Editar Categoria
             </DialogTitle>
             <hr />
             <DialogDescription className=" w-full ">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="">
-                  <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
+                  <div className="mt-2 grid w-full  items-start gap-6 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="name"
@@ -131,33 +151,9 @@ export default function AddIngredientModal() {
                     />
 
                     <FormField
-                      name="price"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-black">
-                            Preço
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className="bg-zinc-50 text-black"
-                              type="number"
-                              step="0.01"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value))
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage className="absolute text-red-500" />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
                       control={form.control}
                       name="image"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel className="mt-4 font-medium text-black">
                             Imagem
@@ -168,28 +164,25 @@ export default function AddIngredientModal() {
                               <div className="relative my-4 flex h-[200px] w-[200px] cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 text-center">
                                 <img
                                   src={imagePreview}
-                                  alt="Preview"
-                                  className=" h-[150px] w-[150px] object-cover "
-                                  style={{ maxHeight: '200px' }} // opcional: definindo uma altura máxima
+                                  alt={form.getValues('name')}
+                                  className="h-[150px] w-[150px] object-cover"
+                                  style={{ maxHeight: '200px' }}
                                 />
-                                <button
-                               className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
+                                <Button
+                                  type="button"
+                                  className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
                                   onClick={() => {
-                                    setImagePreview('')
-                                    setFile(undefined)
+                                    handleFileDelete()
                                   }}
                                 >
                                   <Trash size={20} weight="bold" />
-                                </button>
+                                </Button>
                               </div>
                             ) : (
-                              <div
-                                className={`relative my-4 flex h-[200px] max-w-full   flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4 ${form.formState.errors.image ? 'border-red-500' : ''}`}
-                              >
+                              <div className="relative my-4 flex h-[200px] max-w-full flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-4">
                                 <input
                                   type="file"
                                   required
-                                  {...field}
                                   accept=".svg, .png, .jpg, .jpeg"
                                   className="absolute inset-0 h-full w-full opacity-0"
                                   onChange={handleFileChange}
@@ -214,7 +207,7 @@ export default function AddIngredientModal() {
                       <Button
                         type="button"
                         variant="secondary"
-                        className="text-white hover:bg-red-500 "
+                        className="text-white hover:bg-red-500"
                       >
                         Close
                       </Button>
@@ -228,12 +221,7 @@ export default function AddIngredientModal() {
                       {form.formState.isSubmitting ? (
                         <CircleNotch size={16} className="animate-spin" />
                       ) : (
-                        <Button
-                          className="  "
-                          onClick={() => console.log(form.getValues())}
-                        >
-                          Criar Ingrediente
-                        </Button>
+                        'Salvar Alterações'
                       )}
                     </Button>
                   </div>

@@ -1,41 +1,32 @@
 'use client'
 
-import { Ingredient } from '@prisma/client'
+import { ProductCategory } from '@prisma/client'
 
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
-import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
+import { DeleteCategorieModal } from './DeleteCategoryModal'
+import AddCategoryModal from './AddCategoryModal'
+import SeeCategoryModal from './SeeCategoryModal'
+import EditCategoryModal from './EditCategoryModal'
 
-import EditIngredientModal from './EditIngredientModal'
-
-import AddIngredientModal from './AddIngreditentModal'
-import { DeleteIngredientModal } from './DeleteIngredientModal'
-import SeeIngredientModal from './SeeIngredientModal'
-
-interface IngredientsTableProps {
-  Ingredients?: Ingredient[] // Mark Ingredients prop as optional
+interface CategoryTableProps {
+  Category: ProductCategory[] // Mark Categories prop as optional
 }
 
-export default function TableIngredients({
-  Ingredients = [],
-}: IngredientsTableProps) {
+export default function TableCategories({ Category }: CategoryTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
-  const [ingredients, setIngredients] = useState(Ingredients)
 
-  const filteredIngredients = ingredients.filter(
-    (Ingredient) =>
-      Ingredient.id
-        .toString()
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      Ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredCategories = Category.filter(
+    (Category) =>
+      Category.id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      Category.name.toLowerCase().includes(searchTerm.toLowerCase()),
   )
-  const totalPages = Math.ceil(filteredIngredients.length / itemsPerPage)
+  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage)
 
   // Function to handle page change
   const handlePageChange = (page: number) => {
@@ -51,7 +42,7 @@ export default function TableIngredients({
   // Slice the filtered Products array to only include Products for the current page
   const indexOfLastIngredient = currentPage * itemsPerPage
   const indexOfFirstIngredient = indexOfLastIngredient - itemsPerPage
-  const currentIngredients = filteredIngredients.slice(
+  const currentCategories = filteredCategories.slice(
     indexOfFirstIngredient,
     indexOfLastIngredient,
   )
@@ -60,7 +51,7 @@ export default function TableIngredients({
     try {
       console.log('delete')
 
-      const response = await fetch(`/api/product/deleteIngredient?id=${id}`, {
+      const response = await fetch(`/api/product/deleteCategory?id=${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -69,28 +60,26 @@ export default function TableIngredients({
 
       // Verifica se a resposta é bem-sucedida
       if (response.ok) {
-        const newIngredients = await handleGetIngredients()
-        setIngredients(newIngredients)
-        console.log('Ingrediente eliminado com sucesso')
+        console.log('Categoria eliminado com sucesso')
       } else {
         const data = await response.json()
-        console.error('Erro ao deletar ingrediente:', data.message)
+        console.error('Erro ao deletar categoria:', data.message)
       }
     } catch (error: any) {
-      console.error('Erro ao deletar ingrediente:', error.message)
+      console.error('Erro ao deletar categoria:', error.message)
     }
   }
 
   return (
     <div className="w-full">
-      <h1 className="mb-5 text-xl font-bold">Ingredientes</h1>
+      <h1 className="mb-5 text-xl font-bold">Categories</h1>
       <div className="mb-5 flex w-full items-center justify-between">
         <SearchInput
-          searchPlaceholder="Pesquisar pelo Ingrediente (id / nome)"
+          searchPlaceholder="Pesquisar pela categoria (id / nome)"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        <AddIngredientModal />
+        <AddCategoryModal />
       </div>
 
       <div className="overflow-x-auto">
@@ -107,13 +96,7 @@ export default function TableIngredients({
                 scope="col"
                 className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
               >
-                Name
-              </TableCell>
-              <TableCell
-                scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
-              >
-                Price
+                Nome
               </TableCell>
 
               <TableCell
@@ -125,35 +108,27 @@ export default function TableIngredients({
             </TableRow>
           </TableHeader>
           <tbody className="">
-            {currentIngredients?.length ? (
-              currentIngredients.map((Ingredient) => (
-                <TableRow key={Ingredient.id}>
+            {currentCategories?.length ? (
+              currentCategories.map((Category) => (
+                <TableRow key={Category.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     <img
-                      src={`/uploads/ingredients/${Ingredient.image}`}
-                      alt={Ingredient.name}
+                      src={`/uploads/icons/${Category.icon}`}
+                      alt={Category.name}
                       width={70}
                       height={70}
                       className="h-[70px] w-[70px] object-contain"
                     />
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
-                    {Ingredient.name}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
-                    {new Intl.NumberFormat('pt-PT', {
-                      style: 'currency',
-                      currency: 'EUR',
-                      minimumFractionDigits: 1,
-                    }).format(Ingredient.price)}
+                    {Category.name}
                   </TableCell>
 
                   <TableCell className="whitespace-nowrap px-6 py-4  text-sm font-medium">
                     <div className="flex flex-row items-center justify-center gap-2 ">
-                      <SeeIngredientModal Ingredient={Ingredient} />
-
-                      <DeleteIngredientModal ingredientId={Ingredient.id} />
-                      <EditIngredientModal ingredient={Ingredient} />
+                      <SeeCategoryModal Category={Category} />
+                      <DeleteCategorieModal categoryId={Category.id} />
+                      <EditCategoryModal productCategory={Category} />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -172,13 +147,13 @@ export default function TableIngredients({
         </Table>
       </div>
       <TablePagination
-        type="Ingredientes"
+        type="Categorias"
         itemsPerPage={itemsPerPage}
         setItemsPerPage={handleItemsPerPageChange}
         currentPage={currentPage}
         totalPages={totalPages}
         handlePageChange={handlePageChange}
-        filteredItemsTotal={filteredIngredients.length}
+        filteredItemsTotal={filteredCategories.length}
       />
     </div>
   )
