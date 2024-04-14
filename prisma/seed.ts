@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcrypt'
+import { genSaltSync, hashSync } from 'bcrypt-ts'
 
 const prisma = new PrismaClient()
 
 async function main() {
   try {
-    const hashedPin = await hash('1234', 10)
+    const salt = genSaltSync(10)
+    const hashedPin = hashSync('1234', salt)
 
     // Criar usuários
     const user1 = await prisma.user.create({

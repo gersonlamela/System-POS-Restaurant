@@ -1,4 +1,5 @@
-import { Product } from '@prisma/client'
+import { ForkKnife, Notebook } from '@phosphor-icons/react'
+import { Product, ProductCategory } from '@prisma/client'
 
 export function getTax(role: Product['tax']) {
   switch (role) {
@@ -31,6 +32,51 @@ export async function handleGetProducts() {
   console.error('Error fetching products:', result.statusText)
   return []
 }
+export async function handleGetProductsByCategoryId(
+  categoryId: ProductCategory['id'],
+) {
+  try {
+    if (!categoryId) {
+      throw new Error('Category ID is required')
+    }
+
+    const result = await fetch(
+      `http://localhost:3000/api/product/getProductByCategoryId?id=${categoryId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+    if (!result.ok) {
+      throw new Error(`Failed to fetch products: ${result.statusText}`)
+    }
+
+    const responseBody = await result.text()
+    console.log('Response body:', responseBody)
+
+    // Verifica se a resposta tem um corpo
+    if (!responseBody.trim()) {
+      throw new Error('Empty response body')
+    }
+
+    const data = JSON.parse(responseBody)
+    console.log('Parsed data:', data)
+
+    // Verifica se a resposta contém a chave 'products'
+    if (!data.products) {
+      throw new Error('Response does not contain products')
+    }
+
+    return data.products
+  } catch (error) {
+    console.error('Error fetching products:', error)
+    // Retorne uma lista vazia ou lance o erro para tratamento externo
+    throw error
+  }
+}
 
 export async function handleGetProductsCategory() {
   const result = await fetch(
@@ -51,7 +97,6 @@ export async function handleGetProductsCategory() {
     return data.CategoryProducts
   }
 
-  // Handle non-ok response
   console.error('Error fetching category products:', result.statusText)
   return []
 }

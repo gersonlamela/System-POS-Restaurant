@@ -11,6 +11,14 @@ import { DeleteCategorieModal } from './DeleteCategoryModal'
 import AddCategoryModal from './AddCategoryModal'
 import SeeCategoryModal from './SeeCategoryModal'
 import EditCategoryModal from './EditCategoryModal'
+import {
+  BeerBottle,
+  CookingPot,
+  ForkKnife,
+  Hamburger,
+} from '@phosphor-icons/react'
+import BowlSteam from '../../../../../public/icons/Bowl'
+import { IceCream } from 'lucide-react'
 
 interface CategoryTableProps {
   Category: ProductCategory[] // Mark Categories prop as optional
@@ -20,6 +28,26 @@ export default function TableCategories({ Category }: CategoryTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
+
+  const getCategoryIcon = (categoryName: string) => {
+    switch (categoryName) {
+      case 'Entradas':
+        return <ForkKnife size={32} />
+      case 'Sopas':
+        return <CookingPot size={32} />
+      case 'Hamburguers':
+        return <Hamburger size={32} />
+      case 'Acompanhamentos':
+        return <BowlSteam />
+      case 'Bebidas':
+        return <BeerBottle size={32} />
+      case 'Sobremesas':
+        return <IceCream size={32} />
+      // Adicione mais cases conforme necessário para outras categorias
+      default:
+        return null // Retorna null se o nome da categoria não corresponder
+    }
+  }
 
   const filteredCategories = Category.filter(
     (Category) =>
@@ -112,13 +140,7 @@ export default function TableCategories({ Category }: CategoryTableProps) {
               currentCategories.map((Category) => (
                 <TableRow key={Category.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
-                    <img
-                      src={`/uploads/icons/${Category.icon}`}
-                      alt={Category.name}
-                      width={70}
-                      height={70}
-                      className="h-[70px] w-[70px] object-contain"
-                    />
+                    {getCategoryIcon(Category.name)}
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     {Category.name}

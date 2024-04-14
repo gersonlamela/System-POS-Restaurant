@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from './prisma'
-import { compare } from 'bcrypt'
+import { compareSync } from 'bcrypt-ts'
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -33,7 +33,8 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Usuário não encontrado')
         }
 
-        const pinMatch = await compare(credentials.pin, existigUser.pin)
+        const pinMatch = compareSync(credentials.pin, existigUser.pin) // true
+
         console.log(pinMatch)
 
         if (!pinMatch) {

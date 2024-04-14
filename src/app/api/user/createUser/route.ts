@@ -1,12 +1,12 @@
 // pages/api/createUser.ts
 import { NextResponse } from 'next/server'
 
-import { hash } from 'bcrypt'
 import { prisma } from '@/lib/prisma'
 
 import * as z from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { genSaltSync, hashSync } from 'bcrypt-ts'
 
 const authenticateAndAuthorize = async (req: any): Promise<boolean> => {
   try {
@@ -95,7 +95,8 @@ export async function POST(req: Request, res: Response) {
       )
     }
 
-    const hashedPin = await hash(pin, 10)
+    const salt = genSaltSync(10)
+    const hashedPin = hashSync(pin, salt)
 
     // Insere os dados na base de dados usando o Prisma
     const newUser = await prisma.user.create({

@@ -13,10 +13,27 @@ module.exports = {
       center: true,
       padding: '2rem',
       screens: {
-        '2xl': '1400px',
+        sm: '640px',
+        // => @media (min-width: 640px) { ... }
+
+        md: '768px',
+        // => @media (min-width: 768px) { ... }
+
+        lg: '1024px',
+        // => @media (min-width: 1024px) { ... }
+
+        xl: '1280px',
+        // => @media (min-width: 1280px) { ... }
+
+        '2xl': '1736px',
+        // => @media (min-width: 1536px) { ... }
       },
     },
     extend: {
+      gridTemplateColumns: {
+        'auto-fill-100': 'repeat(auto-fill, minmax(199.5px, 1fr))',
+        'auto-fit-100': 'repeat(auto-fit, minmax(100px, 1fr))',
+      },
       fontFamily: {
         poppins: 'var(--font-poppins)',
       },
@@ -27,13 +44,18 @@ module.exports = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         text: 'hsl(var(--text))',
+
         primary: {
           DEFAULT: '#F86E0A',
-          foreground: 'var(--primary-foreground)',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: '#91A5B8',
+        },
+        third: {
+          DEFAULT: '#63667B',
+        },
+        LightGray: {
+          DEFAULT: '#F7F7F8',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',

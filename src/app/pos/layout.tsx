@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar'
 import { SideBar } from '@/components/pos/SideBar'
+import OrderProvider from '@/functions/OrderProvider'
 import { FC, ReactNode } from 'react'
 
 interface POSLayoutProps {
@@ -9,7 +10,7 @@ interface POSLayoutProps {
 const POSLayout: FC<POSLayoutProps> = ({ children }) => {
   return (
     <div className="flex h-full w-full flex-row  items-center justify-center gap-[20px] rounded-md  bg-[#F9F8FB]  px-[20px] py-[20px] ">
-      {children}
+      <OrderProvider>{children}</OrderProvider>
     </div>
   )
 }

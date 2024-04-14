@@ -25,10 +25,10 @@ export function getStatus(status: User['status']) {
   }
 }
 
-export function getRole(role: User['role']) {
+export function getRole(role: string) {
   switch (role) {
     case 'ADMIN':
-      return 'Admin'
+      return 'Administrador'
     case 'EMPLOYEE':
       return 'Funcionário'
     case 'MANAGER':

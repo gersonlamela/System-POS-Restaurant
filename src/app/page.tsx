@@ -8,12 +8,14 @@ import { handleGetProductsCategory } from '@/functions/Product/product'
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
-  const category = await handleGetProductsCategory()
 
   return (
     <div>
       <Navbar />
-      <SideBar categories={category} />
+      <div className="grid grid-cols-4">
+        <div className="">Mesa</div>
+      </div>
+      {session?.user ? 'ola' : <UserSignIn />}
     </div>
   )
 }
