@@ -15,12 +15,15 @@ import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { handleGetProductsCategory } from '@/functions/Product/product'
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 
 interface SideBarProps {
   categories: ProductCategory[]
 }
 
 export function SideBar({ categories }: SideBarProps) {
+  const params = useParams<{ tableNumber: string }>()
+
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
       case 'Entradas':
@@ -44,7 +47,7 @@ export function SideBar({ categories }: SideBarProps) {
     <div className="flex h-full min-w-[202px]  max-w-[202px] flex-col rounded-[10px] bg-LightGray p-[15px]  ">
       <div className="flex  h-full flex-col items-center justify-between gap-[15px] overflow-scroll">
         <Link
-          href={`/order/`} // Adiciona o número da mesa na URL
+          href={`/order/${params.tableNumber}/`} // Adiciona o número da mesa na URL
           className="flex h-[100px] w-full flex-col items-center justify-center gap-[10px] rounded-[10px] bg-white text-sm font-medium text-primary shadow"
         >
           <Notebook size={40} />
@@ -52,7 +55,7 @@ export function SideBar({ categories }: SideBarProps) {
         </Link>
         {categories.map((category: ProductCategory) => (
           <Link
-            href={`/order/${category.id}`} // Adiciona o número da mesa e o ID da categoria na URL
+            href={`/order/${params.tableNumber}/category/${category.id}`} // Adiciona o número da mesa e o ID da categoria na URL
             key={category.id}
             className="flex h-[100px] w-full flex-col items-center justify-center gap-[10px] rounded-[10px] bg-white text-sm font-medium text-primary shadow"
           >

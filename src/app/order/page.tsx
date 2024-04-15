@@ -4,34 +4,30 @@ import MenuList from '@/components/pos/MenuList'
 
 import { OrderList } from '@/components/pos/OrderList'
 import { ProductList } from '@/components/pos/ProductList'
-import { SideBar } from '@/components/pos/SideBar'
+import { TableList } from '@/components/pos/TabeList'
+
 import { Time } from '@/components/pos/Time'
 import { UserAuth } from '@/components/pos/UserAuth'
-import {
-  handleGetProductsCategory,
-  handleGetProducts,
-} from '@/functions/Product/product'
+import { handleGetProducts } from '@/functions/Product/product'
+import { handleGetTables } from '@/functions/Table/table'
 import { useState, useEffect } from 'react'
 
-interface OrderProps {
-  tableNumber: string
-}
-
-export default function Order({ tableNumber }: OrderProps) {
-  const [products, setProducts] = useState([])
+export default function Order() {
+  const [tables, setTables] = useState([])
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchTables = async () => {
       try {
-        const fetchedProducts = await handleGetProducts()
+        const fetchedTables = await handleGetTables()
 
-        setProducts(fetchedProducts)
+        console.log(fetchedTables)
+        setTables(fetchedTables)
       } catch (error) {
-        console.error('Error fetching products:', error)
+        console.error('Error fetching tables:', error)
       }
     }
 
-    fetchProducts()
+    fetchTables()
   }, [])
   return (
     <div className="flex h-full flex-1 flex-col justify-between gap-[15px]">
@@ -41,9 +37,9 @@ export default function Order({ tableNumber }: OrderProps) {
       </div>
 
       <div className="flex flex-1 flex-row gap-[15px]">
-        <ProductList Products={products} tableNumber={tableNumber} />
+        <TableList Tables={tables} />
 
-        <OrderList tableNumber={tableNumber} />
+        <OrderList />
       </div>
 
       <div className="flex h-[95px] justify-start align-bottom">

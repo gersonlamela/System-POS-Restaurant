@@ -4,12 +4,13 @@ import { LayoutDashboard, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 import { Carrot, ForkKnife, PicnicTable, Scroll } from '@phosphor-icons/react'
+import Link from 'next/link'
 
 const menuItems = [
   {
     icon: <PicnicTable size={24} />,
     title: 'Mesas',
-    href: '/',
+    href: '/order',
   },
   {
     icon: <Users size={24} />,
@@ -39,12 +40,11 @@ const menuItems = [
 ]
 
 export default function MenuList() {
-  const pathname = usePathname()
-
   return (
     <div className="flex  h-[95px] flex-1 flex-row items-start justify-start gap-[15px] overflow-scroll bg-white pb-[10px] pr-[15px] pt-[15px]">
       {menuItems.map((item, index) => (
-        <div
+        <a
+          href={item.href}
           key={index}
           className=" flex h-[70px] min-w-[186.3px] max-w-[186.3px]  flex-col   rounded-[10px] bg-secondary p-[15px]"
         >
@@ -55,7 +55,7 @@ export default function MenuList() {
           <div className="flex w-full items-center justify-start text-base font-medium text-white">
             {item.title}
           </div>
-        </div>
+        </a>
       ))}
     </div>
   )

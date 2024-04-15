@@ -43,3 +43,24 @@ export async function handleGetTableById(tableId: Table['id']) {
     throw error
   }
 }
+
+export async function handleGetTables() {
+  const result = await fetch('http://localhost:3000/api/table/getTables', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (result.ok) {
+    const data = await result.json()
+
+    console.log('data:', data)
+
+    return data.table
+  }
+
+  // Handle non-ok response
+  console.error('Error fetching tables:', result.statusText)
+  return []
+}
