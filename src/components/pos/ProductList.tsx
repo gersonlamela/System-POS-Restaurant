@@ -38,18 +38,25 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
 
   const handleAddToOrder = () => {
     const price =
-      product.price * (1 + getTax(product.tax) / 100) - (product.discount || 0)
+      product.price *
+      (1 - (product.discount || 0) / 100) *
+      (1 + getTax(product.tax) / 100)
+
+    const priceWithoutDiscount = product.price * (1 + getTax(product.tax) / 100)
 
     const { id, name } = product
     const newProduct = {
       id,
       name,
       price,
+      priceWithoutDiscount,
       quantity: 1,
     }
 
     addProductToOrder(newProduct, tableNumber)
   }
+
+  const productPriceWithTax = product.price * (1 + getTax(product.tax) / 100)
 
   return (
     <div
@@ -67,7 +74,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
               style: 'currency',
               currency: 'EUR',
               minimumFractionDigits: 1,
-            }).format(product.price)}
+            }).format(productPriceWithTax)}
           </span>
         </div>
       </div>

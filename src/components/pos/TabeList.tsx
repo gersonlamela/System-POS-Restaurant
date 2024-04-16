@@ -3,6 +3,7 @@ import { useOrder } from '@/functions/OrderProvider'
 import { Table } from '@prisma/client'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { Skeleton } from '../ui/skeleton'
 
 interface TableListProps {
   Tables: Table[]
@@ -84,9 +85,13 @@ const TableItem = ({ table }: TableItemProps) => {
         <div className="absolute inset-0 top-[8.75rem] flex flex-col bg-black bg-opacity-30 pb-[10px] pl-[15px] pt-[8px]">
           {orderForTable ? (
             <div className="flex flex-col gap-[5px]">
-              <span className="text-[12px] font-semibold text-white">
-                {elapsedTime}
-              </span>
+              {elapsedTime ? (
+                <span className="text-[12px] font-semibold text-white">
+                  {elapsedTime}
+                </span>
+              ) : (
+                <Skeleton className="h-[12px] w-[80px] bg-[#7b7b85]" />
+              )}
               <span className="text-[12px] font-semibold text-white">
                 {orderForTable.userName}
               </span>

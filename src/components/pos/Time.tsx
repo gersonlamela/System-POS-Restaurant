@@ -1,18 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { pt } from 'date-fns/locale'
 
 export function Time() {
   const [agora, setAgora] = useState(new Date()) // Inicializa com a data atual
 
-  const updateTime = () => {
-    setAgora(new Date()) // Atualiza com a nova data
-  }
+  // Atualiza a cada segundo usando useEffect
+  useEffect(() => {
+    // Função para atualizar o tempo
+    const updateTime = () => {
+      setAgora(new Date()) // Atualiza com a nova data
+    }
+    const intervalId = setInterval(updateTime, 1000)
 
-  // Atualiza a cada segundo
-  setInterval(updateTime, 1000)
+    // Limpa o intervalo ao desmontar o componente
+    return () => clearInterval(intervalId)
+  }, []) // O segundo argumento vazio garante que o useEffect seja executado apenas uma vez após a montagem inicial do componente
 
   const time = format(agora, 'HH:mm:ss', { locale: pt })
   const dia = format(agora, 'dd/MM/yy', { locale: pt })

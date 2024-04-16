@@ -1,10 +1,7 @@
 'use client'
 
 import { LayoutDashboard, Users } from 'lucide-react'
-import { usePathname } from 'next/navigation'
-
-import { Carrot, ForkKnife, PicnicTable, Scroll } from '@phosphor-icons/react'
-import Link from 'next/link'
+import { ForkKnife, PicnicTable, Scroll } from '@phosphor-icons/react'
 
 const menuItems = [
   {

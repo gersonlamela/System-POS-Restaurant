@@ -15,14 +15,6 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
     removeProductFromOrder,
   } = useOrder()
 
-  const handleDecreaseProductQuantityClick = () => {
-    decreaseProductQuantity(product.id, tableNumber)
-  }
-
-  const handleIncreaseProductQuantityClick = () => {
-    increaseProductQuantity(product.id, tableNumber)
-  }
-
   const handleRemoveProductClick = () => {
     removeProductFromOrder(product.id, tableNumber)
   }
@@ -33,8 +25,17 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
         <div className="h-[70px] w-[70px] rounded-[5px] bg-third"></div>
         <div className="flex flex-col">
           <div className="text-base font-semibold">{product.name}</div>
-          <div className="text-[12px] font-semibold">
+          <div className="flex gap-[5px] text-[12px] font-semibold">
             {product.price.toFixed(2)}€
+            {product.priceWithoutDiscount &&
+              product.priceWithoutDiscount !== product.price ? (
+              <span
+                className="text-[10px] font-semibold text-primary"
+                style={{ textDecoration: 'line-through' }}
+              >
+                {product.priceWithoutDiscount.toFixed(2)}€
+              </span>
+            ) : null}
           </div>
         </div>
       </div>

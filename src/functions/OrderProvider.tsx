@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+'use client'
+
 import { useLocalStorage } from '@/functions/useLocalStorage'
 import { createContext, ReactNode, useContext } from 'react'
 
@@ -7,6 +9,7 @@ export interface OrderProduct {
   name: string
   price: number
   quantity: number
+  priceWithoutDiscount: number
 }
 
 interface OrderData {
@@ -29,6 +32,7 @@ interface OrderContextData {
   total: (tableNumber: string) => number
   subtotal: (tableNumber: string) => number
   totalDiscount: (tableNumber: string) => number
+  totalTAX: (tableNumber: string) => number
 }
 
 const OrderContext = createContext<OrderContextData>({
@@ -45,6 +49,7 @@ const OrderContext = createContext<OrderContextData>({
   total: () => 0,
   subtotal: () => 0,
   totalDiscount: () => 0,
+  totalTAX: () => 0,
 })
 
 export const useOrder = () => useContext(OrderContext)
@@ -61,7 +66,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       [tableNumber]: {
         products: [],
         createdAt: new Date().toISOString(),
-        userName
+        userName,
       },
     })
   }
@@ -127,29 +132,50 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const orderTotalPrice = (tableNumber: string) => {
-    const order = orders[tableNumber]
-    return order
+    const order = orders[tableNumber];
+    return order && order.products // Check if order and order.products are not undefined
       ? order.products.reduce(
         (total, product) => total + product.price * product.quantity,
-        0,
+        0
       )
-      : 0
-  }
+      : 0;
+  };
 
   const orderBasePrice = (tableNumber: string) => orderTotalPrice(tableNumber)
 
   const orderTotalDiscount = (tableNumber: string) => {
-    const order = orders[tableNumber]
-    const totalPrice = order ? orderTotalPrice(tableNumber) : 0
-    return totalPrice - orderBasePrice(tableNumber)
-  }
+    const order = orders[tableNumber];
+    if (!order) return 0; // If order doesn't exist, return 0 discount
 
-  const total = (tableNumber: string) => orderTotalPrice(tableNumber)
+    // Calculate the total price of all products
+    const totalPrice = order.products.reduce(
+      (total, product) => total + product.price * product.quantity,
+      0
+    );
 
-  const subtotal = (tableNumber: string) => orderTotalPrice(tableNumber)
+    // Calculate the base price (subtotal) of the order
+    const basePrice = orderBasePrice(tableNumber);
+
+    // Calculate the discount by subtracting the base price from the total price
+    const discount = totalPrice - basePrice;
+
+    return discount;
+  };
+  const total = (tableNumber: string) =>
+    parseFloat(orderTotalPrice(tableNumber).toFixed(2))
+
+  const subtotal = (tableNumber: string) =>
+    parseFloat(orderTotalPrice(tableNumber).toFixed(2))
 
   const totalDiscount = (tableNumber: string) =>
-    orderTotalPrice(tableNumber) - subtotal(tableNumber)
+    parseFloat(orderTotalPrice(tableNumber).toFixed(2)) -
+    parseFloat(subtotal(tableNumber).toFixed(2))
+
+  const totalTAX = (tableNumber: string) => {
+    const subtotalValue = subtotal(tableNumber)
+    const ivaPercentage = 0.23 // You can change this according to your requirement
+    return parseFloat((subtotalValue * ivaPercentage).toFixed(2))
+  }
 
   const contextValue: OrderContextData = {
     orders,
@@ -165,6 +191,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     total,
     subtotal,
     totalDiscount,
+    totalTAX,
   }
 
   return (
