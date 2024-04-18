@@ -24,9 +24,24 @@ export function Time() {
 
   return (
     <div className="flex h-[50px] w-full items-center justify-between rounded-[10px] bg-LightGray px-[15px] shadow">
-      <div className="w-[90px] text-[20px] font-medium text-third">{time}</div>
-      <div className="text-[22px] font-bold text-third">POSlamela</div>
-      <div className="text-[20px] font-medium text-third">{dia}</div>
+      <div
+        className="w-[90px] text-[20px] font-medium text-third"
+        suppressHydrationWarning
+      >
+        {time}
+      </div>
+      <div
+        className="text-[22px] font-bold text-third"
+        suppressHydrationWarning
+      >
+        POSlamela
+      </div>
+      <div
+        className="text-[20px] font-medium text-third"
+        suppressHydrationWarning
+      >
+        {dia}
+      </div>
     </div>
   )
 }

@@ -1,21 +1,70 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+'use client'
 
-import Navbar from '@/components/Navbar'
 import { UserSignIn } from '@/components/form/UserSignIn'
-import { SideBar } from '@/components/pos/SideBar'
-import { handleGetProductsCategory } from '@/functions/Product/product'
+import MenuList from '@/components/pos/MenuList'
+import { OrderList } from '@/components/pos/OrderList'
+import { TableList } from '@/components/pos/TabeList'
 
-export default async function Home() {
-  const session = await getServerSession(authOptions)
+import { Time } from '@/components/pos/Time'
+import { UserAuth } from '@/components/pos/UserAuth'
+import { Skeleton } from '@/components/ui/skeleton'
+
+import { handleGetTables } from '@/functions/Table/table'
+import { useSession } from 'next-auth/react'
+import { useState, useEffect } from 'react'
+
+export default function Order() {
+  const { data: session, status } = useSession()
+  const [tables, setTables] = useState([])
+
+  useEffect(() => {
+    const fetchTables = async () => {
+      try {
+        const fetchedTables = await handleGetTables()
+        setTables(fetchedTables)
+      } catch (error) {
+        console.error('Error fetching tables:', error)
+      }
+    }
+    fetchTables()
+  }, [])
+
+  const skeletonArray = Array.from({ length: 6 })
 
   return (
-    <div>
-      <Navbar />
-      <div className="grid grid-cols-4">
-        <div className="">Mesa</div>
+    <div className="flex w-full flex-row gap-[15px]">
+      <div className="flex h-full flex-1 flex-col   gap-[15px]">
+        <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px]">
+          <Time />
+          <UserAuth />
+        </div>
+
+        <div className="flex h-full flex-1 flex-col  justify-between gap-[15px]">
+          <div className="flex h-full  flex-row gap-[15px]">
+            <div className="flex flex-1">
+              {tables.length > 0 ? (
+                <TableList Tables={tables} />
+              ) : (
+                <div className="grid w-full grid-cols-auto-fill-100 items-center gap-[15.5px] overflow-y-auto">
+                  {skeletonArray.map((_, index) => (
+                    <Skeleton
+                      key={index}
+                      className="h-[200px] w-[199.5px] bg-[#7b7b85]"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="min-w-[335px]">
+              <OrderList />
+            </div>
+          </div>
+
+          <div className=" flex w-full flex-1 items-center ">
+            <MenuList />
+          </div>
+        </div>
       </div>
-      {session?.user ? 'ola' : <UserSignIn />}
     </div>
   )
 }

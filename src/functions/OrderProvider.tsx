@@ -2,6 +2,7 @@
 'use client'
 
 import { useLocalStorage } from '@/functions/useLocalStorage'
+import { useSession } from 'next-auth/react'
 import { createContext, ReactNode, useContext } from 'react'
 
 export interface OrderProduct {
@@ -10,6 +11,7 @@ export interface OrderProduct {
   price: number
   quantity: number
   priceWithoutDiscount: number
+  image: string;
 }
 
 interface OrderData {
@@ -25,7 +27,7 @@ interface OrderContextData {
   increaseProductQuantity: (productId: string, tableNumber: string) => void
   removeProductFromOrder: (productId: string, tableNumber: string) => void
   clearOrdersForTable: (tableNumber: string) => void
-  createEmptyOrderForTable: (tableNumber: string, userName: string) => void
+  createEmptyOrderForTable: (tableNumber: string) => void
   orderTotalPrice: (tableNumber: string) => number
   orderBasePrice: (tableNumber: string) => number
   orderTotalDiscount: (tableNumber: string) => number
@@ -60,13 +62,15 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     {},
   )
 
-  const createEmptyOrderForTable = (tableNumber: string, userName: string) => {
+  const { data: session } = useSession()
+
+  const createEmptyOrderForTable = (tableNumber: string) => {
     setOrders({
       ...orders,
       [tableNumber]: {
         products: [],
         createdAt: new Date().toISOString(),
-        userName,
+        userName: session?.user?.name || '',
       },
     })
   }
@@ -85,19 +89,25 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       [tableNumber]: updater(orders[tableNumber]),
     })
   }
-
   const addProductToOrder = (product: OrderProduct, tableNumber: string) => {
+    // Atualiza a mesa com o produto adicionado
     const updater = (order: OrderData) => {
-      const existingProduct = order.products.find((p) => p.id === product.id)
+      const existingProduct = order.products.find((p) => p.id === product.id);
       if (existingProduct) {
-        existingProduct.quantity++
+        existingProduct.quantity++;
       } else {
-        order.products.push({ ...product, quantity: 1 })
+        order.products.push({ ...product, quantity: 1 }); // Adiciona a URL da imagem ao produto
       }
-      return { ...order }
+      return { ...order };
+    };
+
+    // Atualiza a mesa apenas se ela já existir
+    if (orders[tableNumber]) {
+      updateOrder(tableNumber, updater);
     }
-    updateOrder(tableNumber, updater)
-  }
+  };
+
+
 
   const decreaseProductQuantity = (productId: string, tableNumber: string) => {
     const updater = (order: OrderData) => {
@@ -149,15 +159,13 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 
     // Calculate the total price of all products
     const totalPrice = order.products.reduce(
-      (total, product) => total + product.price * product.quantity,
+      (total, product) => total + ((product.priceWithoutDiscount - product.price) * product.quantity),
       0
     );
 
-    // Calculate the base price (subtotal) of the order
-    const basePrice = orderBasePrice(tableNumber);
 
     // Calculate the discount by subtracting the base price from the total price
-    const discount = totalPrice - basePrice;
+    const discount = totalPrice;
 
     return discount;
   };
@@ -168,8 +176,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     parseFloat(orderTotalPrice(tableNumber).toFixed(2))
 
   const totalDiscount = (tableNumber: string) =>
-    parseFloat(orderTotalPrice(tableNumber).toFixed(2)) -
-    parseFloat(subtotal(tableNumber).toFixed(2))
+    parseFloat(orderTotalDiscount(tableNumber).toFixed(2))
 
   const totalTAX = (tableNumber: string) => {
     const subtotalValue = subtotal(tableNumber)

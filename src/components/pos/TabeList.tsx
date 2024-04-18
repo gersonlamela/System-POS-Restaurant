@@ -11,7 +11,7 @@ interface TableListProps {
 
 export function TableList({ Tables }: TableListProps) {
   return (
-    <div className="grid max-h-[771px] w-full flex-1 grid-cols-auto-fill-100 justify-items-center gap-[15.5px] overflow-y-auto">
+    <div className="grid max-h-[771px] w-full  grid-cols-auto-fill-100 justify-items-center gap-[15.5px] overflow-y-auto">
       {Tables ? (
         Tables.map((table, index) => <TableItem key={index} table={table} />)
       ) : (
@@ -64,19 +64,14 @@ const TableItem = ({ table }: TableItemProps) => {
         setElapsedTime(formatElapsedTime(orderForTable.createdAt))
       }
     }, 1000)
-
     return () => clearInterval(timer) // Limpar o intervalo quando o componente é desmontado
   }, [orderForTable])
 
-  const { data: session } = useSession()
-
-  const userName = session?.user?.name || 'Anônimo'
   return (
     <Link
       href={`/order/${table.number}`}
       onClick={() =>
-        !orderForTable &&
-        createEmptyOrderForTable(table.number.toString(), userName?.toString())
+        !orderForTable && createEmptyOrderForTable(table.number.toString())
       }
       className="relative flex h-[200px] w-[199.5px] cursor-pointer flex-col items-center justify-between"
     >
@@ -86,7 +81,10 @@ const TableItem = ({ table }: TableItemProps) => {
           {orderForTable ? (
             <div className="flex flex-col gap-[5px]">
               {elapsedTime ? (
-                <span className="text-[12px] font-semibold text-white">
+                <span
+                  className="text-[12px] font-semibold text-white"
+                  suppressHydrationWarning
+                >
                   {elapsedTime}
                 </span>
               ) : (

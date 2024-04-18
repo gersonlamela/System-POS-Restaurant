@@ -2,12 +2,13 @@
 
 import { LayoutDashboard, Users } from 'lucide-react'
 import { ForkKnife, PicnicTable, Scroll } from '@phosphor-icons/react'
+import Link from 'next/link'
 
 const menuItems = [
   {
     icon: <PicnicTable size={24} />,
     title: 'Mesas',
-    href: '/order',
+    href: '/',
   },
   {
     icon: <Users size={24} />,
@@ -38,21 +39,21 @@ const menuItems = [
 
 export default function MenuList() {
   return (
-    <div className="flex  h-[95px] flex-1 flex-row items-start justify-start gap-[15px] overflow-scroll bg-white pb-[10px] pr-[15px] pt-[15px]">
+    <div className="flex w-full  flex-row items-start gap-[15px] overflow-x-auto bg-white ">
       {menuItems.map((item, index) => (
-        <a
+        <Link
           href={item.href}
           key={index}
-          className=" flex h-[70px] min-w-[186.3px] max-w-[186.3px]  flex-col   rounded-[10px] bg-secondary p-[15px]"
+          className="flex h-[70px] w-full  flex-col rounded-[10px] bg-secondary p-[15px]"
         >
-          <div className="flex w-full  items-center justify-end text-base font-medium text-white">
+          <div className="flex w-full items-center justify-end text-base font-medium text-white">
             {item.icon}
           </div>
 
           <div className="flex w-full items-center justify-start text-base font-medium text-white">
             {item.title}
           </div>
-        </a>
+        </Link>
       ))}
     </div>
   )

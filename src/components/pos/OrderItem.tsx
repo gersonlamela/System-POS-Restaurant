@@ -1,7 +1,14 @@
+/* eslint-disable prettier/prettier */
+
+'use client'
 import { OrderProduct, useOrder } from '@/functions/OrderProvider'
 import { Notepad, PencilSimpleLine } from '@phosphor-icons/react'
 import { Trash } from 'lucide-react'
 import { NumberIncrease } from './NumberIncrease'
+import { ProductCategory } from '@prisma/client'
+import { useEffect, useState } from 'react'
+import { handleGetCategoryByCategoryId } from '@/functions/Product/product'
+import Image from 'next/image'
 
 interface OrderItemProps {
   product: OrderProduct
@@ -9,6 +16,7 @@ interface OrderItemProps {
 }
 
 export function OrderItem({ product, tableNumber }: OrderItemProps) {
+  const [category, setCategory] = useState<ProductCategory>()
   const {
     decreaseProductQuantity,
     increaseProductQuantity,
@@ -19,10 +27,40 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
     removeProductFromOrder(product.id, tableNumber)
   }
 
+  useEffect(() => {
+    const fetchCategory = async () => {
+      if (product.id) {
+        try {
+          const fetchedCategory = await handleGetCategoryByCategoryId(
+            product?.id,
+          )
+          setCategory(fetchedCategory)
+        } catch (error) {
+          console.error('Error fetching tables:', error)
+        }
+      }
+    }
+    fetchCategory()
+  }, [])
+
+
+
   return (
     <div className="flex flex-col gap-[8px]">
       <div className="flex w-full flex-row items-center gap-[15px]">
-        <div className="h-[70px] w-[70px] rounded-[5px] bg-third"></div>
+        <div className="h-[70px] w-[70px] rounded-[5px] ">
+          {category?.name && (
+            <Image
+              width={70}
+              height={70}
+              src={`/uploads/products/${category?.name.replace(/\s+/g, '')}/${product.image}`}
+              alt={product.name}
+              className="h-[70px] w-[70px] object-fill"
+
+              priority
+            />
+          )}
+        </div>
         <div className="flex flex-col">
           <div className="text-base font-semibold">{product.name}</div>
           <div className="flex gap-[5px] text-[12px] font-semibold">

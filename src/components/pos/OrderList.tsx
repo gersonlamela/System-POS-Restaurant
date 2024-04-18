@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+
+'use client'
 import { useOrder } from '@/functions/OrderProvider'
 import { Button } from '../ui/button'
 
@@ -29,7 +31,7 @@ export function OrderList() {
   return (
     <div className="flex  h-full min-w-[335px] flex-col gap-[10px]">
       <div className="flex h-[579px] overflow-scroll w-full flex-col  rounded-[10px] bg-LightGray px-[10px] py-[10px] shadow">
-        <div className="flex w-full flex-row justify-between mb-[15px] ">
+        <div className="flex  w-full flex-row justify-between mb-[30px] ">
           <div className="flex w-full flex-row  justify-between">
             <h1 className="font-medium text-black">
               Mesa {params.tableNumber}
@@ -60,7 +62,9 @@ export function OrderList() {
 
             ))
           ) : (
-            <div className="h-full flex items-center justify-center text-center font-semibold">Pedido vazio.</div>
+            <div className='flex flex-1 h-full justify-center items-center font-semibold text-xl'>
+              Sem Pedidos
+            </div>
           )
         }
       </div >
