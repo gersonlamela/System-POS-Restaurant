@@ -2,37 +2,47 @@
 
 import MenuList from '@/components/pos/MenuList'
 import { OrderList } from '@/components/pos/OrderList'
-import { TableList } from '@/components/pos/TabeList'
+import { TableInfo, TableList } from '@/components/pos/TabeList'
 
 import { Time } from '@/components/pos/Time'
 import { UserAuth } from '@/components/pos/UserAuth'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useOrder } from '@/functions/OrderProvider'
 
 import { handleGetTables } from '@/functions/Table/table'
-import { useState, useEffect } from 'react'
+import { SignOut } from '@phosphor-icons/react'
+import { signOut } from 'next-auth/react'
+import { useState, useEffect, Suspense } from 'react'
 
 export default function Order() {
   const [tables, setTables] = useState([])
+
+  const { orders } = useOrder()
 
   useEffect(() => {
     const fetchTables = async () => {
       try {
         const fetchedTables = await handleGetTables()
         setTables(fetchedTables)
+        // Assuming you have a function to fetch orders
+        // Replace `fetchOrders` with your actual function
+        const fetchedOrders = await fetchOrders()
+        setOrders(fetchedOrders)
       } catch (error) {
-        console.error('Error fetching tables:', error)
+        console.error('Error fetching data:', error)
       }
     }
     fetchTables()
   }, [])
-
   const skeletonArray = Array.from({ length: 6 })
 
   return (
     <div className="flex w-full flex-row gap-[15px]">
       <div className="flex h-full flex-1 flex-col   gap-[15px]">
         <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px]">
-          <Time />
+          <Suspense>
+            <Time />
+          </Suspense>
           <UserAuth />
         </div>
 
@@ -57,8 +67,20 @@ export default function Order() {
             </div>
           </div>
 
-          <div className=" flex w-full flex-1 items-center ">
-            <MenuList />
+          <div className=" flex w-full flex-1 items-center  gap-[15px]">
+            <div className="shadow-button20 flex h-[114px] w-[202px] items-center justify-center rounded-[10px] bg-LightGray">
+              <button
+                onClick={() => signOut()}
+                className="flex h-[84px] w-[80px] flex-col items-center justify-center gap-[8px] rounded-[10px] bg-secondary font-semibold text-white"
+              >
+                <SignOut size={25} />
+                Sair
+              </button>
+            </div>
+            <div className="flex w-full  flex-col gap-[15px]">
+              <TableInfo full={1} Tables={tables} orders={orders} />
+              <MenuList />
+            </div>
           </div>
         </div>
       </div>

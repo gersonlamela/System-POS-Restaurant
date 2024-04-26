@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
-import { getServerSession } from 'next-auth'
-import { Ingredient, Product, ProductIngredient } from '@prisma/client'
+import { Product } from '@prisma/client'
 import { getTax } from '@/functions/Product/product'
 
 const calculateTotalPrice = (

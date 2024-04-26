@@ -33,9 +33,16 @@ module.exports = {
       gridTemplateColumns: {
         'auto-fill-100': 'repeat(auto-fill, minmax(199.5px, 1fr))',
         'auto-fit-100': 'repeat(auto-fit, minmax(100px, 1fr))',
+        'auto-fill-194': 'repeat(auto-fill, minmax(194px, 1fr))',
+        'auto-fill-270': 'repeat(auto-fill, minmax(270px, 1fr))',
+        'auto-fit-270': 'repeat(auto-fit, minmax(270px, 1fr))',
       },
       fontFamily: {
         poppins: 'var(--font-poppins)',
+      },
+      boxShadow: {
+        button10: '0px 0px 10px 0px #00000025',
+        button20: '0px 4px 20px 0px #00000025',
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -57,8 +64,14 @@ module.exports = {
         LightGray: {
           DEFAULT: '#F7F7F8',
         },
+        success: {
+          DEFAULT: '#88E152',
+        },
+        waiting: {
+          DEFAULT: '#F86E0A',
+        },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
+          DEFAULT: '#FF0000',
           foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {

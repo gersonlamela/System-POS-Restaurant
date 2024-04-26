@@ -16,10 +16,11 @@ export interface OrderProduct {
   note: string; // Adiciona a propriedade para armazenar a nota do produto
 }
 
-interface OrderData {
+export interface OrderData {
   products: OrderProduct[]
   createdAt: string // Storing the creation time
   userName: string
+  totalPrice: string
 }
 
 interface OrderContextData {
@@ -69,12 +70,15 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   const { data: session } = useSession()
 
   const createEmptyOrderForTable = (tableNumber: string) => {
+    const basePrice = orderTotalPrice(tableNumber);
+    const formattedTotalPrice = basePrice.toFixed(2);
     setOrders({
       ...orders,
       [tableNumber]: {
         products: [],
         createdAt: new Date().toISOString(),
         userName: session?.user?.name || '',
+        totalPrice: formattedTotalPrice,
       },
     })
   }
@@ -108,24 +112,41 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 
   const addProductToOrder = (product: OrderProduct, tableNumber: string) => {
     const updater = (order: OrderData) => {
-      const existingProduct = order.products.find((p) => p.id === product.id);
-      if (existingProduct) {
-        existingProduct.quantity++;
+      let updatedOrder;
+      const existingProductIndex = order.products.findIndex((p) => p.id === product.id);
+
+      if (existingProductIndex !== -1) {
+        // Se o produto já existe na ordem, apenas aumente sua quantidade
+        order.products[existingProductIndex].quantity++;
+        updatedOrder = order;
       } else {
-        const newProduct = { ...product, quantity: 1 }; // Adiciona a URL da imagem ao produto
-        order.products.push(newProduct);
-        if (product.note) {
-          newProduct.note = product.note; // Adiciona a nota ao produto, se existir
-        }
+        // Se o produto ainda não existe na ordem, adicione-o e atualize o total price
+        const newProduct = { ...product, quantity: 1 };
+        updatedOrder = {
+          ...order,
+          products: [...order.products, newProduct],
+        };
       }
-      return { ...order };
+
+      // Atualize o total price da ordem
+      const totalPrice = updatedOrder.products.reduce(
+        (total, product) => total + product.price * product.quantity,
+        0
+      );
+      const formattedTotalPrice = totalPrice.toFixed(2);
+      updatedOrder = { ...updatedOrder, totalPrice: formattedTotalPrice };
+
+      return updatedOrder;
     };
 
-    // Atualiza a mesa apenas se ela já existir
+    // Atualize a mesa apenas se ela já existir
     if (orders[tableNumber]) {
-      updateOrder(tableNumber, updater);
+      const updatedOrder = updater(orders[tableNumber]);
+      updateOrder(tableNumber, () => updatedOrder);
     }
   };
+
+
 
 
 

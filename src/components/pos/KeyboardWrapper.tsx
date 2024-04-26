@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useRef, useEffect, useState } from 'react'
-import Keyboard from 'react-simple-keyboard'
+import Keyboard, { KeyboardReactInterface } from 'react-simple-keyboard'
 import 'react-simple-keyboard/build/css/index.css'
 
 interface IProps {
@@ -13,7 +13,7 @@ const KeyboardWrapper: FunctionComponent<IProps> = ({
   note,
   onConfirm,
 }) => {
-  const keyboard = useRef<Keyboard | null>(null)
+  const keyboard = useRef<KeyboardReactInterface | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null) // Criando uma ref para o textarea
   const [layout, setLayout] = useState('default')
 

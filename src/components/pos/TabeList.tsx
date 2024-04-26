@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useOrder } from '@/functions/OrderProvider'
+import { OrderData, useOrder } from '@/functions/OrderProvider'
 import { Table } from '@prisma/client'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { Skeleton } from '../ui/skeleton'
 
 interface TableListProps {
   Tables: Table[]
@@ -11,7 +9,7 @@ interface TableListProps {
 
 export function TableList({ Tables }: TableListProps) {
   return (
-    <div className="grid max-h-[771px] w-full  grid-cols-auto-fill-100 justify-items-center gap-[15.5px] overflow-y-auto">
+    <div className="shadow-button10 grid-cols-auto-fill-194 grid h-full w-full  gap-[15px] rounded-[10px] bg-[#F7F7F8] px-[15px] pb-[50px] pt-[15px]">
       {Tables ? (
         Tables.map((table, index) => <TableItem key={index} table={table} />)
       ) : (
@@ -31,6 +29,8 @@ const TableItem = ({ table }: TableItemProps) => {
 
   // Verifica se há uma ordem para a mesa atual
   const orderForTable = orders[table.number.toString()]
+
+  console.log('order', orders[table.number.toString()])
 
   // Função para formatar o tempo decorrido desde a criação da ordem
   const formatElapsedTime = (createdAt: string) => {
@@ -69,38 +69,84 @@ const TableItem = ({ table }: TableItemProps) => {
 
   return (
     <Link
+      className={`relative flex h-[120px] w-[194px] cursor-pointer flex-col items-center justify-evenly rounded-[5px] ${orderForTable ? 'bg-[#FF0000]' : 'bg-[#88E152]'} bg-opacity-40 p-[15px] text-base font-medium `}
       href={`/order/${table.number}`}
-      onClick={() =>
-        !orderForTable && createEmptyOrderForTable(table.number.toString())
-      }
-      className="relative flex h-[200px] w-[199.5px] cursor-pointer flex-col items-center justify-between"
+      onClick={(e) => {
+        if (!orderForTable) {
+          e.preventDefault()
+          createEmptyOrderForTable(table.number.toString())
+        }
+      }}
     >
-      <div className="relative flex h-full w-full bg-third">
-        <div className="flex flex-1">ola</div>
-        <div className="absolute inset-0 top-[8.75rem] flex flex-col bg-black bg-opacity-30 pb-[10px] pl-[15px] pt-[8px]">
-          {orderForTable ? (
-            <div className="flex flex-col gap-[5px]">
-              {elapsedTime ? (
-                <span
-                  className="text-[12px] font-semibold text-white"
-                  suppressHydrationWarning
-                >
-                  {elapsedTime}
-                </span>
-              ) : (
-                <Skeleton className="h-[12px] w-[80px] bg-[#7b7b85]" />
-              )}
-              <span className="text-[12px] font-semibold text-white">
-                {orderForTable.userName}
-              </span>
-            </div>
-          ) : (
-            <span className="text-[12px] font-semibold text-white">
-              {table.number}
+      <div
+        className={`absolute right-[15px] top-[15px] h-[15px] w-[15px] rounded-full border border-white ${orderForTable ? 'bg-[#FF0000]' : 'bg-[#88E152]'}`}
+      ></div>
+      <div className="flex flex-col items-center justify-center">
+        <div>#{String(table.number).padStart(3, '0')}</div>
+        {orderForTable && (
+          <div className="flex flex-col items-center justify-center text-white">
+            <span>{elapsedTime}</span>
+            <span>{orderForTable.userName}</span>
+            <span className="text-base text-black">
+              {orderForTable.totalPrice}€
             </span>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </Link>
+  )
+}
+
+export default TableItem
+
+interface TableInfoProps {
+  full: number
+  Tables: Table[]
+  orders: Record<string, OrderData>
+}
+
+export function TableInfo({ Tables, orders }: TableInfoProps) {
+  // Contar o número total de mesas
+  const totalTables = Tables.length
+
+  // Contar o número de mesas com pedidos associados
+  const occupiedTables = Tables.filter((table) => {
+    const orderForTable = orders[table.number.toString()]
+    return orderForTable !== undefined
+  }).length
+
+  // Calcular o número de mesas livres
+  const freeTables = totalTables - occupiedTables
+
+  return (
+    <div className="shadow-button10 flex h-[29px] w-full  items-center justify-between rounded-[10px] bg-LightGray px-[15px]">
+      <div className="flex flex-row items-center gap-[35px]">
+        <div className="font-medium text-third">MESAS:</div>
+        <div className="flex flex-row items-center justify-center gap-[10px] ">
+          <div className="bg-success h-[15px] w-[15px] gap-[10px] rounded-full" />
+          <div className="text-[14px] font-medium text-third">Livre</div>
+        </div>
+
+        <div className="flex flex-row items-center justify-center gap-[10px] ">
+          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-destructive" />
+          <div className="text-[14px] font-medium text-third">Ocupada</div>
+        </div>
+      </div>
+      <div className=" flex flex-row gap-[35px]">
+        <div className="flex flex-row items-center justify-center gap-[10px] ">
+          <div className="bg-success h-[15px] w-[15px] gap-[10px] rounded-full" />
+          <div className="text-[14px] font-medium text-third">
+            ({freeTables})
+          </div>
+        </div>
+
+        <div className="flex flex-row items-center justify-center gap-[10px] ">
+          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-destructive" />
+          <div className="text-[14px] font-medium text-third">
+            ({occupiedTables})
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

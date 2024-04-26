@@ -19,13 +19,20 @@ export function OrderList() {
   // Filtrar os pedidos que correspondem ao número da mesa
   const filteredOrders = Object.entries(orders).filter(([key]) => key === params.tableNumber);
 
+
+  const handleClearOrder = (tableNumber: string) => {
+    clearOrdersForTable(tableNumber);
+
+    location.href = '/';
+  }
+
   return (
     <div className="flex min-w-[335px] flex-1 flex-col justify-between gap-[15px]">
       <div className="flex flex-col flex-grow bg-LightGray rounded-[10px] p-4 shadow">
         <div className="flex flex-row justify-between items-center">
           <h1 className="font-medium text-black">Mesa {params.tableNumber}</h1>
           <Button
-            onClick={() => clearOrdersForTable(params.tableNumber)}
+            onClick={() => handleClearOrder(params.tableNumber)}
             className="h-8 px-4 bg-white text-primary shadow hover:bg-primary hover:text-white"
           >
             Limpar Tudo

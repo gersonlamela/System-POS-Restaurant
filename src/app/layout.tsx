@@ -7,8 +7,9 @@ import { Header } from '@/components/pos/Header'
 import { Footer } from '@/components/pos/Footer'
 
 import { authOptions } from '@/lib/auth'
-import { UserSignIn } from '@/components/form/UserSignIn'
 import { getServerSession } from 'next-auth/next'
+import UserSignIn from '@/components/form/UserSignIn'
+import { Toaster } from 'sonner'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -24,8 +25,9 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions)
   return (
     <html lang="pt" className={`${poppins.variable} font-poppins`}>
-      <body className="max-w-screen flex h-screen flex-col border border-red-500">
+      <body className="max-w-screen flex h-screen flex-col">
         <Providers>
+          <Toaster position="top-right" />
           <Header />
           <main className="flex flex-1 overflow-auto  px-[15px] pb-[10px] pt-[15px]">
             {children}

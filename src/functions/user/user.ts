@@ -1,7 +1,4 @@
-import { authOptions } from '@/lib/auth'
 import { User } from '@prisma/client'
-import { getServerSession } from 'next-auth'
-import { useRouter } from 'next/navigation'
 
 export function getStatusStyle(status: User['status']) {
   switch (status) {

@@ -24,9 +24,14 @@ const FormSchema = z.object({
 interface SignInFormProps {
   user: User
   handleCloseModal: () => void
+  handleClearSelectedUser: () => void
 }
 
-const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
+const SignInForm = ({
+  user,
+  handleCloseModal,
+  handleClearSelectedUser,
+}: SignInFormProps) => {
   const [pinError, setPinError] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -51,8 +56,6 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
       return
     }
 
-    setPinError(null)
-
     const signInData = await signIn('credentials', {
       id: values.userId,
       pin: values.pin,
@@ -61,18 +64,20 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
 
     if (signInData?.error) {
       toast.error(signInData.error)
+      setPinError('Pin Ivalido')
     } else {
-      // Redirecionar para a página desejada após o login bem-sucedido
-      location.href = '/' // Substitua '/dashboard' pelo caminho desejado
+      location.href = '/'
     }
   }
 
   return (
     <div
-      className="absolute inset-0 z-50 flex w-full flex-col items-center justify-center bg-[#FEF0E780]"
+      className={`absolute inset-0 z-50 flex w-full flex-col items-center justify-center`}
       onClick={handleOutsideClick}
     >
-      <div className="flex h-[670px] w-[450px] flex-col items-center justify-between rounded-[30px] bg-white px-[50px] py-[30px]">
+      <div
+        className={`shadow-button20 flex h-[650px] w-[400px] flex-col items-center justify-between rounded-[30px] bg-white px-[50px] py-[20px] `}
+      >
         <Form {...form}>
           <form
             onSubmit={(e) => {
@@ -83,35 +88,33 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                 onSubmit(form.getValues())
               }
             }}
-            className="flex flex-col gap-[20px]"
+            className="flex h-full w-[300px] flex-col items-center gap-[20px]"
           >
             {user.name && (
-              <h1 className="text-center text-3xl font-semibold">
+              <h1 className="text-center text-[26px] font-semibold uppercase text-third">
                 {user.name}
               </h1>
             )}
-            <div className="flex flex-col">
+
+            <div className="flex w-full flex-col">
               <FormField
                 control={form.control}
                 name="pin"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormControl>
                       <div
-                        className={`flex space-x-3 ${pinError ? 'animate-shake' : ''}`}
-                        data-hs-pin-input
+                        className={`shadow-button10 flex h-[65px] w-full items-end justify-center rounded-[10px] bg-white text-center text-3xl font-semibold text-primary ${pinError ? 'border border-primary' : ''}`}
                       >
-                        {[0, 1, 2, 3].map((index) => (
-                          <input
-                            key={index}
-                            type="text"
-                            className="flex h-[85px] w-[85px] items-center justify-center rounded-md border-gray-200 bg-white text-center text-3xl font-semibold shadow-lg"
-                            disabled
-                            data-hs-pin-input-item
-                            maxLength={4} // Limita o campo a 4 caracteres
-                            value={field.value[index] || ''} // Use o valor do campo se disponível, caso contrário, use uma string vazia
-                          />
-                        ))}
+                        <div
+                          className={`flex h-full items-center justify-center`}
+                        >
+                          {form
+                            .getValues('pin')
+                            .split('')
+                            .map(() => '*')
+                            .join('')}
+                        </div>
                       </div>
                     </FormControl>
                   </FormItem>
@@ -119,11 +122,11 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid w-full grid-cols-3 gap-[15px]">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
                 <Button
                   key={number}
-                  className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-black shadow-md"
+                  className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-[30px] font-semibold text-third"
                   onClick={() => {
                     const pinLength = form.getValues('pin').length
                     if (pinLength < 4) {
@@ -135,29 +138,30 @@ const SignInForm = ({ user, handleCloseModal }: SignInFormProps) => {
                 </Button>
               ))}
               <Button
-                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-secondary shadow-md"
-                onClick={() => form.setValue('pin', '')}
+                className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary"
+                onClick={() => handleClearSelectedUser()}
               >
                 <XCircle size={36} />
               </Button>
-              <Button
-                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-black shadow-md"
-                onClick={() =>
-                  form.setValue('pin', form.getValues('pin') + '0')
-                }
+              <a
+                href="/"
+                className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-third"
               >
                 0
-              </Button>
+              </a>
               <Button
                 onClick={() =>
                   form.setValue('pin', form.getValues('pin').slice(0, -1))
                 }
-                className="flex h-[100px] w-[100px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-secondary shadow-md"
+                className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary"
               >
                 <Backspace size={36} />
               </Button>
             </div>
-            {pinError && <p className="text-red-500">{pinError}</p>}
+
+            <div className="flex w-full items-center justify-center text-[24px] font-bold text-third">
+              POSLamela
+            </div>
           </form>
         </Form>
       </div>
