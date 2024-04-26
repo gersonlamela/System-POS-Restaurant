@@ -39,7 +39,7 @@ const menuItems = [
 
 export default function MenuList() {
   return (
-    <div className="flex w-full  flex-row items-start gap-[15px] overflow-x-auto bg-white ">
+    <div className="flex w-full flex-row items-start gap-[15px] overflow-x-auto bg-white ">
       {menuItems.map((item, index) => (
         <Link
           href={item.href}

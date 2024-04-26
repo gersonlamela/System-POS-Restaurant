@@ -173,7 +173,7 @@ export default function AddIngredientModal() {
                                   style={{ maxHeight: '200px' }} // opcional: definindo uma altura máxima
                                 />
                                 <button
-                               className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
+                                  className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"
                                   onClick={() => {
                                     setImagePreview('')
                                     setFile(undefined)

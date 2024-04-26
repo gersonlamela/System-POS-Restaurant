@@ -50,26 +50,25 @@ export default function OrderPage() {
     fetchProducts()
   }, [])
   return (
-    <div className="flex w-full flex-row gap-[15px]">
+    <div className="flex max-h-screen w-full flex-row gap-[15px]">
       <SideBar categories={categories} />
 
-      <div className="flex h-full flex-1 flex-col   gap-[15px]">
-        <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px]">
+      <div className="flex flex-1 flex-col gap-[15px]">
+        <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px] ">
           <Time />
           <UserAuth />
         </div>
 
-        <div className="flex h-full flex-1 flex-col  justify-between gap-[15px]">
-          <div className="flex h-full  flex-row gap-[15px]">
-            <div className="flex flex-1">
+        <div className="flex  flex-1 flex-col  justify-between gap-[15px] ">
+          <div className="flex w-full flex-1 flex-row justify-between gap-[15px]">
+            <div className="w-full overflow-scroll">
               <ProductList Products={products} tableNumber={tableNumber} />
             </div>
-            <div className="min-w-[335px]">
+            <div className="flex w-[335px] flex-1">
               <OrderList />
             </div>
           </div>
-
-          <div className=" flex w-full flex-1 items-center ">
+          <div className="flex w-full items-center ">
             <MenuList />
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Form, FormControl, FormField, FormItem } from '../ui/form'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { Backspace, SignIn, XCircle } from '@phosphor-icons/react'
+import { Backspace, XCircle } from '@phosphor-icons/react'
 
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
@@ -13,12 +13,6 @@ import { signIn } from 'next-auth/react'
 
 import { User } from '@prisma/client'
 import { useState } from 'react'
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-  InputOTPSeparator,
-} from '../ui/input-otp'
 
 const FormSchema = z.object({
   userId: z.string().min(1, 'O ID do utilizador é obrigatório'),

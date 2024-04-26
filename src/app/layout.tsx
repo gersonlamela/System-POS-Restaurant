@@ -3,12 +3,12 @@ import '../styles/globals.css'
 import { Providers } from '@/components/Provider'
 import { Poppins } from 'next/font/google'
 
-import { Toaster } from '@/components/ui/sonner'
 import { Header } from '@/components/pos/Header'
 import { Footer } from '@/components/pos/Footer'
-import { getServerSession } from 'next-auth'
+
 import { authOptions } from '@/lib/auth'
 import { UserSignIn } from '@/components/form/UserSignIn'
+import { getServerSession } from 'next-auth/next'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -31,7 +31,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
-          {!session?.user.name && <UserSignIn />}
+          {!session && <UserSignIn />}
         </Providers>
       </body>
     </html>

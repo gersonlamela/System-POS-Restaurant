@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 'use client'
 
@@ -6,12 +7,13 @@ import { useSession } from 'next-auth/react'
 import { createContext, ReactNode, useContext } from 'react'
 
 export interface OrderProduct {
-  id: string
-  name: string
-  price: number
-  quantity: number
-  priceWithoutDiscount: number
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  priceWithoutDiscount: number;
   image: string;
+  note: string; // Adiciona a propriedade para armazenar a nota do produto
 }
 
 interface OrderData {
@@ -35,6 +37,7 @@ interface OrderContextData {
   subtotal: (tableNumber: string) => number
   totalDiscount: (tableNumber: string) => number
   totalTAX: (tableNumber: string) => number
+  updateProductNote: (productId: string, tableNumber: string, newNote: string) => void
 }
 
 const OrderContext = createContext<OrderContextData>({
@@ -45,6 +48,7 @@ const OrderContext = createContext<OrderContextData>({
   removeProductFromOrder: () => undefined,
   clearOrdersForTable: () => undefined,
   createEmptyOrderForTable: () => undefined,
+  updateProductNote: () => undefined,
   orderTotalPrice: () => 0,
   orderBasePrice: () => 0,
   orderTotalDiscount: () => 0,
@@ -89,14 +93,30 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       [tableNumber]: updater(orders[tableNumber]),
     })
   }
+
+  const updateProductNote = (productId: string, tableNumber: string, newNote: string) => {
+    updateOrder(tableNumber, (order) => {
+      const updatedProducts = order.products.map((product) => {
+        if (product.id === productId) {
+          return { ...product, note: newNote }; // Atualize a nota do produto
+        }
+        return product;
+      });
+      return { ...order, products: updatedProducts };
+    });
+  };
+
   const addProductToOrder = (product: OrderProduct, tableNumber: string) => {
-    // Atualiza a mesa com o produto adicionado
     const updater = (order: OrderData) => {
       const existingProduct = order.products.find((p) => p.id === product.id);
       if (existingProduct) {
         existingProduct.quantity++;
       } else {
-        order.products.push({ ...product, quantity: 1 }); // Adiciona a URL da imagem ao produto
+        const newProduct = { ...product, quantity: 1 }; // Adiciona a URL da imagem ao produto
+        order.products.push(newProduct);
+        if (product.note) {
+          newProduct.note = product.note; // Adiciona a nota ao produto, se existir
+        }
       }
       return { ...order };
     };
@@ -187,6 +207,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   const contextValue: OrderContextData = {
     orders,
     addProductToOrder,
+    updateProductNote,
     decreaseProductQuantity,
     increaseProductQuantity,
     removeProductFromOrder,

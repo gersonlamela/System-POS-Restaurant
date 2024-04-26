@@ -1,6 +1,5 @@
 'use client'
 
-import { UserSignIn } from '@/components/form/UserSignIn'
 import MenuList from '@/components/pos/MenuList'
 import { OrderList } from '@/components/pos/OrderList'
 import { TableList } from '@/components/pos/TabeList'
@@ -10,11 +9,9 @@ import { UserAuth } from '@/components/pos/UserAuth'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { handleGetTables } from '@/functions/Table/table'
-import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 
 export default function Order() {
-  const { data: session, status } = useSession()
   const [tables, setTables] = useState([])
 
   useEffect(() => {
@@ -55,7 +52,7 @@ export default function Order() {
                 </div>
               )}
             </div>
-            <div className="min-w-[335px]">
+            <div className="flex max-w-[335px] flex-1 flex-col justify-between gap-[15px]">
               <OrderList />
             </div>
           </div>

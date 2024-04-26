@@ -42,6 +42,8 @@ export default function OrderCategory() {
         )
 
         setProducts(fetchedProducts)
+
+        console.log('categorias produtos', fetchedProducts)
       } catch (error) {
         console.error('Error fetching products:', error)
       }
@@ -54,20 +56,27 @@ export default function OrderCategory() {
     <div className="flex w-full flex-row gap-[15px]">
       <SideBar categories={categories} />
 
-      <div className="flex h-full flex-1 flex-col justify-between gap-[15px]">
-        <div className="flex flex-row gap-[15px]" suppressHydrationWarning>
+      <div className="flex h-full flex-1 flex-col   gap-[15px]">
+        <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px] ">
           <Time />
           <UserAuth />
         </div>
-        <div className="flex flex-1 flex-row gap-[15px]">
-          <div className="flex flex-1 flex-row gap-[15px]">
-            <ProductList Products={products} tableNumber={params.tableNumber} />
 
-            <OrderList />
+        <div className="flex  flex-1 flex-col  justify-between gap-[15px]">
+          <div className="flex h-full w-full flex-row justify-between">
+            <div className="h-full w-full overflow-scroll">
+              <ProductList
+                Products={products}
+                tableNumber={params.tableNumber}
+              />
+            </div>
+            <div className="flex min-w-[335px] flex-1 ">
+              <OrderList />
+            </div>
           </div>
-        </div>
-        <div className="flex h-[95px] justify-start align-bottom">
-          <MenuList />
+          <div className="flex h-[95px] w-full items-center ">
+            <MenuList />
+          </div>
         </div>
       </div>
     </div>

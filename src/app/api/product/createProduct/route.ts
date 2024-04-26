@@ -49,18 +49,13 @@ export async function POST(request: NextRequest) {
 
     const extension = file.name.split('.').pop() // Get file extension
 
-    const categoryName = categoryData
-      ? categoryData.name.replace(/\s+/g, '')
-      : 'UnknownCategory' // Remover espaços em branco
-
     const imagePath = join(
       './public/uploads/products',
-      categoryName,
       `${cuidValue}.${extension}`,
     )
 
     // Check if directory exists, if not, create it
-    await mkdir(join('./public/uploads/products', categoryName), {
+    await mkdir(join('./public/uploads/products'), {
       recursive: true,
     })
 

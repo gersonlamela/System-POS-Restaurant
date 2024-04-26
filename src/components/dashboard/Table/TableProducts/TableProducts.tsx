@@ -173,7 +173,7 @@ export default function TableProducts({ Products }: Products) {
                 <TableRow key={Product.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
                     <img
-                      src={`/uploads/products/${Product.ProductCategory.name.replace(/\s+/g, '')}/${Product.image}`}
+                      src={`/uploads/products/${Product.image}`}
                       alt={Product.name}
                       width={70}
                       height={70}

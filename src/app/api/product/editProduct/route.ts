@@ -41,12 +41,11 @@ export async function PUT(request: NextRequest) {
 
       const imagePath = join(
         './public/uploads/products',
-        categoryName,
         `${cuidValue}.${extension}`,
       )
 
       // Check if directory exists, if not, create it
-      await mkdir(join('./public/uploads/products', categoryName), {
+      await mkdir(join('./public/uploads/products'), {
         recursive: true,
       })
 

@@ -3,13 +3,10 @@
 import {
   getTax,
   handleGetCategoryByCategoryId,
-  handleGetProductsByCategoryId,
-  handleGetProductsCategory,
 } from '@/functions/Product/product'
 import { useOrder } from '@/functions/OrderProvider'
 
 import { Product, ProductCategory } from '@prisma/client'
-import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
@@ -20,7 +17,7 @@ interface ProductListProps {
 
 export function ProductList({ Products, tableNumber }: ProductListProps) {
   return (
-    <div className="grid max-h-[771px] w-full grid-cols-auto-fill-100 justify-items-center gap-[15.5px]  overflow-y-auto">
+    <div className="flex max-h-[70vh] flex-wrap content-start items-stretch justify-center gap-[15px] overflow-scroll lg:justify-start ">
       {Products ? (
         Products.map((product, index) => (
           <ProductItem
@@ -64,6 +61,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
       price,
       priceWithoutDiscount,
       quantity: 1,
+      note: '',
       image,
     }
 
@@ -86,9 +84,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
       }
     }
     fetchCategory()
-  }, [])
-
-  console.log(category)
+  }, [product.id])
 
   return (
     <div
@@ -101,11 +97,9 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
             <Image
               width={199.5}
               height={199.5}
-              src={`/uploads/products/${category?.name.replace(
-                /\s+/g,
-                '',
-              )}/${product.image}`}
+              src={`/uploads/products/${product.image}`}
               alt={product.name}
+              className="object-contain"
               priority
             />
           )}

@@ -1,3 +1,5 @@
+import { Button } from '../ui/button'
+
 interface PayProps {
   subtotal: number
   total: number
@@ -32,9 +34,9 @@ export function Pay({ subtotal, total, totalDiscount, tax }: PayProps) {
         <span className="text-[14px] font-semibold text-white">{total}€</span>
       </div>
 
-      <div className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
+      <Button className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
         Pagar
-      </div>
+      </Button>
     </div>
   )
 }

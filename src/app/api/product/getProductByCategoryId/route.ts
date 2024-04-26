@@ -4,12 +4,12 @@ import { prisma } from '@/lib/prisma'
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   try {
-    const productId = searchParams.get('id')
+    const categoryId = searchParams.get('id')
 
     // Fetch products by categoryId
     const products = await prisma.product.findMany({
       where: {
-        productCategoryId: productId,
+        productCategoryId: categoryId,
       },
     })
 

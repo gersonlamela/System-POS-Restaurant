@@ -1,74 +1,59 @@
 /* eslint-disable prettier/prettier */
 
 'use client'
-import { useOrder } from '@/functions/OrderProvider'
-import { Button } from '../ui/button'
-
-import { OrderItem } from './OrderItem'
-import { Pay } from './Pay'
-import { useParams } from 'next/navigation'
+import { useOrder } from '@/functions/OrderProvider';
+import { Button } from '../ui/button';
+import { OrderItem } from './OrderItem';
+import { Pay } from './Pay';
+import { useParams } from 'next/navigation';
 
 export function OrderList() {
-  const params = useParams<{ tableNumber: string }>()
+  const params = useParams<{ tableNumber: string }>();
+  const { orders, clearOrdersForTable, subtotal, total, totalDiscount, totalTAX } = useOrder();
 
-  const { orders, clearOrdersForTable, subtotal, total, totalDiscount, totalTAX
-  } =
-    useOrder()
-
-  const subtotalTable = subtotal(params.tableNumber)
-  const totalTable = total(params.tableNumber)
-  const totalDiscountTable = totalDiscount(params.tableNumber)
-  const totalTAXTable = totalTAX(params.tableNumber)
-
+  const subtotalTable = subtotal(params.tableNumber);
+  const totalTable = total(params.tableNumber);
+  const totalDiscountTable = totalDiscount(params.tableNumber);
+  const totalTAXTable = totalTAX(params.tableNumber);
 
   // Filtrar os pedidos que correspondem ao número da mesa
-  const filteredOrders = Object.entries(orders).filter(
-    ([key]) => key === params.tableNumber,
-  )
-
-  console.log(filteredOrders)
+  const filteredOrders = Object.entries(orders).filter(([key]) => key === params.tableNumber);
 
   return (
-    <div className="flex  h-full min-w-[335px] flex-col gap-[10px]">
-      <div className="flex h-[579px] overflow-scroll w-full flex-col  rounded-[10px] bg-LightGray px-[10px] py-[10px] shadow">
-        <div className="flex  w-full flex-row justify-between mb-[30px] ">
-          <div className="flex w-full flex-row  justify-between">
-            <h1 className="font-medium text-black">
-              Mesa {params.tableNumber}
-            </h1>
-          </div>
-          <div className='w-full flex flex-row justify-end'>
-            <Button
-              onClick={() => clearOrdersForTable(params.tableNumber)}
-              className="h-[25px] w-[100px] bg-white text-primary shadow hover:bg-primary hover:text-white"
-            >
-              Limpar Tudo
-            </Button>
-          </div>
+    <div className="flex min-w-[335px] flex-1 flex-col justify-between gap-[15px]">
+      <div className="flex flex-col flex-grow bg-LightGray rounded-[10px] p-4 shadow">
+        <div className="flex flex-row justify-between items-center">
+          <h1 className="font-medium text-black">Mesa {params.tableNumber}</h1>
+          <Button
+            onClick={() => clearOrdersForTable(params.tableNumber)}
+            className="h-8 px-4 bg-white text-primary shadow hover:bg-primary hover:text-white"
+          >
+            Limpar Tudo
+          </Button>
         </div>
-
-        {
-          filteredOrders.length > 0 ? (
-            filteredOrders.map(([tableNumber, products], index) => (
+        {filteredOrders.length > 0 ? (
+          <div style={{ maxHeight: `calc(100vh - 530px)` }} className="overflow-y-scroll">
+            {filteredOrders.map(([tableNumber, products], index) => (
               products.products.map((product, productIndex) => (
                 <div key={product.id}>
                   <OrderItem tableNumber={tableNumber} product={product} />
-                  {index !== filteredOrders.length - 1 ||
-                    productIndex !== products.products.length - 1 ? (
-                    <hr className="my-[10px] border border-gray-200" />
+                  {index !== filteredOrders.length - 1 || productIndex !== products.products.length - 1 ? (
+                    <hr className="my-4 border border-gray-200" />
                   ) : null}
                 </div>
               ))
+            ))}
+          </div>
+        ) : (
+          <div className="flex h-full flex-grow justify-center items-center font-semibold text-xl">Sem Pedidos</div>
+        )}
+      </div>
 
-            ))
-          ) : (
-            <div className='flex flex-1 h-full justify-center items-center font-semibold text-xl'>
-              Sem Pedidos
-            </div>
-          )
-        }
-      </div >
-      <Pay subtotal={subtotalTable} total={totalTable} totalDiscount={totalDiscountTable} tax={totalTAXTable} />
-    </div >
-  )
+      <div className="h-[180px]">
+        <Pay subtotal={subtotalTable} total={totalTable} totalDiscount={totalDiscountTable} tax={totalTAXTable} />
+      </div>
+    </div>
+  );
 }
+
+

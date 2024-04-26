@@ -52,7 +52,7 @@ export default function EditProductModal({ Product }: ProductProps) {
   const [category, setCategory] = useState<ProductCategory[]>([])
 
   const [imagePreview, setImagePreview] = useState<string>(
-    `/uploads/products/${Product.ProductCategory.name.replace(/\s+/g, '')}/${Product.image}`,
+    `/uploads/products/${Product.image}`,
   )
   const [selectedIngredients, setSelectedIngredients] = useState<
     { id: string; quantity: number }[]

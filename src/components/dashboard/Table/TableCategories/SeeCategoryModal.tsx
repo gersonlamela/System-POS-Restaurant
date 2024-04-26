@@ -80,13 +80,13 @@ export default function SeeCategoryModal({ Category }: SeeCategoryModalProps) {
               </div>
               <div className="flex w-full justify-end gap-2">
                 <DialogClose asChild>
-                <Button
-                        type="button"
-                        variant="secondary"
-                        className="text-white hover:bg-red-500"
-                      >
-                        Close
-                      </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="text-white hover:bg-red-500"
+                  >
+                    Close
+                  </Button>
                 </DialogClose>
                 <Button variant={'outline'}>
                   <span>Editar Categoria</span>

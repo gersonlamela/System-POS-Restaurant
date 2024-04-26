@@ -1,48 +1,47 @@
 /* eslint-disable prettier/prettier */
 
 'use client'
-import { OrderProduct, useOrder } from '@/functions/OrderProvider'
-import { Notepad, PencilSimpleLine } from '@phosphor-icons/react'
-import { Trash } from 'lucide-react'
-import { NumberIncrease } from './NumberIncrease'
-import { ProductCategory } from '@prisma/client'
-import { useEffect, useState } from 'react'
-import { handleGetCategoryByCategoryId } from '@/functions/Product/product'
-import Image from 'next/image'
+import { useEffect, useState } from 'react';
+import { PencilSimpleLine, Trash } from '@phosphor-icons/react';
+import { NumberIncrease } from './NumberIncrease';
+import { OrderProduct, useOrder } from '@/functions/OrderProvider';
+import { ProductCategory } from '@prisma/client';
+import { handleGetCategoryByCategoryId } from '@/functions/Product/product';
+import Image from 'next/image';
+import { NotePopup } from './NotePopup';
 
 interface OrderItemProps {
-  product: OrderProduct
-  tableNumber: string
+  product: OrderProduct;
+  tableNumber: string;
 }
 
 export function OrderItem({ product, tableNumber }: OrderItemProps) {
-  const [category, setCategory] = useState<ProductCategory>()
-  const {
-    decreaseProductQuantity,
-    increaseProductQuantity,
-    removeProductFromOrder,
-  } = useOrder()
+  const [note, setNote] = useState(product.note);
+  const [category, setCategory] = useState<ProductCategory>();
+  const { decreaseProductQuantity, increaseProductQuantity, removeProductFromOrder, updateProductNote } = useOrder();
 
   const handleRemoveProductClick = () => {
-    removeProductFromOrder(product.id, tableNumber)
-  }
+    removeProductFromOrder(product.id, tableNumber);
+  };
+
+  const handleConfirmNote = (newNote: string) => {
+    setNote(newNote);
+    updateProductNote(product.id, tableNumber, newNote); // Atualize a nota do produto no provedor de pedidos
+  };
 
   useEffect(() => {
     const fetchCategory = async () => {
       if (product.id) {
         try {
-          const fetchedCategory = await handleGetCategoryByCategoryId(
-            product?.id,
-          )
-          setCategory(fetchedCategory)
+          const fetchedCategory = await handleGetCategoryByCategoryId(product?.id);
+          setCategory(fetchedCategory);
         } catch (error) {
-          console.error('Error fetching tables:', error)
+          console.error('Error fetching tables:', error);
         }
       }
-    }
-    fetchCategory()
-  }, [])
-
+    };
+    fetchCategory();
+  }, [product.id]);
 
 
   return (
@@ -53,10 +52,9 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
             <Image
               width={70}
               height={70}
-              src={`/uploads/products/${category?.name.replace(/\s+/g, '')}/${product.image}`}
+              src={`/uploads/products/${product.image}`}
               alt={product.name}
-              className="h-[70px] w-[70px] object-fill"
-
+              className="h-[70px] w-[70px] object-contain"
               priority
             />
           )}
@@ -65,8 +63,7 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
           <div className="text-base font-semibold">{product.name}</div>
           <div className="flex gap-[5px] text-[12px] font-semibold">
             {product.price.toFixed(2)}€
-            {product.priceWithoutDiscount &&
-              product.priceWithoutDiscount !== product.price ? (
+            {product.priceWithoutDiscount && product.priceWithoutDiscount !== product.price ? (
               <span
                 className="text-[10px] font-semibold text-primary"
                 style={{ textDecoration: 'line-through' }}
@@ -78,9 +75,8 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
         </div>
       </div>
       <div className="flex w-full flex-row justify-between">
-        <div className="flex items-center justify-center gap-[14px] text-[#A9A9A9]">
-          <Notepad size={20} /> Add Nota
-        </div>
+
+        <NotePopup currentNote={note} onConfirm={handleConfirmNote} />
         <div className="h-full border border-l-2 border-[#ECEDED]"></div>
         <div className="flex items-center justify-center gap-[14px] text-[#A9A9A9]">
           <PencilSimpleLine size={20} /> Editar Pedido
@@ -95,12 +91,12 @@ export function OrderItem({ product, tableNumber }: OrderItemProps) {
           quantity={product.quantity}
         />
         <div
-          onClick={() => handleRemoveProductClick()}
+          onClick={handleRemoveProductClick}
           className="flex h-[35px] w-[35px] items-center justify-center rounded-full bg-white text-primary shadow hover:bg-primary hover:text-white"
         >
-          <Trash size={16} className="" />
+          <Trash size={16} />
         </div>
       </div>
     </div>
-  )
+  );
 }
