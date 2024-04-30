@@ -42,8 +42,8 @@ export function OrderList() {
           <div style={{ maxHeight: `calc(100vh - 530px)` }} className="overflow-y-scroll">
             {filteredOrders.map(([tableNumber, products], index) => (
               products.products.map((product, productIndex) => (
-                <div key={product.id}>
-                  <OrderItem tableNumber={tableNumber} product={product} />
+                <div key={product.orderId}>
+                  <OrderItem tableNumber={tableNumber} product={product} orderId={product.orderId || ''} />
                   {index !== filteredOrders.length - 1 || productIndex !== products.products.length - 1 ? (
                     <hr className="my-4 border border-gray-200" />
                   ) : null}

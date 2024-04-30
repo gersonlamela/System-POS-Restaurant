@@ -4,35 +4,34 @@ import { prisma } from '@/lib/prisma'
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   try {
-    const categoryId = searchParams.get('id')
+    const productId = searchParams.get('id')
+
+    if (!productId) {
+      throw new Error('Product ID is required')
+    }
 
     // Fetch products by categoryId
-    const products = await prisma.product.findMany({
+    const ingredients = await prisma.productIngredient.findMany({
       where: {
-        productCategoryId: categoryId,
+        productId,
       },
       include: {
-        ProductIngredient: {
-          include: {
-            ingredient: true,
-          },
-        },
-        ProductCategory: true,
+        ingredient: true,
       },
     })
 
     // Check if any products were found
-    if (products.length === 0) {
+    if (ingredients.length === 0) {
       const allProducts = await prisma.product.findMany()
       return NextResponse.json({
         products: allProducts, // Sending all products if no category is specified
-        message: 'Não foram encontrados produtos para esta categoria',
+        message: 'Não foram encontrados ingredientes para este produto',
       })
     }
 
     return NextResponse.json({
-      products,
-      message: 'Produtos encontrados com sucesso',
+      ingredients,
+      message: 'Ingredientes encontrados com sucesso',
     })
   } catch (error: unknown) {
     console.error('Error fetching products:', error)

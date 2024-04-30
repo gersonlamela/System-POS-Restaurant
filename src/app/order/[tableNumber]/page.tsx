@@ -14,9 +14,10 @@ import {
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { SideBar } from '@/components/pos/SideBar'
+import { ProductWithIngredients } from '@/types/Product'
 
 export default function OrderPage() {
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<ProductWithIngredients[]>([])
   const params = useParams<{ tableNumber: string }>()
 
   const tableNumber = params.tableNumber
@@ -49,6 +50,7 @@ export default function OrderPage() {
 
     fetchProducts()
   }, [])
+
   return (
     <div className="flex max-h-screen w-full flex-row gap-[15px]">
       <SideBar categories={categories} />
@@ -62,7 +64,7 @@ export default function OrderPage() {
         <div className="flex  flex-1 flex-col  justify-between gap-[15px] ">
           <div className="flex w-full flex-1 flex-row justify-between gap-[15px]">
             <div className="w-full overflow-scroll">
-              <ProductList Products={products} tableNumber={tableNumber} />
+              <ProductList product={products} tableNumber={tableNumber} />
             </div>
             <div className="flex w-[335px] flex-1">
               <OrderList />

@@ -5,18 +5,28 @@
 import { useLocalStorage } from '@/functions/useLocalStorage'
 import { useSession } from 'next-auth/react'
 import { createContext, ReactNode, useContext } from 'react'
+import cuid from 'cuid'; //
+
+export interface OrderIngredient {
+  id: string;
+  name: string;
+  quantity: number;
+}
 
 export interface OrderProduct {
+  orderId?: string
   id: string;
   name: string;
   price: number;
   quantity: number;
   priceWithoutDiscount: number;
   image: string;
-  note: string; // Adiciona a propriedade para armazenar a nota do produto
+  note: string;
+  ingredients: OrderIngredient[]; // Adicione os ingredientes do produto aqui
 }
 
 export interface OrderData {
+
   products: OrderProduct[]
   createdAt: string // Storing the creation time
   userName: string
@@ -26,9 +36,9 @@ export interface OrderData {
 interface OrderContextData {
   orders: Record<string, OrderData>
   addProductToOrder: (product: OrderProduct, tableNumber: string) => void
-  decreaseProductQuantity: (productId: string, tableNumber: string) => void
-  increaseProductQuantity: (productId: string, tableNumber: string) => void
-  removeProductFromOrder: (productId: string, tableNumber: string) => void
+  decreaseProductQuantity: (orderId: string, productId: string, tableNumber: string) => void
+  increaseProductQuantity: (orderId: string, productId: string, tableNumber: string) => void
+  removeProductFromOrder: (orderId: string, productId: string, tableNumber: string) => void
   clearOrdersForTable: (tableNumber: string) => void
   createEmptyOrderForTable: (tableNumber: string) => void
   orderTotalPrice: (tableNumber: string) => number
@@ -39,6 +49,7 @@ interface OrderContextData {
   totalDiscount: (tableNumber: string) => number
   totalTAX: (tableNumber: string) => number
   updateProductNote: (productId: string, tableNumber: string, newNote: string) => void
+  updateIngredientQuantity: (orderId: string, productId: string, ingredientId: string, newQuantity: number, tableNumber: string) => void
 }
 
 const OrderContext = createContext<OrderContextData>({
@@ -50,6 +61,7 @@ const OrderContext = createContext<OrderContextData>({
   clearOrdersForTable: () => undefined,
   createEmptyOrderForTable: () => undefined,
   updateProductNote: () => undefined,
+  updateIngredientQuantity: () => undefined,
   orderTotalPrice: () => 0,
   orderBasePrice: () => 0,
   orderTotalDiscount: () => 0,
@@ -98,6 +110,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     })
   }
 
+
   const updateProductNote = (productId: string, tableNumber: string, newNote: string) => {
     updateOrder(tableNumber, (order) => {
       const updatedProducts = order.products.map((product) => {
@@ -109,78 +122,109 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       return { ...order, products: updatedProducts };
     });
   };
-
   const addProductToOrder = (product: OrderProduct, tableNumber: string) => {
-    const updater = (order: OrderData) => {
-      let updatedOrder;
-      const existingProductIndex = order.products.findIndex((p) => p.id === product.id);
+    const updater = (prevOrders: Record<string, OrderData>): Record<string, OrderData> => {
+      let updatedOrders: Record<string, OrderData> = { ...prevOrders };
 
-      if (existingProductIndex !== -1) {
-        // Se o produto já existe na ordem, apenas aumente sua quantidade
-        order.products[existingProductIndex].quantity++;
-        updatedOrder = order;
+      // Verifique se já existe um pedido para esta mesa
+      if (tableNumber in prevOrders) {
+        // Se já houver um pedido para esta mesa, adicione o produto a esse pedido
+        const existingOrder = prevOrders[tableNumber];
+        const updatedProducts = [...existingOrder.products, { ...product, orderId: cuid() }]; // Adicione orderId ao produto
+
+        // Recalcular o preço total do pedido
+        const totalPrice = updatedProducts.reduce(
+          (total, product) => total + product.price * product.quantity,
+          0
+        );
+        const formattedTotalPrice = totalPrice.toFixed(2);
+
+        updatedOrders[tableNumber] = {
+          ...existingOrder,
+          products: updatedProducts,
+          totalPrice: formattedTotalPrice,
+        };
       } else {
-        // Se o produto ainda não existe na ordem, adicione-o e atualize o total price
-        const newProduct = { ...product, quantity: 1 };
-        updatedOrder = {
-          ...order,
-          products: [...order.products, newProduct],
+        // Se não houver um pedido para esta mesa, crie um novo pedido
+        const newOrder: OrderData = {
+          products: [{ ...product }], // Adicione orderId ao produto
+          createdAt: new Date().toISOString(),
+          userName: session?.user?.name || '',
+          totalPrice: product.price.toFixed(2),
+        };
+        updatedOrders = {
+          ...prevOrders,
+          [tableNumber]: newOrder,
         };
       }
 
-      // Atualize o total price da ordem
-      const totalPrice = updatedOrder.products.reduce(
-        (total, product) => total + product.price * product.quantity,
-        0
-      );
-      const formattedTotalPrice = totalPrice.toFixed(2);
-      updatedOrder = { ...updatedOrder, totalPrice: formattedTotalPrice };
-
-      return updatedOrder;
+      return updatedOrders;
     };
 
-    // Atualize a mesa apenas se ela já existir
-    if (orders[tableNumber]) {
-      const updatedOrder = updater(orders[tableNumber]);
-      updateOrder(tableNumber, () => updatedOrder);
-    }
+    setOrders(updater);
   };
 
 
 
 
 
-  const decreaseProductQuantity = (productId: string, tableNumber: string) => {
+  const decreaseProductQuantity = (orderId: string, productId: string, tableNumber: string) => {
     const updater = (order: OrderData) => {
-      const product = order.products.find((p) => p.id === productId)
-      if (product && product.quantity > 1) {
-        product.quantity--
-      } else {
-        order.products = order.products.filter((p) => p.id !== productId)
+      if (!order || !order.products) {
+        console.error(`Pedido com orderId ${orderId} não possui produtos.`);
+        return order;
       }
-      return { ...order }
-    }
-    updateOrder(tableNumber, updater)
-  }
 
-  const increaseProductQuantity = (productId: string, tableNumber: string) => {
-    const updater = (order: OrderData) => {
-      const product = order.products.find((p) => p.id === productId)
-      if (product) {
-        product.quantity++
+      const productIndex = order.products.findIndex((p) => p.id === productId && p.orderId === orderId);
+      if (productIndex !== -1) {
+        const product = order.products[productIndex];
+        if (product.quantity > 1) {
+          product.quantity--;
+        } else {
+          // Remove o produto do pedido se a quantidade for 1
+          order.products.splice(productIndex, 1);
+        }
       }
-      return { ...order }
-    }
-    updateOrder(tableNumber, updater)
-  }
+      return { ...order };
+    };
+    updateOrder(tableNumber, updater);
+  };
 
-  const removeProductFromOrder = (productId: string, tableNumber: string) => {
+
+  const increaseProductQuantity = (orderId: string, productId: string, tableNumber: string) => {
     const updater = (order: OrderData) => {
-      order.products = order.products.filter((p) => p.id !== productId)
-      return { ...order }
-    }
-    updateOrder(tableNumber, updater)
-  }
+      if (!order || !order.products) {
+        console.error(`Pedido com orderId ${orderId} não possui produtos.`);
+        return order;
+      }
+
+      const productIndex = order.products.findIndex((p) => p.id === productId && p.orderId === orderId);
+      if (productIndex !== -1) {
+        order.products[productIndex].quantity++;
+      }
+      return { ...order };
+    };
+    updateOrder(tableNumber, updater);
+  };
+
+
+
+  const removeProductFromOrder = (orderId: string, productId: string, tableNumber: string) => {
+    const updater = (order: OrderData) => {
+      if (!order || !order.products) {
+        console.error(`Pedido com orderId ${orderId} não possui produtos.`);
+        return order;
+      }
+
+      const productIndex = order.products.findIndex((p) => p.id === productId && p.orderId === orderId);
+      if (productIndex !== -1) {
+        order.products.splice(productIndex, 1);
+      }
+      return { ...order };
+    };
+    updateOrder(tableNumber, updater);
+  };
+
 
   const orderTotalPrice = (tableNumber: string) => {
     const order = orders[tableNumber];
@@ -225,6 +269,60 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     return parseFloat((subtotalValue * ivaPercentage).toFixed(2))
   }
 
+  const updateIngredientQuantity = (
+    orderId: string,
+    productId: string,
+    ingredientId: string,
+    newQuantity: number,
+    tableNumber: string
+  ) => {
+
+    updateOrder(tableNumber, (order) => {
+      // Verifique se o pedido existe e possui a propriedade 'products'
+      if (!order || !order.products) {
+        console.error(`Pedido com orderId ${orderId} não encontrado ou não possui produtos.`);
+        return order;
+      }
+
+      // Verifique se o pedido possui o produto com productId e orderId especificados
+      const productToUpdate = order.products.find(product => product.id === productId && product.orderId === orderId);
+      if (!productToUpdate) {
+        console.error(`Produto com productId ${productId} e orderId ${orderId} não encontrado no pedido.`);
+        return order;
+      }
+
+      // Clone o pedido para não modificar o original diretamente
+      const updatedOrder = { ...order };
+
+      // Clone o produto para não modificar o original diretamente
+      const updatedProduct = { ...productToUpdate };
+
+      // Localize o ingrediente correspondente pelo ingredientId
+      const updatedIngredients = updatedProduct.ingredients.map((ingredient) => {
+        if (ingredient.id === ingredientId) {
+          // Atualize a quantidade do ingrediente para newQuantity
+          return { ...ingredient, quantity: newQuantity };
+        }
+        return ingredient;
+      });
+
+      // Atualize o produto com os ingredientes atualizados
+      updatedProduct.ingredients = updatedIngredients;
+
+      // Atualize o pedido com o produto atualizado
+      const productIndex = updatedOrder.products.findIndex(product => product.id === productId && product.orderId === orderId);
+      updatedOrder.products[productIndex] = updatedProduct;
+
+      // Retorne o pedido com os produtos atualizados
+      return updatedOrder;
+    });
+  };
+
+
+
+
+
+
   const contextValue: OrderContextData = {
     orders,
     addProductToOrder,
@@ -241,6 +339,8 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     subtotal,
     totalDiscount,
     totalTAX,
+    updateIngredientQuantity,
+
   }
 
   return (

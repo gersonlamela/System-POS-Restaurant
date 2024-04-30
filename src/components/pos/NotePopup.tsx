@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import KeyboardWrapper from './KeyboardWrapper'
 import { Notepad } from '@phosphor-icons/react'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
-import { Button } from '../ui/button'
 
 interface NotePopupProps {
   currentNote: string // Adiciona a propriedade currentNote
@@ -37,9 +36,9 @@ export const NotePopup: React.FC<NotePopupProps> = ({
         asChild
         className="flex cursor-pointer items-center justify-center gap-[14px] text-[#A9A9A9]"
       >
-        <Button variant="ghost">
+        <button>
           <Notepad size={20} /> Add Nota
-        </Button>
+        </button>
       </DialogTrigger>
       <DialogContent className="flex flex-col gap-[15px] rounded-md bg-white p-4 shadow-md">
         <KeyboardWrapper

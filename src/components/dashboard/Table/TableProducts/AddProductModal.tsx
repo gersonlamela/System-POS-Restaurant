@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import {
   Dialog,
@@ -28,6 +29,7 @@ import { Ingredient, ProductCategory } from '@prisma/client'
 import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
 
 import { handleGetProductsCategory } from '@/functions/Product/product'
+import { NumberIncrease } from '../../NumberIncrease'
 
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
 
@@ -62,6 +64,11 @@ export default function AddProductModal() {
     })
   }, [])
 
+
+  useEffect(() => {
+    form.setValue('ingredients', selectedIngredients);
+  }, [selectedIngredients]);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -83,43 +90,46 @@ export default function AddProductModal() {
   }, [])
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    console.log(values)
+    console.log(selectedIngredients)
+    console.log(values);
+
     if (!file) return
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const formData = new FormData();
+      formData.append('file', file);
 
       // Adicione outros campos ao FormData conforme necessário
-      formData.append('name', values.name)
-      formData.append('price', values.price.toString())
-      formData.append('tax', values.tax)
+      formData.append('name', values.name);
+      formData.append('price', values.price.toString());
+      formData.append('tax', values.tax);
       if (values.discount) {
-        formData.append('discount', values.discount.toString())
+        formData.append('discount', values.discount.toString());
       }
       if (values.stock) {
-        formData.append('stock', values.stock.toString())
+        formData.append('stock', values.stock.toString());
       }
-      formData.append('category', values.category)
+      formData.append('category', values.category);
 
-      // Adicione os ingredientes selecionados ao FormData
-      formData.append('ingredients', JSON.stringify(selectedIngredients))
+      // Adicione apenas os ingredientes com quantidade maior que 0 ao FormData
+      const selectedIngredientsWithQuantity = selectedIngredients.filter((selected) => selected.quantity > 0);
+      formData.append('ingredients', JSON.stringify(selectedIngredientsWithQuantity));
 
       const response = await fetch('/api/product/createProduct', {
         method: 'POST',
         body: formData,
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
       if (response.ok) {
-        location.href = '/dashboard/products'
+        location.href = '/dashboard/products';
       }
 
-      toast.error(data.message)
+      toast.error(data.message);
     } catch (error) {
-      console.log('There was an error', error)
+      console.log('There was an error', error);
     }
-  }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files
@@ -136,6 +146,28 @@ export default function AddProductModal() {
       reader.readAsDataURL(selectedFile)
     }
   }
+
+  const updateIngredientQuantity = (id: string, quantity: number) => {
+    // Verifica se o ingrediente já está na lista de ingredientes selecionados
+    const ingredientIndex = selectedIngredients.findIndex(
+      (ingredient) => ingredient.id === id
+    );
+
+    // Se o ingrediente já estiver na lista, atualiza sua quantidade
+    if (ingredientIndex !== -1) {
+      const updatedIngredients = [...selectedIngredients];
+      updatedIngredients[ingredientIndex] = {
+        ...updatedIngredients[ingredientIndex],
+        quantity,
+      };
+      setSelectedIngredients(updatedIngredients);
+    } else {
+      // Se o ingrediente não estiver na lista, adiciona-o com a quantidade informada
+      setSelectedIngredients([...selectedIngredients, { id, quantity }]);
+    }
+  };
+
+
 
   const { reset } = form
   return (
@@ -280,9 +312,9 @@ export default function AddProductModal() {
                     <FormField
                       control={form.control}
                       name="ingredients"
-                      render={({ field }) => (
-                        <div className="relative ">
-                          <label className="block font-medium text-black">
+                      render={() => (
+                        <div className="relative">
+                          <label className="block font-medium text-black my-1">
                             Ingredientes
                           </label>
                           <Input
@@ -291,88 +323,41 @@ export default function AddProductModal() {
                             className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
                             value={searchValue}
                             onChange={(e) => {
-                              setSearchValue(e.target.value.toLowerCase())
+                              setSearchValue(e.target.value.toLowerCase());
                             }}
                           />
 
-                          <div className="absolute left-0 top-full z-10 mt-1 grid max-h-[250px] w-full grid-cols-2 overflow-auto rounded-md bg-gray-100">
+                          <div className="absolute left-0 top-full z-10 my-1 grid max-h-[250px] w-full grid-cols-2 overflow-auto rounded-md bg-gray-100">
                             {ingredients ? (
                               ingredients
                                 .filter((ingredient) =>
-                                  ingredient.name
-                                    .toLowerCase()
-                                    .includes(searchValue),
+                                  ingredient.name.toLowerCase().includes(searchValue)
                                 )
                                 .map((ingredient) => (
-                                  <label
+                                  <div
                                     key={ingredient.id}
-                                    className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
+                                    className="flex flex-wrap gap-3 items-center p-2 hover:bg-gray-100"
                                   >
-                                    <Input
-                                      className="mr-2 h-4 w-4"
-                                      type="checkbox"
-                                      name={ingredient.name}
-                                      value={ingredient.id}
-                                      checked={selectedIngredients.some(
-                                        (selected) =>
-                                          selected.id === ingredient.id,
-                                      )}
-                                      onChange={(e) => {
-                                        const isChecked = e.target.checked
-                                        const ingredientId = ingredient.id
-                                        const ingredientQuantity = parseInt(
-                                          prompt('Enter the quantity') || '0',
-                                        )
-                                        const updatedIngredients = isChecked
-                                          ? [
-                                              ...selectedIngredients,
-                                              {
-                                                id: ingredientId,
-                                                quantity: ingredientQuantity,
-                                              },
-                                            ]
-                                          : selectedIngredients.filter(
-                                              (selected) =>
-                                                selected.id !== ingredientId,
-                                            )
-                                        setSelectedIngredients(
-                                          updatedIngredients,
-                                        )
-                                        field.onChange(updatedIngredients)
-                                      }}
+                                    <img
+                                      src={`/uploads/ingredients/${ingredient.image}`}
+                                      alt={ingredient.name}
+                                      className="h-8 w-8 object-contain"
                                     />
-                                    <span className="text-sm">
-                                      {ingredient.name}
-                                    </span>
-                                    {/* Campo de entrada para quantidade */}
-                                    <Input
-                                      type="number"
-                                      min="0"
-                                      value={
-                                        selectedIngredients.find(
-                                          (selected) =>
-                                            selected.id === ingredient.id,
-                                        )?.quantity
-                                      }
-                                      onChange={(e) => {
-                                        const updatedQuantity =
-                                          parseInt(e.target.value) || 0
-                                        const updatedIngredients =
-                                          selectedIngredients.map((selected) =>
-                                            selected.id === ingredient.id
-                                              ? {
-                                                  ...selected,
-                                                  quantity: updatedQuantity,
-                                                }
-                                              : selected,
-                                          )
-                                        setSelectedIngredients(
-                                          updatedIngredients,
-                                        )
-                                        field.onChange(updatedIngredients)
-                                      }}
-                                    />
-                                  </label>
+
+                                    <span className="text-sm">{ingredient.name}</span>
+                                    <div className="w-full flex flex-1">
+                                      <NumberIncrease
+                                        value={
+                                          selectedIngredients.find(
+                                            (selected) => selected.id === ingredient.id
+                                          )?.quantity || 0
+                                        }
+                                        onChange={(quantity) =>
+                                          updateIngredientQuantity(ingredient.id, quantity)
+                                        }
+                                      />
+                                    </div>
+                                  </div>
                                 ))
                             ) : (
                               <div>Sem Ingredientes</div>
@@ -381,6 +366,7 @@ export default function AddProductModal() {
                         </div>
                       )}
                     />
+
                     <FormField
                       name="stock"
                       control={form.control}
@@ -393,6 +379,7 @@ export default function AddProductModal() {
                             <Input
                               className="bg-zinc-50 text-black"
                               type="number"
+                              min={1}
                               {...field}
                               onChange={(e) =>
                                 field.onChange(parseInt(e.target.value))

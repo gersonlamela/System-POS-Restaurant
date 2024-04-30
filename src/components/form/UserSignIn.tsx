@@ -45,12 +45,12 @@ export default function UserSignIn() {
           handleCloseModal={handleCloseModal}
         />
       ) : (
-        <div className="relative flex  h-[790px]  w-[750px]  flex-col items-center justify-between gap-10 rounded-[20px]  bg-white pb-12 pl-[100px] pr-[35px] shadow-2xl  lg:w-[1100px]">
+        <div className="relative flex  h-[790px]  w-[750px]  flex-col items-center justify-between gap-10 rounded-[20px]  bg-white pb-12  pr-[35px] shadow-2xl  lg:w-[1100px]">
           <div className="mb-[46px] mt-[57px] flex w-full items-center justify-center text-[48px] font-bold text-third">
             POSLamela
           </div>
-          <div className="flex h-full w-full flex-row items-center justify-center gap-[35px]">
-            <div className="flex h-full w-full flex-1 rounded-[30px] bg-third p-[30px]">
+          <div className="flex h-full w-full flex-row items-center justify-center gap-[35px] pl-[100px]">
+            <div className="flex h-full w-full flex-1 rounded-[30px]  bg-third p-[30px]">
               {users.length > 0 ? (
                 <div className="grid w-full grid-cols-1  justify-items-center gap-[15px] lg:grid-cols-3 lg:justify-items-start">
                   {users.map((user: User, index: number) => (

@@ -6,20 +6,21 @@ import {
 } from '@/functions/Product/product'
 import { useOrder } from '@/functions/OrderProvider'
 
-import { Product, ProductCategory } from '@prisma/client'
+import { ProductCategory } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { ProductWithIngredients } from '@/types/Product'
 
 interface ProductListProps {
-  Products: Product[]
+  product: ProductWithIngredients[]
   tableNumber: string // Adicione o número da mesa como uma propriedade
 }
 
-export function ProductList({ Products, tableNumber }: ProductListProps) {
+export function ProductList({ product, tableNumber }: ProductListProps) {
   return (
     <div className="flex max-h-[70vh] flex-wrap content-start items-stretch justify-center gap-[15px] overflow-scroll lg:justify-start ">
-      {Products ? (
-        Products.map((product, index) => (
+      {product ? (
+        product.map((product, index) => (
           <ProductItem
             key={index}
             product={product}
@@ -34,7 +35,7 @@ export function ProductList({ Products, tableNumber }: ProductListProps) {
 }
 
 interface ProductItemProps {
-  product: Product
+  product: ProductWithIngredients // Alterado para acessar diretamente a propriedade 'product'
   tableNumber: string
 }
 
@@ -63,7 +64,14 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
       quantity: 1,
       note: '',
       image,
+      ingredients: product.ProductIngredient.map((ingredient) => ({
+        id: ingredient.ingredient.id,
+        name: ingredient.ingredient.name,
+        quantity: ingredient.quantity,
+      })),
     }
+
+    console.log(newProduct) // Verifique se os dados do novo produto estão corretos
 
     addProductToOrder(newProduct, tableNumber)
   }
@@ -75,7 +83,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
       if (product.id) {
         try {
           const fetchedCategory = await handleGetCategoryByCategoryId(
-            product?.id,
+            product.id,
           )
           setCategory(fetchedCategory)
         } catch (error) {

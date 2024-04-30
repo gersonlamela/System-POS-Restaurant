@@ -7,12 +7,22 @@ export function NumberIncrease({
   productId,
   quantity,
   tableNumber,
+  orderId,
 }: {
-  decreaseProductQuantity: (productId: string, tableNumber: string) => void
-  increaseProductQuantity: (productId: string, tableNumber: string) => void
+  decreaseProductQuantity: (
+    orderId: string,
+    productId: string,
+    tableNumber: string,
+  ) => void
+  increaseProductQuantity: (
+    orderId: string,
+    productId: string,
+    tableNumber: string,
+  ) => void
   productId: string
   quantity: number
   tableNumber: string
+  orderId?: string
 }) {
   const [value, setValue] = useState(quantity)
 
@@ -21,17 +31,21 @@ export function NumberIncrease({
     setValue(quantity)
   }, [quantity])
 
+  if (!orderId) {
+    return null
+  }
+
   const decrement = () => {
     if (value > 1) {
       // Verifica se o valor é maior que 1 antes de decrementar
       setValue(value - 1)
-      decreaseProductQuantity(productId, tableNumber)
+      decreaseProductQuantity(orderId, productId, tableNumber)
     }
   }
 
   const increment = () => {
     setValue(value + 1)
-    increaseProductQuantity(productId, tableNumber)
+    increaseProductQuantity(orderId, productId, tableNumber)
   }
 
   return (

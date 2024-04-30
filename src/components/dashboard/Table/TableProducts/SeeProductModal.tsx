@@ -18,11 +18,13 @@ import { Binoculars } from '@phosphor-icons/react'
 import { parseISO, format } from 'date-fns'
 import { getTax } from '@/functions/Product/product'
 import IngredientsList from '@/components/IngredientsList'
-import { ProductProps } from '@/types/Product'
-import { Edit } from 'lucide-react'
-import EditProductModal from './EditProduct'
+import { ProductWithIngredients } from '@/types/Product'
 
-export default function SeeProductModal({ Product }: ProductProps) {
+interface SeeProductModalProps {
+  Product: ProductWithIngredients
+}
+
+export default function SeeProductModal({ Product }: SeeProductModalProps) {
   if (!Product) return null
 
   const date = parseISO(Product.createdAt.toString())
@@ -44,7 +46,7 @@ export default function SeeProductModal({ Product }: ProductProps) {
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
                   <img
-                    src={`/uploads/products/${Product.ProductCategory.name.replace(/\s+/g, '')}/${Product.image}`}
+                    src={`/uploads/products/${Product.image}`}
                     alt={Product.name}
                     width={200}
                     height={200}
@@ -108,7 +110,7 @@ export default function SeeProductModal({ Product }: ProductProps) {
                   </div>
                 </div>
               </div>
-              <IngredientsList Product={Product} />
+              <IngredientsList product={Product} />
 
               <div className="flex w-full justify-end gap-2">
                 <DialogClose asChild>

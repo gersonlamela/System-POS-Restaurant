@@ -1,4 +1,3 @@
-import { ForkKnife, Notebook } from '@phosphor-icons/react'
 import { Product, ProductCategory } from '@prisma/client'
 
 export function getTax(role: Product['tax']) {

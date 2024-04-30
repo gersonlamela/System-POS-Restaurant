@@ -24,16 +24,12 @@ export default function Order() {
       try {
         const fetchedTables = await handleGetTables()
         setTables(fetchedTables)
-        // Assuming you have a function to fetch orders
-        // Replace `fetchOrders` with your actual function
-        const fetchedOrders = await fetchOrders()
-        setOrders(fetchedOrders)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
     fetchTables()
-  }, [])
+  }, [tables])
   const skeletonArray = Array.from({ length: 6 })
 
   return (
@@ -67,8 +63,8 @@ export default function Order() {
             </div>
           </div>
 
-          <div className=" flex w-full flex-1 items-center  gap-[15px]">
-            <div className="shadow-button20 flex h-[114px] w-[202px] items-center justify-center rounded-[10px] bg-LightGray">
+          <div className=" flex flex-1 items-center  gap-[15px]">
+            <div className="flex h-[114px] w-[202px] items-center justify-center rounded-[10px] bg-LightGray shadow-button20">
               <button
                 onClick={() => signOut()}
                 className="flex h-[84px] w-[80px] flex-col items-center justify-center gap-[8px] rounded-[10px] bg-secondary font-semibold text-white"

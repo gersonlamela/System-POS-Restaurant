@@ -7,8 +7,6 @@ import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
 import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
 
-import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
-
 import EditIngredientModal from './EditIngredientModal'
 
 import AddIngredientModal from './AddIngreditentModal'
@@ -25,7 +23,7 @@ export default function TableIngredients({
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
-  const [ingredients, setIngredients] = useState(Ingredients)
+  const [ingredients] = useState(Ingredients)
 
   const filteredIngredients = ingredients.filter(
     (Ingredient) =>
@@ -55,31 +53,6 @@ export default function TableIngredients({
     indexOfFirstIngredient,
     indexOfLastIngredient,
   )
-
-  async function handleDelete(id: string) {
-    try {
-      console.log('delete')
-
-      const response = await fetch(`/api/product/deleteIngredient?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      // Verifica se a resposta é bem-sucedida
-      if (response.ok) {
-        const newIngredients = await handleGetIngredients()
-        setIngredients(newIngredients)
-        console.log('Ingrediente eliminado com sucesso')
-      } else {
-        const data = await response.json()
-        console.error('Erro ao deletar ingrediente:', data.message)
-      }
-    } catch (error: any) {
-      console.error('Erro ao deletar ingrediente:', error.message)
-    }
-  }
 
   return (
     <div className="w-full">

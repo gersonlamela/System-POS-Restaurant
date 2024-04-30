@@ -1,20 +1,24 @@
 import React from 'react'
 
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel'
-import { ProductProps } from '@/types/Product'
+import { ProductWithIngredients } from '@/types/Product'
 
-export default function IngredientsList({ Product }: ProductProps) {
+interface IngredientsListProps {
+  product: ProductWithIngredients
+}
+
+export default function IngredientsList({ product }: IngredientsListProps) {
   return (
     <Carousel orientation="horizontal" className="w-full rounded-lg  ">
       <CarouselContent>
-        {Product ? (
-          Product.ProductIngredient.map((productIngredients) => (
+        {product ? (
+          product.ProductIngredient.map((productIngredients) => (
             <CarouselItem
               key={productIngredients.ingredient.id}
               className=" flex max-w-[100px] basis-1/2 flex-col  items-center justify-center gap-2 "
             >
               <img
-                src={`/uploads/products/${productIngredients.ingredient.name.replace(/\s+/g, '')}/${productIngredients.ingredient.image}`}
+                src={`/uploads/ingredients/${productIngredients.ingredient.image}`}
                 alt={productIngredients.ingredient.name}
                 className="h-[40px] object-contain "
               />

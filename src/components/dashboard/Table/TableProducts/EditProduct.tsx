@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import {
   Dialog,
@@ -24,16 +25,12 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
-import {
-  Ingredient,
-  Product as PrismaProduct,
-  ProductCategory,
-} from '@prisma/client'
+import { Ingredient, ProductCategory } from '@prisma/client'
 import { handleGetIngredients } from '@/functions/Ingredients/ingredients'
-import { ProductProps } from '@/types/Product'
+import { ProductWithIngredients } from '@/types/Product'
 import { handleGetProductsCategory } from '@/functions/Product/product'
+import { NumberIncrease } from '../../NumberIncrease'
 
-const ProductCategoryEnum = z.enum(['DRINK', 'FOOD', 'DESSERT'])
 const TaxEnum = z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD'])
 
 const FormSchema = z.object({
@@ -47,7 +44,11 @@ const FormSchema = z.object({
   stock: z.number(),
 })
 
-export default function EditProductModal({ Product }: ProductProps) {
+interface EditProductModalProps {
+  Product: ProductWithIngredients
+}
+
+export default function EditProductModal({ Product }: EditProductModalProps) {
   const [file, setFile] = useState<File>()
   const [category, setCategory] = useState<ProductCategory[]>([])
 
@@ -59,9 +60,9 @@ export default function EditProductModal({ Product }: ProductProps) {
   >(() => {
     return Product.ProductIngredient
       ? Product.ProductIngredient.map((ingredient) => ({
-          id: ingredient.ingredient.id,
-          quantity: ingredient.quantity,
-        }))
+        id: ingredient.ingredient.id,
+        quantity: ingredient.quantity,
+      }))
       : []
   })
 
@@ -157,6 +158,26 @@ export default function EditProductModal({ Product }: ProductProps) {
   const handleFileDelete = () => {
     setImagePreview('') // Clear the image preview
     setFile(undefined) // Reset the file state
+  }
+
+  const updateIngredientQuantity = (id: string, quantity: number) => {
+    // Verifica se o ingrediente já está na lista de ingredientes selecionados
+    const ingredientIndex = selectedIngredients.findIndex(
+      (ingredient) => ingredient.id === id,
+    )
+
+    // Se o ingrediente já estiver na lista, atualiza sua quantidade
+    if (ingredientIndex !== -1) {
+      const updatedIngredients = [...selectedIngredients]
+      updatedIngredients[ingredientIndex] = {
+        ...updatedIngredients[ingredientIndex],
+        quantity,
+      }
+      setSelectedIngredients(updatedIngredients)
+    } else {
+      // Se o ingrediente não estiver na lista, adiciona-o com a quantidade informada
+      setSelectedIngredients([...selectedIngredients, { id, quantity }])
+    }
   }
 
   const { reset } = form
@@ -322,9 +343,9 @@ export default function EditProductModal({ Product }: ProductProps) {
                     <FormField
                       control={form.control}
                       name="ingredients"
-                      render={({ field }) => (
-                        <div className="relative ">
-                          <label className="block font-medium text-black">
+                      render={() => (
+                        <div className="relative">
+                          <label className="my-1 block font-medium text-black">
                             Ingredientes
                           </label>
                           <Input
@@ -337,75 +358,54 @@ export default function EditProductModal({ Product }: ProductProps) {
                             }}
                           />
 
-                          <div className="absolute left-0 top-full z-10 mt-1 grid max-h-[250px] w-full grid-cols-2  overflow-auto rounded-md bg-gray-100 ">
-                            {ingredients
-                              .filter((ingredient) =>
-                                ingredient.name
-                                  .toLowerCase()
-                                  .includes(searchValue),
-                              )
-                              .map((ingredient) => (
-                                <>
-                                  <label
+                          <div className="absolute left-0 top-full z-10 my-1 grid max-h-[250px] w-full grid-cols-2 overflow-auto rounded-md bg-gray-100">
+                            {ingredients ? (
+                              ingredients
+                                .filter((ingredient) =>
+                                  ingredient.name
+                                    .toLowerCase()
+                                    .includes(searchValue),
+                                )
+                                .map((ingredient) => (
+                                  <div
                                     key={ingredient.id}
-                                    className="flex cursor-pointer items-center p-2 hover:bg-gray-100"
+                                    className="flex flex-wrap items-center gap-3 p-2 hover:bg-gray-100"
                                   >
-                                    <Input
-                                      className="mr-2 h-4 w-4"
-                                      type="checkbox"
-                                      name={ingredient.name}
-                                      value={ingredient.id}
-                                      checked={selectedIngredients.some(
-                                        (item) => item.id === ingredient.id,
-                                      )}
-                                      onChange={(e) => {
-                                        const isChecked = e.target.checked
-                                        const ingredientId = ingredient.id
-
-                                        let updatedIngredients: {
-                                          id: string
-                                          quantity: number
-                                        }[]
-
-                                        if (isChecked) {
-                                          // Se o ingrediente estiver sendo selecionado, pergunte pela quantidade
-                                          const quantityString = prompt(
-                                            `Quantidade de ${ingredient.name}:`,
-                                          )
-                                          const quantity = quantityString
-                                            ? parseInt(quantityString)
-                                            : 1
-
-                                          updatedIngredients = [
-                                            ...selectedIngredients,
-                                            { id: ingredientId, quantity },
-                                          ]
-                                        } else {
-                                          // Se o ingrediente estiver sendo desselecionado, remova-o da lista
-                                          updatedIngredients =
-                                            selectedIngredients.filter(
-                                              (item) =>
-                                                item.id !== ingredientId,
-                                            )
-                                        }
-
-                                        setSelectedIngredients(
-                                          updatedIngredients,
-                                        )
-                                        field.onChange(updatedIngredients) // Atualiza o valor do campo de entrada controlado pelo FormField
-                                      }}
+                                    <img
+                                      src={`/uploads/ingredients/${ingredient.image}`}
+                                      alt={ingredient.name}
+                                      className="h-8 w-8 object-contain"
                                     />
 
                                     <span className="text-sm">
                                       {ingredient.name}
                                     </span>
-                                  </label>
-                                </>
-                              ))}
+                                    <div className="flex w-full flex-1">
+                                      <NumberIncrease
+                                        value={
+                                          selectedIngredients.find(
+                                            (selected) =>
+                                              selected.id === ingredient.id,
+                                          )?.quantity || 0
+                                        }
+                                        onChange={(quantity) =>
+                                          updateIngredientQuantity(
+                                            ingredient.id,
+                                            quantity,
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                ))
+                            ) : (
+                              <div>Sem Ingredientes</div>
+                            )}
                           </div>
                         </div>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="image"

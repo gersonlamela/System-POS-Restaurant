@@ -12,11 +12,12 @@ import {
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { OrderList } from '@/components/pos/OrderList'
+import { ProductWithIngredients } from '@/types/Product'
 
 export default function OrderCategory() {
   const params = useParams<{ tableNumber: string; categoryId: string }>()
 
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<ProductWithIngredients[]>([])
 
   const [categories, setCategories] = useState([])
 
@@ -66,7 +67,7 @@ export default function OrderCategory() {
           <div className="flex h-full w-full flex-row justify-between">
             <div className="h-full w-full overflow-scroll">
               <ProductList
-                Products={products}
+                product={products}
                 tableNumber={params.tableNumber}
               />
             </div>
