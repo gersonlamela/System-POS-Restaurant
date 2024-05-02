@@ -9,7 +9,7 @@ interface TableListProps {
 
 export function TableList({ Tables }: TableListProps) {
   return (
-    <div className="shadow-button10 grid-cols-auto-fill-194 grid h-full w-full  gap-[15px] rounded-[10px] bg-[#F7F7F8] px-[15px] pb-[50px] pt-[15px]">
+    <div className="grid h-full w-full grid-cols-auto-fill-194 gap-[15px]  rounded-[10px] bg-[#F7F7F8] px-[15px] pb-[50px] pt-[15px] shadow-button10">
       {Tables ? (
         Tables.map((table, index) => <TableItem key={index} table={table} />)
       ) : (
@@ -29,8 +29,6 @@ const TableItem = ({ table }: TableItemProps) => {
 
   // Verifica se há uma ordem para a mesa atual
   const orderForTable = orders[table.number.toString()]
-
-  console.log('order', orders[table.number.toString()])
 
   // Função para formatar o tempo decorrido desde a criação da ordem
   const formatElapsedTime = (createdAt: string) => {
@@ -119,11 +117,11 @@ export function TableInfo({ Tables, orders }: TableInfoProps) {
   const freeTables = totalTables - occupiedTables
 
   return (
-    <div className="shadow-button10 flex h-[29px] w-full  items-center justify-between rounded-[10px] bg-LightGray px-[15px]">
+    <div className="flex h-[29px] w-full items-center  justify-between rounded-[10px] bg-LightGray px-[15px] shadow-button10">
       <div className="flex flex-row items-center gap-[35px]">
         <div className="font-medium text-third">MESAS:</div>
         <div className="flex flex-row items-center justify-center gap-[10px] ">
-          <div className="bg-success h-[15px] w-[15px] gap-[10px] rounded-full" />
+          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-success" />
           <div className="text-[14px] font-medium text-third">Livre</div>
         </div>
 
@@ -134,7 +132,7 @@ export function TableInfo({ Tables, orders }: TableInfoProps) {
       </div>
       <div className=" flex flex-row gap-[35px]">
         <div className="flex flex-row items-center justify-center gap-[10px] ">
-          <div className="bg-success h-[15px] w-[15px] gap-[10px] rounded-full" />
+          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-success" />
           <div className="text-[14px] font-medium text-third">
             ({freeTables})
           </div>

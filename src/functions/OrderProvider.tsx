@@ -11,6 +11,7 @@ export interface OrderIngredient {
   id: string;
   name: string;
   quantity: number;
+  cookingPreference?: string;
 }
 
 export interface OrderProduct {
@@ -49,7 +50,7 @@ interface OrderContextData {
   totalDiscount: (tableNumber: string) => number
   totalTAX: (tableNumber: string) => number
   updateProductNote: (productId: string, tableNumber: string, newNote: string) => void
-  updateIngredientQuantity: (orderId: string, productId: string, ingredientId: string, newQuantity: number, tableNumber: string) => void
+  updateIngredientQuantity: (orderId: string, productId: string, ingredientId: string, newQuantity: number, tableNumber: string, cookingPreference?: string) => void
 }
 
 const OrderContext = createContext<OrderContextData>({
@@ -160,6 +161,18 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 
       return updatedOrders;
     };
+
+    // Verificar se o produto tem ingredientes de carne
+    const hasMeatIngredient = product.ingredients.some((ingredient) => ingredient.name === 'Carne');
+
+    // Se o produto tiver ingredientes de carne, inclua o cookingPreference
+    if (hasMeatIngredient) {
+      product.ingredients.forEach((ingredient) => {
+        if (ingredient.name === 'Carne') {
+          ingredient.cookingPreference = ''; // Defina um valor padrão ou deixe em branco inicialmente
+        }
+      });
+    }
 
     setOrders(updater);
   };
@@ -274,9 +287,9 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     productId: string,
     ingredientId: string,
     newQuantity: number,
-    tableNumber: string
+    tableNumber: string,
+    cookingPreference?: string // Adicione o parâmetro cookingPreference
   ) => {
-
     updateOrder(tableNumber, (order) => {
       // Verifique se o pedido existe e possui a propriedade 'products'
       if (!order || !order.products) {
@@ -301,7 +314,14 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       const updatedIngredients = updatedProduct.ingredients.map((ingredient) => {
         if (ingredient.id === ingredientId) {
           // Atualize a quantidade do ingrediente para newQuantity
-          return { ...ingredient, quantity: newQuantity };
+          const updatedIngredient = { ...ingredient, quantity: newQuantity };
+
+          // Verificar se o ingrediente é carne e, se for, incluir o cookingPreference
+          if (ingredient.name === 'Carne') {
+            updatedIngredient.cookingPreference = cookingPreference;
+          }
+
+          return updatedIngredient;
         }
         return ingredient;
       });
@@ -317,6 +337,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       return updatedOrder;
     });
   };
+
 
 
 

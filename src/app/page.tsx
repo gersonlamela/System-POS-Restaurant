@@ -12,7 +12,7 @@ import { useOrder } from '@/functions/OrderProvider'
 import { handleGetTables } from '@/functions/Table/table'
 import { SignOut } from '@phosphor-icons/react'
 import { signOut } from 'next-auth/react'
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Order() {
   const [tables, setTables] = useState([])
@@ -36,9 +36,7 @@ export default function Order() {
     <div className="flex w-full flex-row gap-[15px]">
       <div className="flex h-full flex-1 flex-col   gap-[15px]">
         <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px]">
-          <Suspense>
-            <Time />
-          </Suspense>
+          <Time />
           <UserAuth />
         </div>
 
@@ -66,7 +64,12 @@ export default function Order() {
           <div className=" flex flex-1 items-center  gap-[15px]">
             <div className="flex h-[114px] w-[202px] items-center justify-center rounded-[10px] bg-LightGray shadow-button20">
               <button
-                onClick={() => signOut()}
+                onClick={() =>
+                  signOut({
+                    redirect: true,
+                    callbackUrl: `${window.location.origin}/`,
+                  })
+                }
                 className="flex h-[84px] w-[80px] flex-col items-center justify-center gap-[8px] rounded-[10px] bg-secondary font-semibold text-white"
               >
                 <SignOut size={25} />

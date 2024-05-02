@@ -45,14 +45,12 @@ export async function handleGetIngredientsByProductId(
     }
 
     const responseBody = await result.text()
-    console.log('Response body:', responseBody)
 
     if (!responseBody.trim()) {
       throw new Error('Empty response body')
     }
 
     const data = JSON.parse(responseBody)
-    console.log('Parsed data:', data)
 
     if (!data.ingredients) {
       throw new Error('Response does not contain ingredients')

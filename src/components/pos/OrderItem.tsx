@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 'use client'
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Trash } from '@phosphor-icons/react';
 import { NumberIncrease } from './NumberIncrease';
 import { OrderProduct, useOrder } from '@/functions/OrderProvider';
@@ -26,10 +26,6 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
   const { decreaseProductQuantity, increaseProductQuantity, removeProductFromOrder, updateProductNote } = useOrder();
 
   const [ingredients, setIngredients] = useState<IngredientsProduct[]>([])
-
-
-
-
 
 
   const handleRemoveProductClick = () => {
@@ -58,15 +54,13 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
       try {
         const ingredients = await handleGetIngredientsByProductId(product.id)
         setIngredients(ingredients)
-
-        console.log('ingredients', ingredients)
       } catch (error) {
         console.error('Error fetching Ingredients:', error)
       }
     }
     fetchIngredients()
     fetchCategory();
-  }, [product.id]);
+  }, []);
 
 
   if (!orderId) {
@@ -74,59 +68,61 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
   }
 
   return (
-    <div className="flex flex-col gap-[8px]">
-      <div className="flex w-full flex-row items-center gap-[15px]">
-        <div className="h-[70px] w-[70px] rounded-[5px] ">
-          {category?.name && (
-            <Image
-              width={70}
-              height={70}
-              src={`/uploads/products/${product.image}`}
-              alt={product.name}
-              className="h-[70px] w-[70px] object-contain"
-              priority
-            />
-          )}
+    <Suspense>
+      <div className="flex flex-col gap-[8px]">
+        <div className="flex w-full flex-row items-center gap-[15px]">
+          <div className="h-[70px] w-[70px] rounded-[5px] ">
+            {category?.name && (
+              <Image
+                width={70}
+                height={70}
+                src={`/uploads/products/${product.image}`}
+                alt={product.name}
+                className="h-[70px] w-[70px] object-contain"
+                priority
+              />
+            )}
+          </div>
+          <div className="flex flex-col">
+            <div className="text-base font-semibold">{product.name}</div>
+            <div className="flex gap-[5px] text-[12px] font-semibold">
+              {product.price.toFixed(2)}€
+              {product.priceWithoutDiscount && product.priceWithoutDiscount !== product.price ? (
+                <span
+                  className="text-[10px] font-semibold text-primary"
+                  style={{ textDecoration: 'line-through' }}
+                >
+                  {product.priceWithoutDiscount.toFixed(2)}€
+                </span>
+              ) : null}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col">
-          <div className="text-base font-semibold">{product.name}</div>
-          <div className="flex gap-[5px] text-[12px] font-semibold">
-            {product.price.toFixed(2)}€
-            {product.priceWithoutDiscount && product.priceWithoutDiscount !== product.price ? (
-              <span
-                className="text-[10px] font-semibold text-primary"
-                style={{ textDecoration: 'line-through' }}
-              >
-                {product.priceWithoutDiscount.toFixed(2)}€
-              </span>
-            ) : null}
+        <div className="flex w-full flex-row justify-between">
+
+          <NotePopup currentNote={note} onConfirm={handleConfirmNote} />
+          <div className="h-full border border-l-2 border-[#ECEDED]"></div>
+          <div className="flex items-center justify-center gap-[14px] text-[#A9A9A9]">
+            <EditOrderPopUp tableNumber={tableNumber} ProductIngredient={ingredients} product={product} orderId={product.orderId} />
+          </div>
+        </div>
+        <div className="flex w-full items-center justify-between">
+          <NumberIncrease
+            orderId={product.orderId}
+            tableNumber={tableNumber}
+            decreaseProductQuantity={decreaseProductQuantity}
+            increaseProductQuantity={increaseProductQuantity}
+            productId={product.id}
+            quantity={product.quantity}
+          />
+          <div
+            onClick={handleRemoveProductClick}
+            className="flex h-[35px] w-[35px] items-center justify-center rounded-full bg-white text-primary shadow hover:bg-primary hover:text-white"
+          >
+            <Trash size={16} />
           </div>
         </div>
       </div>
-      <div className="flex w-full flex-row justify-between">
-
-        <NotePopup currentNote={note} onConfirm={handleConfirmNote} />
-        <div className="h-full border border-l-2 border-[#ECEDED]"></div>
-        <div className="flex items-center justify-center gap-[14px] text-[#A9A9A9]">
-          <EditOrderPopUp tableNumber={tableNumber} ProductIngredient={ingredients} product={product} orderId={product.orderId} />
-        </div>
-      </div>
-      <div className="flex w-full items-center justify-between">
-        <NumberIncrease
-          orderId={product.orderId}
-          tableNumber={tableNumber}
-          decreaseProductQuantity={decreaseProductQuantity}
-          increaseProductQuantity={increaseProductQuantity}
-          productId={product.id}
-          quantity={product.quantity}
-        />
-        <div
-          onClick={handleRemoveProductClick}
-          className="flex h-[35px] w-[35px] items-center justify-center rounded-full bg-white text-primary shadow hover:bg-primary hover:text-white"
-        >
-          <Trash size={16} />
-        </div>
-      </div>
-    </div>
+    </Suspense>
   );
 }

@@ -21,7 +21,6 @@ export async function handleGetTableById(tableId: Table['id']) {
     }
 
     const responseBody = await result.text()
-    console.log('Response body:', responseBody)
 
     // Verifica se a resposta tem um corpo
     if (!responseBody.trim()) {
@@ -29,7 +28,6 @@ export async function handleGetTableById(tableId: Table['id']) {
     }
 
     const data = JSON.parse(responseBody)
-    console.log('Parsed data:', data)
 
     // Verifica se a resposta contém a chave 'products'
     if (!data.table) {
@@ -54,8 +52,6 @@ export async function handleGetTables() {
 
   if (result.ok) {
     const data = await result.json()
-
-    console.log('data:', data)
 
     return data.table
   }

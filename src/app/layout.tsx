@@ -24,7 +24,7 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions)
   return (
-    <html lang="pt" className={`${poppins.variable} font-poppins`}>
+    <html lang="pt" className={`${poppins.variable}`}>
       <body className="max-w-screen flex h-screen flex-col">
         <Providers>
           <Toaster position="top-right" />

@@ -1,11 +1,5 @@
+/* eslint-disable prettier/prettier */
 'use client'
-
-import {
-  Ingredient,
-  Product as PrismaProduct,
-  ProductCategory,
-  ProductIngredient,
-} from '@prisma/client'
 
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
@@ -20,19 +14,11 @@ import EditProductModal from './EditProduct'
 import { DeleteProductModal } from './DeleteProductModal'
 import { Button } from '@/components/ui/button'
 import { FilterIcon } from 'lucide-react'
-
-// Defina uma interface para representar um produto
-interface Product extends PrismaProduct {
-  ProductIngredient: {
-    ingredient: Ingredient
-    quantity: ProductIngredient['quantity']
-  }[]
-  ProductCategory: ProductCategory
-}
+import { ProductWithIngredients } from '@/types/Product'
 
 // Defina a interface para representar os produtos com ingredientes
 export interface Products {
-  Products: Product[] // Use a interface Product em ProductWithIngredients
+  Products: ProductWithIngredients[] // Use a interface Product em ProductWithIngredients
 }
 
 export default function TableProducts({ Products }: Products) {
@@ -47,28 +33,28 @@ export default function TableProducts({ Products }: Products) {
 
   const filteredProducts = Products
     ? Products.filter((product) => {
-        const stock = product.stock ?? 0 // Usa 0 como valor padrão se product.stock for null
+      const stock = product.stock ?? 0 // Usa 0 como valor padrão se product.stock for null
 
-        // Função para remover caracteres especiais de uma string
-        const removeSpecialChars = (str: any) => str.replace(/[^\w\s]/g, '')
+      // Função para remover caracteres especiais de uma string
+      const removeSpecialChars = (str: string) => str.replace(/[^\w\s]/g, '')
 
-        // Convertendo a string de pesquisa e o nome do produto para minúsculas e removendo caracteres especiais
-        const searchTermCleaned = removeSpecialChars(
-          searchTerm.toLowerCase().trim(),
-        )
-        const productNameCleaned = removeSpecialChars(
-          product.name.toLowerCase(),
-        )
+      // Convertendo a string de pesquisa e o nome do produto para minúsculas e removendo caracteres especiais
+      const searchTermCleaned = removeSpecialChars(
+        searchTerm.toLowerCase().trim(),
+      )
+      const productNameCleaned = removeSpecialChars(
+        product.name.toLowerCase(),
+      )
 
-        if (showOnlyInStock && stock !== 0) return false
-        if (searchTermCleaned === '') return true // Se o termo de pesquisa estiver vazio, inclui todos os produtos
+      if (showOnlyInStock && stock !== 0) return false
+      if (searchTermCleaned === '') return true // Se o termo de pesquisa estiver vazio, inclui todos os produtos
 
-        // Realizando a comparação entre a string de pesquisa e o nome do produto
-        return (
-          product.id.toString().includes(searchTermCleaned) ||
-          productNameCleaned.includes(searchTermCleaned)
-        )
-      })
+      // Realizando a comparação entre a string de pesquisa e o nome do produto
+      return (
+        product.id.toString().includes(searchTermCleaned) ||
+        productNameCleaned.includes(searchTermCleaned)
+      )
+    })
     : []
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)

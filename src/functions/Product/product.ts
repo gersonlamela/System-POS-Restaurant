@@ -22,8 +22,6 @@ export async function handleGetProducts() {
   if (result.ok) {
     const data = await result.json()
 
-    console.log('data:', data)
-
     return data.product
   }
 
@@ -54,7 +52,6 @@ export async function handleGetProductsByCategoryId(
     }
 
     const responseBody = await result.text()
-    console.log('Response body:', responseBody)
 
     // Verifica se a resposta tem um corpo
     if (!responseBody.trim()) {
@@ -62,7 +59,6 @@ export async function handleGetProductsByCategoryId(
     }
 
     const data = JSON.parse(responseBody)
-    console.log('Parsed data:', data)
 
     // Verifica se a resposta contém a chave 'products'
     if (!data.products) {
@@ -90,8 +86,6 @@ export async function handleGetProductsCategory() {
 
   if (result.ok) {
     const data = await result.json()
-
-    console.log('data:', data)
 
     return data.CategoryProducts
   }
@@ -123,7 +117,6 @@ export async function handleGetCategoryByCategoryId(
     }
 
     const responseBody = await result.text()
-    console.log('Response body:', responseBody)
 
     // Verifica se a resposta tem um corpo
     if (!responseBody.trim()) {
@@ -131,7 +124,6 @@ export async function handleGetCategoryByCategoryId(
     }
 
     const data = JSON.parse(responseBody)
-    console.log('Parsed data:', data)
 
     // Verifica se a resposta contém a chave 'products'
     if (!data.category) {

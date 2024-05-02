@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 
-'use client'
 import { useOrder } from '@/functions/OrderProvider';
 import { Button } from '../ui/button';
 import { OrderItem } from './OrderItem';
@@ -40,13 +39,13 @@ export function OrderList() {
         </div>
         {filteredOrders.length > 0 ? (
           <div style={{ maxHeight: `calc(100vh - 530px)` }} className="overflow-y-scroll">
-            {filteredOrders.map(([tableNumber, products], index) => (
+            {filteredOrders.map(([tableNumber, products], orderIndex) => (
               products.products.map((product, productIndex) => (
                 <div key={product.orderId}>
                   <OrderItem tableNumber={tableNumber} product={product} orderId={product.orderId || ''} />
-                  {index !== filteredOrders.length - 1 || productIndex !== products.products.length - 1 ? (
+                  {!(orderIndex === filteredOrders.length - 1 && productIndex === products.products.length - 1) && (
                     <hr className="my-4 border border-gray-200" />
-                  ) : null}
+                  )}
                 </div>
               ))
             ))}
@@ -59,7 +58,7 @@ export function OrderList() {
       <div className="h-[180px]">
         <Pay subtotal={subtotalTable} total={totalTable} totalDiscount={totalDiscountTable} tax={totalTAXTable} />
       </div>
-    </div>
+    </div >
   );
 }
 

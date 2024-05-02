@@ -43,7 +43,7 @@
     "kioskboard": "^2.3.0",
     "lucide-react": "^0.298.0",
     "next": "14.0.4",
-    "next-auth": "^4.24.5",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.2.1",
     "react": "^18",
     "react-chartjs-2": "^4.3.1",

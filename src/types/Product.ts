@@ -22,11 +22,6 @@ export type ProductWithIngredients = Product & {
   }[]
 }
 
-// Defina a interface para representar os produtos com ingredientes
-export interface ProductProps {
-  product: Product
-}
-
 export interface ProductIngredients {
   ProductIngredient: ProductIngredient
   ingredients: Ingredient
