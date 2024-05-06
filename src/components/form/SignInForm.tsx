@@ -76,7 +76,7 @@ const SignInForm = ({
       onClick={handleOutsideClick}
     >
       <div
-        className={`shadow-button20 flex h-[650px] w-[400px] flex-col items-center justify-between rounded-[30px] bg-white px-[50px] py-[20px] `}
+        className={`flex h-[650px] w-[400px] flex-col items-center justify-between rounded-[30px] bg-white px-[50px] py-[20px] shadow-button20 `}
       >
         <Form {...form}>
           <form
@@ -104,7 +104,7 @@ const SignInForm = ({
                   <FormItem>
                     <FormControl>
                       <div
-                        className={`shadow-button10 flex h-[65px] w-full items-end justify-center rounded-[10px] bg-white text-center text-3xl font-semibold text-primary ${pinError ? 'border border-primary' : ''}`}
+                        className={`flex h-[65px] w-full items-end justify-center rounded-[10px] bg-white text-center text-3xl font-semibold text-primary shadow-button10 ${pinError ? 'border border-primary' : ''}`}
                       >
                         <div
                           className={`flex h-full items-center justify-center`}
@@ -126,7 +126,7 @@ const SignInForm = ({
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
                 <Button
                   key={number}
-                  className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-[30px] font-semibold text-third"
+                  className="flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-[30px] font-semibold text-third shadow-button10"
                   onClick={() => {
                     const pinLength = form.getValues('pin').length
                     if (pinLength < 4) {
@@ -138,14 +138,14 @@ const SignInForm = ({
                 </Button>
               ))}
               <Button
-                className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary"
+                className="flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary shadow-button10"
                 onClick={() => handleClearSelectedUser()}
               >
                 <XCircle size={36} />
               </Button>
               <a
                 href="/"
-                className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-third"
+                className="flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-third shadow-button10"
               >
                 0
               </a>
@@ -153,7 +153,7 @@ const SignInForm = ({
                 onClick={() =>
                   form.setValue('pin', form.getValues('pin').slice(0, -1))
                 }
-                className="shadow-button10 flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary"
+                className="flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-primary shadow-button10"
               >
                 <Backspace size={36} />
               </Button>

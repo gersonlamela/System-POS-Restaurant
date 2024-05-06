@@ -27,7 +27,6 @@ export interface OrderProduct {
 }
 
 export interface OrderData {
-
   products: OrderProduct[]
   createdAt: string // Storing the creation time
   userName: string

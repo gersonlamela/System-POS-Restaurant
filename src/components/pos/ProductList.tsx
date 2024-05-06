@@ -18,7 +18,7 @@ interface ProductListProps {
 
 export function ProductList({ product, tableNumber }: ProductListProps) {
   return (
-    <div className="flex max-h-[70vh] flex-wrap content-start items-stretch justify-center gap-[15px] overflow-scroll lg:justify-start ">
+    <div className="flex max-h-[70vh] flex-wrap content-start items-stretch justify-center gap-[15px] overflow-y-scroll lg:justify-start ">
       {product ? (
         product.map((product, index) => (
           <ProductItem
