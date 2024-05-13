@@ -43,7 +43,7 @@ export function Pay({ subtotal, total, totalDiscount, tax, order }: PayProps) {
         </span>
       </div>
 
-      <OrderPayForm order={order} />
+      <OrderPayForm order={order} totalPrice={total} />
     </div>
   )
 }

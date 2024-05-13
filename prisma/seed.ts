@@ -1,15 +1,14 @@
 import { PrismaClient } from '@prisma/client'
-import { genSaltSync, hashSync } from 'bcrypt-ts'
+import bcrypt from 'bcrypt' // Importando o módulo bcrypt-ts de uma forma compatível com CommonJS
 
 const prisma = new PrismaClient()
 
 async function main() {
   try {
-    const salt = genSaltSync(10)
-    const hashedPin = hashSync('1234', salt)
+    const saltRounds = 10
+    const hashedPin = await bcrypt.hash('1234', saltRounds)
 
-    // Criar usuários
-    const user1 = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: 'gersonlamela@example.com',
         pin: hashedPin,
@@ -20,7 +19,7 @@ async function main() {
         role: 'ADMIN',
       },
     })
-    const user2 = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: 'evacruz@example.com',
         pin: hashedPin,
@@ -32,29 +31,16 @@ async function main() {
       },
     })
 
-    const user3 = await prisma.user.create({
-      data: {
-        email: 'josesilva@example.com',
-        pin: hashedPin,
-        address: 'Gondomar',
-        name: 'José Silva',
-        phone: '930678098', // Adicionando prefixo de código de país para Portugal
-        status: 'ACTIVE',
-        role: 'EMPLOYEE',
-      },
-    })
-
     // Criar empresa
-    const company1 = await prisma.company.create({
+    await prisma.company.create({
       data: {
         name: 'Empresa 1', // Nome da empresa em português
         email: 'empresa1@example.com',
-        phone: '930678098', // Adicionando prefixo de código de país para Portugal
+        phone: '930678098',
         address: 'Rua Elm, 789', // Adaptação do endereço para o formato português
         logo: 'logo1.png',
-        users: {
-          connect: [{ id: user1.id }, { id: user2.id }, { id: user3.id }],
-        },
+        capitalSocial: 100000.0,
+        nif: '123456789',
       },
     })
 
@@ -107,7 +93,7 @@ async function main() {
     })
 
     // Criar produtos
-    const product1 = await prisma.product.create({
+    await prisma.product.create({
       data: {
         name: 'Francesinha',
         price: 25.0,
@@ -124,7 +110,7 @@ async function main() {
       },
     })
 
-    const product2 = await prisma.product.create({
+    await prisma.product.create({
       data: {
         name: 'Coca Cola',
         price: 15.0,

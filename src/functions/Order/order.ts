@@ -1,4 +1,4 @@
-import { Order, Ingredient, Product } from '@prisma/client'
+import { Order } from '@prisma/client'
 
 export function getStatusStyleOrder(status: Order['status']) {
   switch (status) {

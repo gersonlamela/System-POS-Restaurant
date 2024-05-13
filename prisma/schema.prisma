@@ -18,8 +18,6 @@ model User {
   phone     String
   role      UserRole
   status    UserStatus @default(ACTIVE)
-  company   Company?   @relation(fields: [companyId], references: [id])
-  companyId String?
   orders    Order[] // Relacionamento para todas as ordens do usuário
 }
 
@@ -34,9 +32,6 @@ model Company {
   logo          String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  tables        Table[]
-  users         User[]
-  orders        Order[]
 }
 
 model Table {
@@ -44,8 +39,6 @@ model Table {
   number    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  company   Company? @relation(fields: [companyId], references: [id])
-  companyId String?
   orders    Order[] // Relacionamento para todas as ordens da mesa
 }
 
@@ -68,8 +61,8 @@ model Order {
   dataOrder DateTime
   NifClient String?
 
-  totalTax   Float @default(0) // Valor padrão para o preço total
-  totalPrice Float @default(0) // Valor padrão para o preço total
+  totalTax   Float @default(0)
+  totalPrice Float @default(0)
 
   status OrderStatus @default(PENDING)
 
@@ -81,8 +74,6 @@ model Order {
 
   productQuantity Int?
   OrderIngredient OrderIngredient[]
-  Company         Company?          @relation(fields: [companyId], references: [id])
-  companyId       String?
 
   PaymentMethod PaymentMethod? @default(CASH)
 }
@@ -122,10 +113,12 @@ model OrderIngredient {
   ingredientId String
   product      Product?   @relation(fields: [productId], references: [id])
   productId    String?
-  quantity     Int // Quantidade do ingrediente no produto
-  maxQuantity  Int? // Quantidade máxima permitida
-  order        Order?     @relation(fields: [orderId], references: [id])
-  orderId      String?
+  quantity     Int
+
+  cookingPreference String?
+
+  Order   Order?  @relation(fields: [orderId], references: [id])
+  orderId String?
 }
 
 model ProductCategory {

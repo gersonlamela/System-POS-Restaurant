@@ -30,7 +30,7 @@ export const authOptions: NextAuthOptions = {
         })
 
         if (!existigUser) {
-          throw new Error('Usuário não encontrado')
+          throw new Error('Utilizador não encontrado')
         }
 
         const pinMatch = compareSync(credentials.pin, existigUser.pin) // true

@@ -55,11 +55,12 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
 
     const priceWithoutDiscount = product.price * (1 + getTax(product.tax) / 100)
 
-    const { id, name, image } = product
+    const { id, name, image, tax } = product
     const newProduct = {
       id,
       name,
       price,
+      tax: getTax(tax),
       priceWithoutDiscount,
       quantity: 1,
       note: '',

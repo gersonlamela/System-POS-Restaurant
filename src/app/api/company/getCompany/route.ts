@@ -5,12 +5,12 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const ingredient = await prisma.ingredient.findMany()
+    const company = await prisma.company.findFirst()
 
     return NextResponse.json(
       {
-        ingredients: ingredient,
-        message: 'Ingredientes encontrados com sucesso',
+        company,
+        message: 'Empresa encontrada com sucesso',
       },
       { status: 201 },
     )

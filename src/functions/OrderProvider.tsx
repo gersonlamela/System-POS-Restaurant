@@ -22,6 +22,7 @@ export interface OrderProduct {
   quantity: number;
   priceWithoutDiscount: number;
   image: string;
+  tax: number;
   note: string;
   ingredients: OrderIngredient[]; // Adicione os ingredientes do produto aqui
 }
@@ -173,8 +174,13 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       });
     }
 
-    setOrders(updater);
+    const updatedOrders = updater(orders); // Atualize as ordens
+
+    // Atualize o estado das ordens e chame orderTotalPrice
+    setOrders(updatedOrders);
+    orderTotalPrice(tableNumber);
   };
+
 
 
 
@@ -197,11 +203,14 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
           order.products.splice(productIndex, 1);
         }
       }
+
+      // Recalcular o preço total do pedido após diminuir a quantidade
+      order.totalPrice = orderTotalPrice(tableNumber).toFixed(2);
+
       return { ...order };
     };
     updateOrder(tableNumber, updater);
   };
-
 
   const increaseProductQuantity = (orderId: string, productId: string, tableNumber: string) => {
     const updater = (order: OrderData) => {
@@ -214,10 +223,15 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       if (productIndex !== -1) {
         order.products[productIndex].quantity++;
       }
+
+      // Recalcular o preço total do pedido após aumentar a quantidade
+      order.totalPrice = orderTotalPrice(tableNumber).toFixed(2);
+
       return { ...order };
     };
     updateOrder(tableNumber, updater);
   };
+
 
 
 
@@ -276,10 +290,25 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     parseFloat(orderTotalDiscount(tableNumber).toFixed(2))
 
   const totalTAX = (tableNumber: string) => {
-    const subtotalValue = subtotal(tableNumber)
-    const ivaPercentage = 0.23 // You can change this according to your requirement
-    return parseFloat((subtotalValue * ivaPercentage).toFixed(2))
-  }
+    const orderData = orders[tableNumber];
+    if (!orderData) return 0; // Retorna 0 se não houver dados de pedido para a mesa especificada
+
+    // Calcula o total do IVA para todos os produtos
+    const totalTax = orderData.products.reduce((acc, product) => {
+      // Calcula o preço do produto sem IVA
+      const productPriceWithoutTax = product.price / (1 + (product.tax / 100));
+      // Calcula o valor total do IVA para este produto
+      const productTax = (product.price - productPriceWithoutTax) * product.quantity;
+      // Soma o valor total do IVA ao acumulador
+      return acc + productTax;
+    }, 0);
+
+    // Retorna o total do IVA
+    return parseFloat(totalTax.toFixed(2));
+  };
+
+
+
 
   const updateIngredientQuantity = (
     orderId: string,

@@ -1,5 +1,4 @@
 import { withAuth } from 'next-auth/middleware'
-import { handleVerifyUserExist } from './functions/user/user'
 
 export default withAuth({
   callbacks: {

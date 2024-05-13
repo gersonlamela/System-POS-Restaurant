@@ -38,7 +38,7 @@ module.exports = {
         'auto-fit-270': 'repeat(auto-fit, minmax(270px, 1fr))',
       },
       fontFamily: {
-        poppins: 'var(--font-poppins)',
+        Poppins: ['poppins', 'sans-serif'],
       },
       boxShadow: {
         button10: '0px 0px 10px 0px #00000025',
