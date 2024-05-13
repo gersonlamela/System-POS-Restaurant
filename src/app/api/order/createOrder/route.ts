@@ -13,15 +13,15 @@ const orderSchema = z.object({
   orders: z.array(
     z.object({
       productId: z.string(),
-      ingredient: z
+      quantity: z.number(), // Alterado para opcional
+      ingredients: z
         .array(
           z.object({
             ingredientId: z.string(),
-            quantity: z.number(),
             cookingPreference: z.string().optional(),
           }),
         )
-        .optional(),
+        .optional(), // Alterado para opcional
     }),
   ),
 })
@@ -36,8 +36,10 @@ async function getUserId(username: string): Promise<string> {
 }
 
 // Função para obter o ID da mesa com base no número da mesa
-async function getTableId(tableNumber: number): Promise<string> {
-  const table = await prisma.table.findFirst({ where: { number: tableNumber } })
+async function getTableId(tableNumber: string): Promise<string> {
+  const table = await prisma.table.findFirst({
+    where: { number: parseInt(tableNumber) },
+  }) // Parse para int
   if (!table) {
     throw new Error(`Table with number ${tableNumber} not found`)
   }
@@ -56,7 +58,7 @@ export async function POST(req: Request) {
 
     // Obter IDs de usuário e mesa
     const userId = await getUserId(validatedBody.username)
-    const tableId = await getTableId(validatedBody.tableNumber)
+    const tableId = await getTableId(validatedBody.tableNumber.toString())
 
     // Criar a mainOrder primeiro
     const mainOrder = await prisma.order.create({
@@ -71,11 +73,15 @@ export async function POST(req: Request) {
       },
     })
 
+    console.log(
+      'isto é um validate',
+      validatedBody.orders.map((order) => order.ingredients),
+    )
     // Criar transação para criar itens de pedido
     await prisma.$transaction(async (prisma) => {
       // Criar itens de pedido para cada produto
       for (const orderItem of validatedBody.orders) {
-        const { productId, ingredient } = orderItem
+        const { productId, quantity = 1, ingredients = [] } = orderItem // Definir valor padrão para quantity e ingredients
 
         // Verificar se o produto existe
         const product = await prisma.product.findUnique({
@@ -86,45 +92,24 @@ export async function POST(req: Request) {
         }
 
         // Criar entrada de pedido para o produto associado à mainOrder
-        const order = await prisma.order.create({
+        const createdOrderProduct = await prisma.orderProduct.create({
           data: {
-            dataOrder: validatedBody.data,
-            NifClient: validatedBody.nif,
-            totalPrice: validatedBody.totalPrice,
-            status: 'COMPLETED',
-            userId,
-            tableId,
-            PaymentMethod: validatedBody.methodPayment,
-            totalTax: 0,
-            productQuantity: 1,
-            products: { connect: { id: product.id } },
-            orderId: mainOrder.orderId,
+            quantity,
+            product: { connect: { id: productId } },
+            order: { connect: { id: mainOrder.id } },
           },
         })
 
-        // Se houver ingredientes, criar entradas para os ingredientes associados
-        if (ingredient) {
-          for (const ing of ingredient) {
-            const { ingredientId, quantity, cookingPreference } = ing
-
-            const ingredient = await prisma.ingredient.findUnique({
-              where: { id: ingredientId },
-            })
-            if (!ingredient) {
-              throw new Error(`Ingredient with ID ${ingredientId} not found`)
-            }
-
-            // Conectar o ingrediente ao item de pedido recém-criado
-            await prisma.orderIngredient.create({
-              data: {
-                orderId: order.id, // Usar o ID da ordem atual
-                productId,
-                ingredientId,
-                cookingPreference,
-                quantity,
-              },
-            })
-          }
+        // Verificar se há ingredientes antes de criar a associação
+        if (ingredients.length > 0) {
+          // Criar os ingredientes e associá-los ao item de pedido
+          await prisma.orderIngredient.createMany({
+            data: ingredients.map((ingredient) => ({
+              ingredientId: ingredient.ingredientId,
+              cookingPreference: ingredient.cookingPreference,
+              orderProductId: createdOrderProduct.id,
+            })),
+          })
         }
       }
     })

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
@@ -112,15 +113,21 @@ function PaymentMethodFormStep({
         data,
         username,
         totalPrice: parseFloat(totalPrice),
-        orders: products.map((product: any) => ({
+        orders: products.map((product: OrderData['products'][0]) => ({
           productId: product.id,
-          ingredient: product.ingredients.map((ingredient: any) => ({
-            ingredientId: ingredient.id,
-            quantity: ingredient.quantity,
-            ...(ingredient.cookingPreference && {
-              cookingPreference: ingredient.cookingPreference,
-            }), // Adiciona cookingPreference apenas se estiver presente
-          })),
+          quantity: product.quantity,
+          ingredients: product.ingredients.map(
+            (ingredient: OrderData['products'][0]['ingredients'][0]) => ({
+              ingredientId: ingredient.id,
+              ...(ingredient.cookingPreference
+                ? {
+                  cookingPreference: ingredient.cookingPreference,
+                }
+                : {
+                  cookingPreference: '',
+                }), // Adiciona cookingPreference apenas se estiver presente
+            }),
+          ),
         })),
       }
       // Envia o pedido para o servidor
@@ -140,7 +147,6 @@ function PaymentMethodFormStep({
       }
     } catch (error) {
       console.error('There was an error', error)
-      // Aqui você pode lidar com o erro, como exibir uma mensagem para o usuário
     }
   }
 

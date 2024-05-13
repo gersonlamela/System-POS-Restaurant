@@ -1,7 +1,6 @@
+/* eslint-disable prettier/prettier */
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { LayoutDashboard, Users } from 'lucide-react'
 import { usePathname } from 'next/navigation'
@@ -30,6 +29,11 @@ const menuItems = [
     href: '/dashboard/ingredients',
   },
   {
+    icon: <ForkKnife size={24} />,
+    title: 'Pedidos',
+    href: '/dashboard/orders',
+  },
+  {
     icon: <LayoutDashboard size={24} />,
     title: 'Categorias',
     href: '/dashboard/categories',
@@ -50,15 +54,13 @@ export default function SideMenu() {
             <Link
               key={index}
               href={item.href}
-              className={`${
-                pathname === item.href ? 'bg-black text-white ' : ''
-              } flex h-[40px]  w-[40px] items-center justify-center gap-[24px] rounded-lg text-text md:w-full md:justify-start md:p-4`}
+              className={`${pathname === item.href ? 'bg-black text-white ' : ''
+                } flex h-[40px]  w-[40px] items-center justify-center gap-[24px] rounded-lg text-text md:w-full md:justify-start md:p-4`}
             >
               {item.icon}
               <span
-                className={`${
-                  pathname === item.href ? '' : ''
-                }  hidden text-lg  md:flex`}
+                className={`${pathname === item.href ? '' : ''
+                  }  hidden text-lg  md:flex`}
               >
                 {item.title}
               </span>

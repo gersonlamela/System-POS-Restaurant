@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Chart } from 'react-google-charts'
 import { handleGetUsers } from '@/functions/user/user'
 import { User } from '.prisma/client'
 

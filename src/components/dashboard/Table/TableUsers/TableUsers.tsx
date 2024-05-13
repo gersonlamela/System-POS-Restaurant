@@ -1,15 +1,5 @@
 'use client'
-import { Button } from '@/components/ui/button'
 import { User } from '@prisma/client'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Users } from 'lucide-react'
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'

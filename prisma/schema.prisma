@@ -42,16 +42,6 @@ model Table {
   orders    Order[] // Relacionamento para todas as ordens da mesa
 }
 
-model Ingredient {
-  id              String              @id @default(cuid())
-  name            String
-  price           Float
-  image           String
-  createdAt       DateTime            @default(now())
-  products        ProductIngredient[]
-  OrderIngredient OrderIngredient[]
-}
-
 model Order {
   id        String   @id @default(cuid())
   orderId   Int      @default(autoincrement())
@@ -66,33 +56,30 @@ model Order {
 
   status OrderStatus @default(PENDING)
 
-  userId   String?
-  User     User?     @relation(fields: [userId], references: [id])
-  tableId  String?
-  Table    Table?    @relation(fields: [tableId], references: [id])
-  products Product[]
-
-  productQuantity Int?
-  OrderIngredient OrderIngredient[]
+  userId  String?
+  User    User?   @relation(fields: [userId], references: [id])
+  tableId String?
+  Table   Table?  @relation(fields: [tableId], references: [id])
 
   PaymentMethod PaymentMethod? @default(CASH)
+  OrderProduct  OrderProduct[]
 }
 
 model Product {
-  id                String              @id @default(cuid())
-  name              String
-  price             Float
-  image             String
-  tax               Tax
-  discount          Int?                @default(0)
-  stock             Int?                @default(0)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  orders            Order[] // Relacionamento com as ordens em que o produto foi incluído
-  OrderIngredient   OrderIngredient[]
+  id        String   @id @default(cuid())
+  name      String
+  price     Float
+  image     String
+  tax       Tax
+  discount  Int?     @default(0)
+  stock     Int?     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   productCategoryId String?
   ProductCategory   ProductCategory?    @relation(fields: [productCategoryId], references: [id])
   ProductIngredient ProductIngredient[]
+  OrderProduct      OrderProduct[]
 }
 
 model ProductIngredient {
@@ -107,18 +94,33 @@ model ProductIngredient {
   @@unique([productId, ingredientId]) // Restrição de chave única composta
 }
 
+model OrderProduct {
+  id              String            @id @default(cuid())
+  quantity        Int
+  product         Product?          @relation(fields: [productId], references: [id])
+  productId       String?
+  order           Order?            @relation(fields: [orderId], references: [id])
+  orderId         String
+  OrderIngredient OrderIngredient[]
+}
+
+model Ingredient {
+  id              String              @id @default(cuid())
+  name            String
+  price           Float
+  image           String
+  createdAt       DateTime            @default(now())
+  products        ProductIngredient[]
+  OrderIngredient OrderIngredient[]
+}
+
 model OrderIngredient {
-  id           String     @id @default(cuid())
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-  ingredientId String
-  product      Product?   @relation(fields: [productId], references: [id])
-  productId    String?
-  quantity     Int
-
+  id                String       @id @default(cuid())
+  orderProduct      OrderProduct @relation(fields: [orderProductId], references: [id])
+  orderProductId    String
+  ingredient        Ingredient   @relation(fields: [ingredientId], references: [id])
+  ingredientId      String
   cookingPreference String?
-
-  Order   Order?  @relation(fields: [orderId], references: [id])
-  orderId String?
 }
 
 model ProductCategory {
