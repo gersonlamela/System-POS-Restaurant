@@ -2,7 +2,7 @@
 
 import MenuList from '@/components/pos/MenuList'
 import { OrderList } from '@/components/pos/OrderList'
-import { TableInfo, TableList } from '@/components/pos/TabeList'
+import TableItem, { TableInfo } from '@/components/pos/TabeList'
 
 import { Time } from '@/components/pos/Time'
 import { UserAuth } from '@/components/pos/UserAuth'
@@ -16,7 +16,6 @@ import { useState, useEffect } from 'react'
 
 export default function Order() {
   const [tables, setTables] = useState([])
-
   const { orders } = useOrder()
 
   useEffect(() => {
@@ -28,8 +27,13 @@ export default function Order() {
         console.error('Error fetching data:', error)
       }
     }
-    fetchTables()
-  }, [tables])
+
+    // Verificar se as mesas já foram buscadas
+    if (tables.length === 0) {
+      fetchTables()
+    }
+  }, []) // Lista de dependências vazia, executa apenas uma vez
+
   const skeletonArray = Array.from({ length: 6 })
 
   return (
@@ -42,9 +46,11 @@ export default function Order() {
 
         <div className="flex h-full flex-1 flex-col  justify-between gap-[15px]">
           <div className="flex h-full  flex-row gap-[15px]">
-            <div className="flex flex-1">
+            <div className="flex flex-1 gap-[15px]">
               {tables.length > 0 ? (
-                <TableList Tables={tables} />
+                tables.map((table, index) => (
+                  <TableItem key={index} table={table} />
+                ))
               ) : (
                 <div className="grid w-full grid-cols-auto-fill-100 items-center gap-[15.5px] overflow-y-auto">
                   {skeletonArray.map((_, index) => (

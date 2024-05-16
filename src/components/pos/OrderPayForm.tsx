@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
@@ -5,7 +6,7 @@ import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Backspace, XCircle } from '@phosphor-icons/react'
 import { OrderData } from '@/functions/OrderProvider'
 import { useParams } from 'next/navigation'
-import { parseISO, format } from 'date-fns'
+import { format } from 'date-fns'
 import { Division } from './Division'
 import { handleGetCompany } from '@/functions/Company/route'
 import { Company } from '@prisma/client'
@@ -91,7 +92,6 @@ function PaymentMethodFormStep({
 }: PaymentDataProps) {
   // Extrai informações do pedido
   const username = order.find(([, data]) => data.userName)?.[1].userName || ''
-  const data = order.find(([, data]) => data.createdAt)?.[1].createdAt || ''
   const totalPrice =
     order.find(([, data]) => data.totalPrice)?.[1].totalPrice || ''
   const products = order.find(([, data]) => data.products)?.[1].products || []
@@ -104,13 +104,17 @@ function PaymentMethodFormStep({
       nif = '999999999'
     }
 
+
+    const currentDate = new Date();
+
+
     try {
       // Constrói o objeto de dados do pedido
       const orderData = {
         methodPayment,
         nif,
         tableNumber, // Certifique-se de que 'tableNumber' seja uma string ou número
-        data,
+        date: currentDate,
         username,
         totalPrice: parseFloat(totalPrice),
         orders: products.map((product: OrderData['products'][0]) => ({
@@ -246,10 +250,10 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
   }, [])
 
   useEffect(() => {
-    const dataCompleta = order.find(([, data]) => data.createdAt)?.[1].createdAt
+    const dataCompleta = Date.now()
 
     if (dataCompleta) {
-      const data = parseISO(dataCompleta)
+      const data = dataCompleta
       const dataFormatada = format(data, 'dd-MM-yyyy')
       const horaFormatada = format(data, "HH'h'mm")
       setDataFormatada(dataFormatada)
@@ -268,8 +272,8 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
   const nextPage = () => setCurrentPage(currentPage + 1)
 
   const atendente = order.find(([, data]) => data.userName)?.[1].userName || ''
-  const primeiroNome = atendente.split(' ')[0] // Pegando apenas o primeiro nome
-  const segundoNome = atendente.split(' ')[1] // Pegando apenas o primeiro nome
+  const primeiroNome = atendente.split(' ')[0] // Primeiro nome
+  const segundoNome = atendente.split(' ')[1] // Segundo nome
 
   const nomeFormatado = `${segundoNome ? primeiroNome + ' ' + segundoNome.charAt(0) : primeiroNome}.` // Pegando a primeira letra do primeiro nome seguida de um ponto
 

@@ -1,82 +1,50 @@
 /* eslint-disable prettier/prettier */
-'use client'
+'use client';
 
-import { getStatusOrder, getStatusStyleOrder } from '@/functions/Order/order'
-import { useState } from 'react'
-import { SearchInput } from '../TableSearchItem'
-import TablePagination from '../TablePagination'
-import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import { getStatusOrder, getStatusStyleOrder } from '@/functions/Order/order';
+import { useEffect, useState } from 'react';
+import { SearchInput } from '../TableSearchItem';
+import TablePagination from '../TablePagination';
+import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 
-import { Order } from '@/types/Order'
-import SeeOrderModal from './SeeOrderModal'
-
+import { Order } from '@/types/Order';
+import SeeOrderModal from './SeeOrderModal';
 
 export interface OrdersTableProps {
-  Order: Order[]
+  orders: Order[]; // Corrigido para "orders" em vez de "Order"
 }
 
-export default function TableOrders({ Order }: OrdersTableProps) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [Orders] = useState<Order[]>(Order)
+export default function TableOrders({ orders }: OrdersTableProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]); // Corrigido para "filteredOrders" em vez de "Orders"
 
-  const filteredOrders = Orders
-    ? Orders?.filter(
-      (Orders) =>
-        Orders.orderId
-          .toString()
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        Orders.NifClient?.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-    : []
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage)
 
-  // Function to handle page change
+  // Atualização dos pedidos filtrados quando a lista de pedidos é alterada
+  useEffect(() => {
+    if (orders) {
+      const filtered = orders.filter((order) =>
+        order.orderId.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.NifClient?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredOrders(filtered);
+      setCurrentPage(1); // Redefine para a primeira página ao filtrar
+    }
+  }, [orders, searchTerm]);
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+
+  // Função para lidar com a mudança de página
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+    setCurrentPage(page);
+  };
 
-  // Function to handle items per page change
+  // Função para lidar com a mudança de itens por página
   const handleItemsPerPageChange = (value: number) => {
-    setItemsPerPage(value)
-    setCurrentPage(1) // Reset to TableCelle first page
-  }
-
-  // Agrupar os pedidos pelo orderId
-  const groupedOrders: Order[] = Object.values(
-    filteredOrders.reduce((acc: Record<string, Order>, order) => {
-      if (!acc[order.orderId]) {
-        acc[order.orderId] = {
-          ...order,
-          OrderIngredient: order.OrderIngredient.map(orderItem => ({
-            ingredient: orderItem.ingredient,
-            orderId: orderItem.orderId,
-            quantity: orderItem.quantity,
-            product: orderItem.product,
-            cookingPreference: orderItem.cookingPreference
-          })),
-        };
-      } else {
-        acc[order.orderId].OrderIngredient.push(
-          ...order.OrderIngredient.map(orderItem => ({
-            ingredient: orderItem.ingredient,
-            orderId: orderItem.orderId,
-            quantity: orderItem.quantity,
-            product: orderItem.product,
-            cookingPreference: orderItem.cookingPreference
-          }))
-        );
-      }
-      return acc;
-    }, {})
-  );
-
-
-
-  console.log(groupedOrders)
-
+    setItemsPerPage(value);
+    setCurrentPage(1); // Redefine para a primeira página
+  };
 
   return (
     <div className="w-full">
@@ -119,8 +87,8 @@ export default function TableOrders({ Order }: OrdersTableProps) {
             </TableRow>
           </TableHeader>
           <tbody className="">
-            {groupedOrders ? (
-              groupedOrders.map((order) => (
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm">
                     {order.orderId}

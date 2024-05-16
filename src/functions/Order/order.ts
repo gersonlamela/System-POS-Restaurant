@@ -22,6 +22,15 @@ export function getStatusOrder(status: Order['status']) {
   }
 }
 
+export function getPayMethodOrder(PaymentMethod: Order['PaymentMethod']) {
+  switch (PaymentMethod) {
+    case 'BANK':
+      return 'Multibanco'
+    case 'CASH':
+      return 'Dinheiro'
+  }
+}
+
 export async function handleGetOrders() {
   const result = await fetch('http://localhost:3000/api/order/getOrders', {
     method: 'GET',

@@ -8,11 +8,13 @@ export async function GET() {
       include: {
         Table: true,
         User: true,
-        products: true,
-        OrderIngredient: {
+        OrderProduct: {
           include: {
-            ingredient: true,
-            product: true,
+            OrderIngredient: {
+              include: {
+                ingredient: true,
+              },
+            },
           },
         },
       },

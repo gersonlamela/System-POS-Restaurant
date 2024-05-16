@@ -9,6 +9,9 @@ interface DashboardLayoutProps {
 }
 export const metadata: Metadata = {
   title: 'Dashboard',
+  icons: {
+    icon: '/favicon.png', // /public path
+  },
 }
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {

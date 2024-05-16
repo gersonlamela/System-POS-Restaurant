@@ -7,7 +7,7 @@ const orderSchema = z.object({
   methodPayment: z.enum(['CASH', 'BANK']),
   nif: z.string().optional(),
   tableNumber: z.number(), // Alterado para string para corresponder ao tipo recebido do formulário
-  data: z.string(),
+  date: z.string().pipe(z.coerce.date()),
   username: z.string(),
   totalPrice: z.number(),
   orders: z.array(
@@ -60,10 +60,9 @@ export async function POST(req: Request) {
     const userId = await getUserId(validatedBody.username)
     const tableId = await getTableId(validatedBody.tableNumber.toString())
 
-    // Criar a mainOrder primeiro
     const mainOrder = await prisma.order.create({
       data: {
-        dataOrder: validatedBody.data,
+        dateOrder: validatedBody.date,
         NifClient: validatedBody.nif,
         totalPrice: validatedBody.totalPrice,
         status: 'COMPLETED',

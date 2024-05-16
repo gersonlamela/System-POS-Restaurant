@@ -6,16 +6,22 @@ import { Poppins } from 'next/font/google'
 import { Header } from '@/components/pos/Header'
 import { Footer } from '@/components/pos/Footer'
 
-import { authOptions } from '@/lib/auth'
-import { getServerSession } from 'next-auth/next'
 import UserSignIn from '@/components/form/UserSignIn'
 import { Toaster } from 'sonner'
+import { Metadata } from 'next'
+
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 
 const poppins = Poppins({
   subsets: ['latin'],
   variable: '--font-poppins',
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 })
+
+export const metadata: Metadata = {
+  title: 'Mesas',
+}
 
 export default async function RootLayout({
   children,

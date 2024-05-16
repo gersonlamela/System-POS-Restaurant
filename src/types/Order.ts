@@ -1,19 +1,17 @@
-import {
-  Ingredient,
-  Table,
-  Order as PrismaOrder,
-  Product,
-  User,
-} from '@prisma/client'
+import { Order as PrismaOrder, Table, User, Ingredient } from '@prisma/client'
 
 export interface Order extends PrismaOrder {
   User?: User
   Table?: Table
-  OrderIngredient: {
-    ingredient: Ingredient[]
-    orderId: string
+  OrderProduct: {
+    id: string
     quantity: number
-    product: Product
-    cookingPreference?: string
-  }[] // Aqui está a correção para definir OrderIngredient como uma matriz
+    productId: string
+    orderId: string
+    OrderIngredient: {
+      id: string
+      ingredient: Ingredient
+      cookingPreference?: string
+    }[]
+  }[]
 }

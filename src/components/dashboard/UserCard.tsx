@@ -7,6 +7,11 @@ import { signOut, useSession } from 'next-auth/react'
 
 export default function UserCard() {
   const { data: session } = useSession()
+
+  if (!session) {
+    return null
+  }
+
   return (
     <div className="mb-4 flex flex-col items-center justify-center gap-2 md:flex-row ">
       <div className="flex flex-col items-center justify-center ">

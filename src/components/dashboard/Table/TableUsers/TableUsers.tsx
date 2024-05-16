@@ -19,7 +19,7 @@ export default function TableUsers({ users }: UsersTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [searchTerm, setSearchTerm] = useState('')
-  const [Users, setUsers] = useState(users)
+  const [Users] = useState(users)
 
   // Calculate total pages based on TableCelle filtered users
   const filteredUsers = Users.filter(

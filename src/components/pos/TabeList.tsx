@@ -1,54 +1,34 @@
 import { useEffect, useState } from 'react'
-import { OrderData, useOrder } from '@/functions/OrderProvider'
 import { Table } from '@prisma/client'
 import Link from 'next/link'
-
-interface TableListProps {
-  Tables: Table[]
-}
-
-export function TableList({ Tables }: TableListProps) {
-  return (
-    <div className="grid h-full w-full grid-cols-auto-fill-194 gap-[15px]  rounded-[10px] bg-[#F7F7F8] px-[15px] pb-[50px] pt-[15px] shadow-button10">
-      {Tables ? (
-        Tables.map((table, index) => <TableItem key={index} table={table} />)
-      ) : (
-        <h1>Sem Mesas</h1>
-      )}
-    </div>
-  )
-}
+import { OrderData, useOrder } from '@/functions/OrderProvider'
 
 interface TableItemProps {
   table: Table
 }
 
 const TableItem = ({ table }: TableItemProps) => {
-  const { createEmptyOrderForTable, orders } = useOrder()
+  const { orders, createEmptyOrderForTable } = useOrder()
   const [elapsedTime, setElapsedTime] = useState('')
+  const [totalPrice, setTotalPrice] = useState(0)
 
-  // Verifica se há uma ordem para a mesa atual
   const orderForTable = orders[table.number.toString()]
 
-  // Função para formatar o tempo decorrido desde a criação da ordem
   const formatElapsedTime = (createdAt: string) => {
     const currentTime = new Date()
     const creationTime = new Date(createdAt)
     const diff = Math.floor(
       (currentTime.getTime() - creationTime.getTime()) / 1000,
-    ) // Diferença em segundos
+    )
 
     const hours = Math.floor(diff / 3600)
     const minutes = Math.floor((diff % 3600) / 60)
     const seconds = diff % 60
 
-    // Adicionando zeros à esquerda para minutos e segundos, se necessário
     const formattedMinutes = minutes.toString().padStart(2, '0')
     const formattedSeconds = seconds.toString().padStart(2, '0')
 
-    if (minutes === 0 && hours === 0) {
-      return `00:${formattedSeconds}`
-    } else if (hours === 0) {
+    if (hours === 0) {
       return `${formattedMinutes}:${formattedSeconds}`
     } else {
       return `${hours}:${formattedMinutes}:${formattedSeconds}`
@@ -56,25 +36,38 @@ const TableItem = ({ table }: TableItemProps) => {
   }
 
   useEffect(() => {
-    // Atualizar o tempo decorrido a cada segundo
     const timer = setInterval(() => {
       if (orderForTable) {
         setElapsedTime(formatElapsedTime(orderForTable.createdAt))
       }
     }, 1000)
-    return () => clearInterval(timer) // Limpar o intervalo quando o componente é desmontado
+    return () => clearInterval(timer)
   }, [orderForTable])
+
+  useEffect(() => {
+    if (orderForTable) {
+      let total = 0
+      orderForTable.products.forEach((item) => {
+        total += item.price * item.quantity
+      })
+      setTotalPrice(total)
+    }
+  }, [orderForTable])
+
+  const handleTableClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!orderForTable) {
+      e.preventDefault()
+      createEmptyOrderForTable(table.number.toString())
+      location.href = `/order/${table.number}` // Redireciona após a criação da ordem
+    }
+  }
 
   return (
     <Link
       className={`relative flex h-[120px] w-[194px] cursor-pointer flex-col items-center justify-evenly rounded-[5px] ${orderForTable ? 'bg-[#FF0000]' : 'bg-[#88E152]'} bg-opacity-40 p-[15px] text-base font-medium `}
       href={`/order/${table.number}`}
-      onClick={(e) => {
-        if (!orderForTable) {
-          e.preventDefault()
-          createEmptyOrderForTable(table.number.toString())
-        }
-      }}
+      passHref
+      onClick={handleTableClick}
     >
       <div
         className={`absolute right-[15px] top-[15px] h-[15px] w-[15px] rounded-full border border-white ${orderForTable ? 'bg-[#FF0000]' : 'bg-[#88E152]'}`}
@@ -86,7 +79,7 @@ const TableItem = ({ table }: TableItemProps) => {
             <span>{elapsedTime}</span>
             <span>{orderForTable.userName}</span>
             <span className="text-base text-black">
-              {orderForTable.totalPrice}€
+              {totalPrice.toFixed(2)}€
             </span>
           </div>
         )}
