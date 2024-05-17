@@ -46,13 +46,13 @@ export default function InactivityTimeoutComponent({
     }, 1000)
 
     // Adicionar event listeners para detectar atividade do Utilizador
-    window.addEventListener('mousemove', handleUserActivity)
-    window.addEventListener('keydown', handleUserActivity)
+    addEventListener('mousemove', handleUserActivity)
+    addEventListener('keydown', handleUserActivity)
 
     // Limpar event listeners e temporizador ao desmontar o componente
     return () => {
-      window.removeEventListener('mousemove', handleUserActivity)
-      window.removeEventListener('keydown', handleUserActivity)
+      removeEventListener('mousemove', handleUserActivity)
+      removeEventListener('keydown', handleUserActivity)
       clearInterval(timerInterval)
     }
   }, [inactiveTime, session])

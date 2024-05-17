@@ -75,7 +75,7 @@ export default function Order() {
                 onClick={() =>
                   signOut({
                     redirect: true,
-                    callbackUrl: `${window.location.origin}/`,
+                    callbackUrl: `${location.origin}/`,
                   })
                 }
                 className="flex h-[84px] w-[80px] flex-col items-center justify-center gap-[8px] rounded-[10px] bg-secondary font-semibold text-white"

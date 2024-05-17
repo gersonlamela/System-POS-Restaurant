@@ -13,7 +13,7 @@ export default function UserAccountnav(userProps: userProps) {
       <Button
         className="bg-red-600 text-white"
         onClick={() =>
-          signOut({ redirect: true, callbackUrl: `${window.location.origin}/` })
+          signOut({ redirect: true, callbackUrl: `${location.origin}/` })
         }
         variant="destructive"
       >

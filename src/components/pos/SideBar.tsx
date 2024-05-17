@@ -76,7 +76,7 @@ export function SideBar({ categories }: SideBarProps) {
             onClick={() =>
               signOut({
                 redirect: true,
-                callbackUrl: `${window.location.origin}/`,
+                callbackUrl: `${location.origin}/`,
               })
             }
             className="flex flex-1 flex-col items-center justify-center rounded-[10px] bg-secondary py-[15px] text-base font-medium text-white"
