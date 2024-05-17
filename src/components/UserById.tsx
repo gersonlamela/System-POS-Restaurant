@@ -5,15 +5,18 @@ interface userIdProps {
 export async function getUserById(userIdProps: userIdProps) {
   const { userId } = userIdProps
 
-  const result = await fetch('http://localhost:3000/api/user/getUserById', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/getUserById`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+      }),
     },
-    body: JSON.stringify({
-      userId,
-    }),
-  })
+  )
 
   if (result.ok) {
     return result.json()

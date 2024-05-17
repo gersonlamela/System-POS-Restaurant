@@ -2,7 +2,7 @@ import { Product } from '@prisma/client'
 
 export async function handleGetIngredients() {
   const result = await fetch(
-    'http://localhost:3000/api/ingredient/getIngredients',
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/ingredient/getIngredients`,
     {
       method: 'GET',
       headers: {
@@ -31,7 +31,7 @@ export async function handleGetIngredientsByProductId(
     }
 
     const result = await fetch(
-      `http://localhost:3000/api/ingredient/getIngredientsByProductId?id=${productId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/ingredient/getIngredientsByProductId?id=${productId}`,
       {
         method: 'GET',
         headers: {

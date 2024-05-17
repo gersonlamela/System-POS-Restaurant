@@ -32,12 +32,15 @@ export function getPayMethodOrder(PaymentMethod: string) {
 }
 
 export async function handleGetOrders() {
-  const result = await fetch('http://localhost:3000/api/order/getOrders', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/order/getOrders`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  })
+  )
 
   if (result.ok) {
     const data = await result.json()

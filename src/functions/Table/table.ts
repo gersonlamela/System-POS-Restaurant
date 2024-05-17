@@ -7,7 +7,7 @@ export async function handleGetTableById(tableId: Table['id']) {
     }
 
     const result = await fetch(
-      `http://localhost:3000/api/table/getTableById?id=${tableId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/table/getTableById?id=${tableId}`,
       {
         method: 'GET',
         headers: {
@@ -43,12 +43,15 @@ export async function handleGetTableById(tableId: Table['id']) {
 }
 
 export async function handleGetTables() {
-  const result = await fetch('http://localhost:3000/api/table/getTables', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/table/getTables`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  })
+  )
 
   if (result.ok) {
     const data = await result.json()

@@ -34,12 +34,15 @@ export function getRole(role: string) {
 }
 
 export async function handleGetUsers() {
-  const result = await fetch('http://localhost:3000/api/user/getUsers', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/getUsers`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  })
+  )
 
   if (result.ok) {
     const data = await result.json()
@@ -58,7 +61,7 @@ export async function handleVerifyUserExist(userId: string) {
     return false
   } else {
     const result = await fetch(
-      `http://localhost:3000/api/user/verifyUserExist?id=${userId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/verifyUserExist?id=${userId}`,
       {
         method: 'GET',
         headers: {

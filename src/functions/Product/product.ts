@@ -12,12 +12,15 @@ export function getTax(role: Product['tax']) {
 }
 
 export async function handleGetProducts() {
-  const result = await fetch('http://localhost:3000/api/product/getProducts', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
+  const result = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/getProducts`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  })
+  )
 
   if (result.ok) {
     const data = await result.json()
@@ -38,7 +41,7 @@ export async function handleGetProductsByCategoryId(
     }
 
     const result = await fetch(
-      `http://localhost:3000/api/product/getProductByCategoryId?id=${categoryId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/getProductByCategoryId?id=${categoryId}`,
       {
         method: 'GET',
         headers: {
@@ -75,7 +78,7 @@ export async function handleGetProductsByCategoryId(
 
 export async function handleGetProductsCategory() {
   const result = await fetch(
-    'http://localhost:3000/api/product/getProductsCategory',
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/getProductsCategory`,
     {
       method: 'GET',
       headers: {
@@ -103,7 +106,7 @@ export async function handleGetCategoryByCategoryId(
     }
 
     const result = await fetch(
-      `http://localhost:3000/api/category/getCategory?id=${categoryId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/category/getCategory?id=${categoryId}`,
       {
         method: 'GET',
         headers: {
