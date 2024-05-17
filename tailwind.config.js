@@ -30,10 +30,13 @@ module.exports = {
       },
     },
     extend: {
+      gridTemplateRows: {
+        'auto-fill-120': 'repeat(auto-fill, minmax(120px, 0fr))',
+      },
       gridTemplateColumns: {
         'auto-fill-100': 'repeat(auto-fill, minmax(199.5px, 1fr))',
         'auto-fit-100': 'repeat(auto-fit, minmax(100px, 1fr))',
-        'auto-fill-194': 'repeat(auto-fill, minmax(194px, 1fr))',
+        'auto-fill-194': 'repeat(auto-fill, minmax(194px, 0fr))',
         'auto-fill-270': 'repeat(auto-fill, minmax(270px, 1fr))',
         'auto-fit-270': 'repeat(auto-fit, minmax(270px, 1fr))',
       },

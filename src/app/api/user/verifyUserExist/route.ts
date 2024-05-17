@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
     if (!existingUser) {
       return NextResponse.json(
-        { message: 'Usuário não encontrado' },
+        { message: 'Utilizador não encontrado' },
         { status: 404 },
       )
     }

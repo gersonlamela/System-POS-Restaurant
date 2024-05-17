@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 'use client'
 
 import MenuList from '@/components/pos/MenuList'
@@ -34,7 +35,7 @@ export default function Order() {
     }
   }, []) // Lista de dependências vazia, executa apenas uma vez
 
-  const skeletonArray = Array.from({ length: 6 })
+  const skeletonArray = Array.from({ length: 22 })
 
   return (
     <div className="flex w-full flex-row gap-[15px]">
@@ -46,21 +47,22 @@ export default function Order() {
 
         <div className="flex h-full flex-1 flex-col  justify-between gap-[15px]">
           <div className="flex h-full  flex-row gap-[15px]">
-            <div className="flex flex-1 gap-[15px]">
-              {tables.length > 0 ? (
-                tables.map((table, index) => (
-                  <TableItem key={index} table={table} />
+            <div
+              style={{ maxHeight: `calc(100vh - 300px)` }}
+              className="grid grid-rows-auto-fill-120 justify-items-start  w-full grid-cols-auto-fill-194 gap-[15px]   overflow-y-auto rounded-[10px] bg-LightGray p-[15px] align-top shadow-md"
+            >
+              {tables.length > 0
+                ? tables.map((table, index) => (
+                  <div key={index} className="max-h-[120px] max-w-[194px]">
+                    <TableItem key={index} table={table} />
+                  </div>
                 ))
-              ) : (
-                <div className="grid w-full grid-cols-auto-fill-100 items-center gap-[15.5px] overflow-y-auto">
-                  {skeletonArray.map((_, index) => (
-                    <Skeleton
-                      key={index}
-                      className="h-[200px] w-[199.5px] bg-[#7b7b85]"
-                    />
-                  ))}
-                </div>
-              )}
+                : skeletonArray.map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    className="h-[120px] w-[194px] bg-[#7b7b85]"
+                  />
+                ))}
             </div>
             <div className="flex max-w-[335px] flex-1 flex-col justify-between gap-[15px]">
               <OrderList />
@@ -89,6 +91,6 @@ export default function Order() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   )
 }

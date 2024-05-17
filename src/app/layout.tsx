@@ -21,6 +21,9 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: 'Mesas',
+  icons: {
+    icon: '/favicon.ico', // /public path
+  },
 }
 
 export default async function RootLayout({

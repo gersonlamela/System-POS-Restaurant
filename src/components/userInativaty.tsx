@@ -15,7 +15,7 @@ export default function InactivityTimeoutComponent({
   children,
 }: InactivityTimeoutProps) {
   const router = useRouter()
-  const { data: session } = useSession() // Obtém o estado de sessão do usuário
+  const { data: session } = useSession() // Obtém o estado de sessão do Utilizador
   let inactiveTime = 0
 
   // Função para reiniciar o temporizador
@@ -25,7 +25,7 @@ export default function InactivityTimeoutComponent({
 
   // Efeito que lida com a lógica de inatividade
   useEffect(() => {
-    // Não faz nada se não estiver no navegador ou se o usuário não estiver logado
+    // Não faz nada se não estiver no navegador ou se o Utilizador não estiver logado
     if (typeof window === 'undefined' || !session) {
       return
     }
@@ -33,7 +33,7 @@ export default function InactivityTimeoutComponent({
     const timerInterval = setInterval(() => {
       inactiveTime += 1
 
-      // Verificar se o usuário está inativo por mais de 5 segundos
+      // Verificar se o Utilizador está inativo por mais de 5 segundos
       if (inactiveTime >= 2000) {
         // Executar a função de logout fornecida
         router.push('/sign-in')
@@ -45,7 +45,7 @@ export default function InactivityTimeoutComponent({
       }
     }, 1000)
 
-    // Adicionar event listeners para detectar atividade do usuário
+    // Adicionar event listeners para detectar atividade do Utilizador
     window.addEventListener('mousemove', handleUserActivity)
     window.addEventListener('keydown', handleUserActivity)
 

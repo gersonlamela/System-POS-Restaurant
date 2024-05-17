@@ -70,6 +70,7 @@ export default function TableProducts({ Products }: Products) {
     setCurrentPage(1) // Reset to the first page
   }
 
+
   // Slice the filtered Products array to only include Products for the current page
   const indexOfLastProduct = currentPage * itemsPerPage
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage
@@ -77,6 +78,9 @@ export default function TableProducts({ Products }: Products) {
     indexOfFirstProduct,
     indexOfLastProduct,
   )
+
+
+
 
   return (
     <div className="w-full">
@@ -118,6 +122,12 @@ export default function TableProducts({ Products }: Products) {
                 className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
               >
                 Price
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-center text-xs font-medium uppercase "
+              >
+                Total Price
               </TableCell>
               <TableCell
                 scope="col"

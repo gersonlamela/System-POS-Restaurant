@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest) {
 
     if (!existingUser) {
       return NextResponse.json(
-        { message: 'Usuário não encontrado' },
+        { message: 'Utilizador não encontrado' },
         { status: 404 },
       )
     }
@@ -50,14 +50,14 @@ export async function PUT(request: NextRequest) {
     })
 
     return NextResponse.json(
-      { message: 'Usuário atualizado com sucesso' },
+      { message: 'Utilizador atualizado com sucesso' },
       { status: 200 },
     )
   } catch (error: any) {
-    console.error('Erro ao atualizar usuário:', error)
+    console.error('Erro ao atualizar Utilizador:', error)
     return NextResponse.json(
       {
-        message: 'Algo deu errado ao atualizar o usuário',
+        message: 'Algo deu errado ao atualizar o Utilizador',
         error: error.message,
       },
       { status: 500 },

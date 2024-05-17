@@ -8,6 +8,7 @@ import { signOut, useSession } from 'next-auth/react'
 export default function UserCard() {
   const { data: session } = useSession()
 
+  console.log(session)
   if (!session) {
     return null
   }
@@ -15,9 +16,9 @@ export default function UserCard() {
   return (
     <div className="mb-4 flex flex-col items-center justify-center gap-2 md:flex-row ">
       <div className="flex flex-col items-center justify-center ">
-        <div className="text-xl font-semibold">{session?.user.name}</div>
+        <div className="text-xl font-semibold">{session.user?.name}</div>
         <div className="text-secondary-foreground text-base font-medium  capitalize">
-          {getRole((session as any)?.user.role)}
+          {getRole(session?.user?.role)}
         </div>
       </div>
 

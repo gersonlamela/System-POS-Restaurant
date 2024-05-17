@@ -29,32 +29,35 @@ export function OrderList() {
   return (
     <div className="flex min-w-[335px] flex-1 flex-col justify-between gap-[15px]">
       <div className="flex flex-col flex-grow bg-LightGray rounded-[10px] p-4 shadow">
-        <div className="flex flex-row justify-between items-center">
-          <h1 className="font-medium text-black">Mesa {params.tableNumber}</h1>
-          <Button
-            onClick={() => handleClearOrder(params.tableNumber)}
-            className="h-8 px-4 bg-white text-primary shadow hover:bg-primary hover:text-white"
-          >
-            Limpar Tudo
-          </Button>
-        </div>
-
-
         {filteredOrders.length > 0 ? (
-          <div style={{ maxHeight: `calc(100vh - 530px)` }} className="overflow-y-scroll">
-            {filteredOrders.map(([tableNumber, products], orderIndex) => (
-              products.products.map((product, productIndex) => (
-                <div key={product.orderId} className='flex flex-col'>
-                  <OrderItem tableNumber={tableNumber} product={product} orderId={product.orderId || ''} />
-                  {(orderIndex !== filteredOrders.length - 1 || productIndex !== products.products.length - 1) && (
-                    <hr className="my-4 border border-gray-200" />
-                  )}
-                </div>
-              ))
-            ))}
-          </div>
+          <>
+            <div className="flex flex-row justify-between items-center">
+              <h1 className="font-medium text-black">Mesa {params.tableNumber}</h1>
+              <Button
+                onClick={() => handleClearOrder(params.tableNumber)}
+                className="h-8 px-4 bg-white text-primary shadow hover:bg-primary hover:text-white"
+              >
+                Limpar Tudo
+              </Button>
+            </div>
+
+
+
+            <div style={{ maxHeight: `calc(100vh - 530px)` }} className="overflow-y-scroll">
+              {filteredOrders.map(([tableNumber, products], orderIndex) => (
+                products.products.map((product, productIndex) => (
+                  <div key={product.orderId} className='flex flex-col'>
+                    <OrderItem tableNumber={tableNumber} product={product} orderId={product.orderId || ''} />
+                    {(orderIndex !== filteredOrders.length - 1 || productIndex !== products.products.length - 1) && (
+                      <hr className="my-4 border border-gray-200" />
+                    )}
+                  </div>
+                ))
+              ))}
+            </div>
+          </>
         ) : (
-          <h1 className="flex h-full flex-grow justify-center items-center font-semibold text-xl">Sem Pedidos</h1>
+          <h1 className="flex h-full flex-grow text-[#A9A9A9] justify-center items-center font-medium text-base">Pedidos</h1>
         )}
       </div>
       <div className="h-[180px]">

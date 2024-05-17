@@ -10,6 +10,7 @@ import { format } from 'date-fns'
 import { Division } from './Division'
 import { handleGetCompany } from '@/functions/Company/route'
 import { Company } from '@prisma/client'
+import { getPayMethodOrder } from '@/functions/Order/order'
 
 // Componente para o passo de entrada do NIF do cliente
 const NifClientFormStep: React.FC<{
@@ -277,6 +278,8 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
 
   const nomeFormatado = `${segundoNome ? primeiroNome + ' ' + segundoNome.charAt(0) : primeiroNome}.` // Pegando a primeira letra do primeiro nome seguida de um ponto
 
+
+
   return (
     <Dialog>
       <DialogTrigger
@@ -284,8 +287,8 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
         asChild
         className="flex cursor-pointer items-center justify-center gap-[14px] text-[#A9A9A9]"
       >
-        <Button className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
-          Pagar
+        <Button disabled={totalPrice === 0} className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
+          Finalizar
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -324,7 +327,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
             <div className="flex h-[640px] w-[400px] items-center justify-center rounded-[10px] bg-white shadow-button20 ">
               <div className="flex max-h-[589px] w-[323px] flex-col items-center gap-[15px] overflow-y-scroll leading-[17px]">
                 <div className="flex flex-col">
-                  <h1 className="text-base font-bold">{company?.name}</h1>
+                  <h1 className="text-base font-bold text-center">{company?.name}</h1>
 
                   <h2 className="w-[217px] text-center text-base font-semibold leading-[17px]">
                     {company?.address}
@@ -538,7 +541,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
                 </div>
                 <Division />
                 <div className="flex w-full flex-col leading-[18px] ">
-                  <div className="font-semibold">Pago em {methodPayment}</div>
+                  <div className="font-semibold">Pago em  {methodPayment && getPayMethodOrder(methodPayment)}</div>
                   <div className="flex w-full flex-row justify-between font-medium">
                     <div>
                       <div>Valor Entregue</div>

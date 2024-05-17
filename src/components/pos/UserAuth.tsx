@@ -16,7 +16,7 @@ export function UserAuth() {
     )
   }
 
-  // Se houver uma sessão, exibe os dados do usuário
+  // Se houver uma sessão, exibe os dados do Utilizador
   if (session) {
     return (
       <div className="flex h-[50px] min-w-[335px] items-center justify-between rounded-[10px] bg-secondary px-[10px]">

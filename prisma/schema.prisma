@@ -18,7 +18,7 @@ model User {
   phone     String
   role      UserRole
   status    UserStatus @default(ACTIVE)
-  orders    Order[] // Relacionamento para todas as ordens do usuário
+  orders    Order[] // Relacionamento para todas as ordens do Utilizador
 }
 
 model Company {

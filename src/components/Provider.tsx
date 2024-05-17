@@ -8,7 +8,7 @@ type Props = {
 }
 
 export const Providers = ({ children }: Props) => (
-  <SessionProvider>
+  <SessionProvider refetchInterval={5 * 60} refetchOnWindowFocus={true}>
     <OrderProvider>{children}</OrderProvider>
   </SessionProvider>
 )

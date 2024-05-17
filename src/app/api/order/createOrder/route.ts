@@ -26,7 +26,7 @@ const orderSchema = z.object({
   ),
 })
 
-// Função para obter o ID do usuário com base no nome de usuário
+// Função para obter o ID do Utilizador com base no nome de Utilizador
 async function getUserId(username: string): Promise<string> {
   const user = await prisma.user.findFirst({ where: { name: username } })
   if (!user) {
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     // Aqui você pode prosseguir com o tratamento dos dados conforme necessário
 
-    // Obter IDs de usuário e mesa
+    // Obter IDs de Utilizador e mesa
     const userId = await getUserId(validatedBody.username)
     const tableId = await getTableId(validatedBody.tableNumber.toString())
 

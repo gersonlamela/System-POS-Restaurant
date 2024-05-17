@@ -22,7 +22,7 @@ export function getStatusOrder(status: Order['status']) {
   }
 }
 
-export function getPayMethodOrder(PaymentMethod: Order['PaymentMethod']) {
+export function getPayMethodOrder(PaymentMethod: string) {
   switch (PaymentMethod) {
     case 'BANK':
       return 'Multibanco'
