@@ -8,7 +8,8 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "generate": "prisma generate"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -20,7 +21,6 @@
     "@next-auth/prisma-adapter": "^0.4.4-canary.81",
     "@nextui-org/react": "^2.2.9",
     "@phosphor-icons/react": "^2.1.4",
-    "prisma": "^4.16.2",
     "@prisma/client": "^4.16.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -87,6 +87,7 @@
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
+    "prisma": "^5.14.0",
     "tailwindcss": "^3.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
