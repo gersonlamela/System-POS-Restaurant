@@ -4,12 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "postinstall": "prisma generate",
+    "build": "next build && prisma generate",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
-    "generate": "prisma generate"
+    "test": "jest"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
