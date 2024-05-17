@@ -136,7 +136,7 @@ function PaymentMethodFormStep({
         })),
       }
       // Envia o pedido para o servidor
-      const response = await fetch('/api/order/createOrder', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/order/createOrder`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
