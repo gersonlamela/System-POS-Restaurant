@@ -1,8 +1,20 @@
+import React, { useState, useEffect } from 'react'
 import TableOrders from '@/components/dashboard/Table/TableOrders/TableOrders'
 import { handleGetOrders } from '@/functions/Order/order'
 
-export default async function page() {
-  const orders = await handleGetOrders()
+const OrdersPage = () => {
+  const [orders, setOrders] = useState([])
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const fetchedOrders = await handleGetOrders()
+      setOrders(fetchedOrders)
+    }
+
+    fetchOrders()
+  }, [])
 
   return <TableOrders orders={orders} />
 }
+
+export default OrdersPage
