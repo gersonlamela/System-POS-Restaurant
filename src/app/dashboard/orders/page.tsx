@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import TableOrders from '@/components/dashboard/Table/TableOrders/TableOrders'
 import { handleGetOrders } from '@/functions/Order/order'
