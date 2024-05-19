@@ -143,12 +143,17 @@ const SignInForm = ({
               >
                 <XCircle size={36} />
               </Button>
-              <a
-                href="/"
-                className="flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-3xl font-semibold text-third shadow-button10"
+              <Button
+                className="flex h-[90px] w-[90px] items-center justify-center rounded-[10px] bg-white text-[30px] font-semibold text-third shadow-button10"
+                onClick={() => {
+                  const pinLength = form.getValues('pin').length
+                  if (pinLength < 4) {
+                    form.setValue('pin', form.getValues('pin') + 0)
+                  }
+                }}
               >
                 0
-              </a>
+              </Button>
               <Button
                 onClick={() =>
                   form.setValue('pin', form.getValues('pin').slice(0, -1))

@@ -55,9 +55,6 @@ const FormSchema = z
   })
 
 export default function AddUserModal() {
-  const { handleSubmit, formState } = useForm()
-  const { isSubmitting } = formState
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
