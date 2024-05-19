@@ -123,12 +123,7 @@ export default function TableProducts({ Products }: Products) {
               >
                 Price
               </TableCell>
-              <TableCell
-                scope="col"
-                className="TableRowacking-wider px-6 py-3 text-center text-xs font-medium uppercase "
-              >
-                Total Price
-              </TableCell>
+
               <TableCell
                 scope="col"
                 className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
