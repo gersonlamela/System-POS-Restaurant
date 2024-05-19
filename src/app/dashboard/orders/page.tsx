@@ -16,6 +16,8 @@ const OrdersPage = () => {
     fetchOrders()
   }, [])
 
+  console.log(orders)
+
   return <TableOrders orders={orders} />
 }
 
