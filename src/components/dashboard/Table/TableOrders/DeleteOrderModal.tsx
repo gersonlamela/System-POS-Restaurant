@@ -10,31 +10,28 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Trash } from '@phosphor-icons/react'
-import { Product } from '@prisma/client'
+import { Order } from '@prisma/client'
 
-export function DeleteProductModal({ productId }: { productId: string }) {
-  async function handleDelete(productId: Product['id']) {
+export function DeleteOrderModal({ orderId }: { orderId: string }) {
+  async function handleDelete(orderId: Order['id']) {
     try {
       console.log('delete')
 
-      const response = await fetch(
-        `/api/product/deleteProduct?id=${productId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      const response = await fetch(`/api/order/deleteOrder?id=${orderId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      )
+      })
 
       if (response.ok) {
-        location.href = '/dashboard/products'
+        location.href = '/dashboard/orders'
       } else {
         const data = await response.json()
-        console.error('Erro ao deletar produto:', data.message)
+        console.error('Erro ao deletar pedido:', data.message)
       }
     } catch (error: unknown) {
-      console.error('Erro ao deletar produto:', error.message)
+      console.error('Erro ao deletar pedido:', error?.message)
     }
   }
   return (
@@ -46,12 +43,12 @@ export function DeleteProductModal({ productId }: { productId: string }) {
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Deseja eliminar o produto?</AlertDialogTitle>
+          <AlertDialogTitle>Deseja eliminar o pedido?</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => handleDelete(productId)}
+            onClick={() => handleDelete(orderId)}
             className="bg-red-600 text-white hover:bg-red-700"
           >
             Eliminar

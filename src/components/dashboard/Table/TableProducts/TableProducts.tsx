@@ -11,7 +11,7 @@ import SeeProductModal from './SeeProductModal'
 import { getTax } from '@/functions/Product/product'
 
 import EditProductModal from './EditProduct'
-import { DeleteProductModal } from './DeleteProductModal'
+import { DeleteProductModal } from '../TableOrders/DeleteOrderModal'
 import { Button } from '@/components/ui/button'
 import { FilterIcon } from 'lucide-react'
 import { ProductWithIngredients } from '@/types/Product'

@@ -13,7 +13,7 @@ const menuItems = [
   {
     icon: <Users size={24} />,
     title: 'Menus',
-    href: '/dashboard/products',
+    href: '/menus',
   },
   {
     icon: <ForkKnife size={24} />,

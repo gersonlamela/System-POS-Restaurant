@@ -126,6 +126,53 @@ async function main() {
       },
     })
 
+    await prisma.table.createMany({
+      data: [
+        {
+          number: 1,
+        },
+        {
+          number: 2,
+        },
+        {
+          number: 3,
+        },
+        {
+          number: 4,
+        },
+        {
+          number: 5,
+        },
+        {
+          number: 6,
+        },
+        {
+          number: 7,
+        },
+        {
+          number: 8,
+        },
+        {
+          number: 9,
+        },
+        {
+          number: 10,
+        },
+        {
+          number: 11,
+        },
+        {
+          number: 12,
+        },
+        {
+          number: 13,
+        },
+        {
+          number: 14,
+        },
+      ],
+    })
+
     console.log('Dados de seed criados com sucesso!')
   } catch (error) {
     console.error('Erro ao inicializar o cliente Prisma:', error)

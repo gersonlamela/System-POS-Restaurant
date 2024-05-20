@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
 import { Backspace, XCircle } from '@phosphor-icons/react'
-import { OrderData } from '@/functions/OrderProvider'
+import { OrderData, useOrder } from '@/functions/OrderProvider'
 import { useParams } from 'next/navigation'
 import { format } from 'date-fns'
 import { Division } from './Division'
@@ -97,6 +97,9 @@ function PaymentMethodFormStep({
     order.find(([, data]) => data.totalPrice)?.[1].totalPrice || ''
   const products = order.find(([, data]) => data.products)?.[1].products || []
 
+  const { clearOrdersForTable } = useOrder();
+
+
   // Função para lidar com o envio do pedido
   async function onSubmit() {
     const tableNumber = parseInt(table)
@@ -146,7 +149,13 @@ function PaymentMethodFormStep({
 
       console.log(orderData)
 
+
+
       // Verifica se a solicitação foi bem-sucedida
+      if (response.ok) {
+        clearOrdersForTable(tableNumber.toString());
+        location.href = '/';
+      }
       if (!response.ok) {
         throw new Error('Failed to submit order')
       }

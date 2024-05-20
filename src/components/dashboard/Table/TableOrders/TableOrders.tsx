@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components
 
 import { Order } from '@/types/Order';
 import SeeOrderModal from './SeeOrderModal';
+import { DeleteOrderModal } from './DeleteOrderModal';
 
 export interface OrdersTableProps {
   orders: Order[];
@@ -120,7 +121,9 @@ export default function TableOrders({ orders }: OrdersTableProps) {
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
                     <div className="flex flex-row items-center gap-2">
                       <SeeOrderModal order={order} />
+                      <DeleteOrderModal orderId={order.id} />
                     </div>
+
                   </TableCell>
                 </TableRow>
               ))

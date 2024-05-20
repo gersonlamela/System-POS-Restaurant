@@ -10,10 +10,11 @@ import { ProductCategory } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ProductWithIngredients } from '@/types/Product'
+import { useRouter } from 'next/navigation'
 
 interface ProductListProps {
   product: ProductWithIngredients[]
-  tableNumber: string // Adicione o número da mesa como uma propriedade
+  tableNumber?: string // Adicione o número da mesa como uma propriedade
 }
 
 export function ProductList({ product, tableNumber }: ProductListProps) {
@@ -36,45 +37,51 @@ export function ProductList({ product, tableNumber }: ProductListProps) {
 
 interface ProductItemProps {
   product: ProductWithIngredients // Alterado para acessar diretamente a propriedade 'product'
-  tableNumber: string
+  tableNumber?: string
 }
 
 const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
   const { addProductToOrder, createEmptyOrderForTable, orders } = useOrder()
   const [category, setCategory] = useState<ProductCategory>()
 
+  const route = useRouter()
   const handleAddToOrder = () => {
-    if (!orders[tableNumber]) {
-      createEmptyOrderForTable(tableNumber)
+    if (tableNumber) {
+      if (!orders[tableNumber]) {
+        createEmptyOrderForTable(tableNumber)
+      }
+
+      const price =
+        product.price *
+        (1 - (product.discount || 0) / 100) *
+        (1 + getTax(product.tax) / 100)
+
+      const priceWithoutDiscount =
+        product.price * (1 + getTax(product.tax) / 100)
+
+      const { id, name, image, tax } = product
+      const newProduct = {
+        id,
+        name,
+        price,
+        tax: getTax(tax),
+        priceWithoutDiscount,
+        quantity: 1,
+        note: '',
+        image,
+        ingredients: product.ProductIngredient.map((ingredient) => ({
+          id: ingredient.ingredient.id,
+          name: ingredient.ingredient.name,
+          quantity: ingredient.quantity,
+        })),
+      }
+
+      console.log(newProduct) // Verifique se os dados do novo produto estão corretos
+
+      addProductToOrder(newProduct, tableNumber)
+    } else {
+      route.replace('/')
     }
-
-    const price =
-      product.price *
-      (1 - (product.discount || 0) / 100) *
-      (1 + getTax(product.tax) / 100)
-
-    const priceWithoutDiscount = product.price * (1 + getTax(product.tax) / 100)
-
-    const { id, name, image, tax } = product
-    const newProduct = {
-      id,
-      name,
-      price,
-      tax: getTax(tax),
-      priceWithoutDiscount,
-      quantity: 1,
-      note: '',
-      image,
-      ingredients: product.ProductIngredient.map((ingredient) => ({
-        id: ingredient.ingredient.id,
-        name: ingredient.ingredient.name,
-        quantity: ingredient.quantity,
-      })),
-    }
-
-    console.log(newProduct) // Verifique se os dados do novo produto estão corretos
-
-    addProductToOrder(newProduct, tableNumber)
   }
 
   const productPriceWithTax = product.price * (1 + getTax(product.tax) / 100)

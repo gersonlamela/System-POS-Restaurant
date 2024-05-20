@@ -64,13 +64,13 @@ const TableItem = ({ table }: TableItemProps) => {
 
   return (
     <Link
-      className={`relative flex h-[120px] w-[194px] cursor-pointer flex-col items-center justify-evenly rounded-[5px] ${orderForTable ? 'bg-[#FF0000]' : 'bg-[#88E152]'} bg-opacity-40 p-[15px] text-base font-medium `}
+      className={`relative flex h-[120px] w-[194px] cursor-pointer flex-col items-center justify-evenly rounded-[5px] ${orderForTable ? 'bg-primary' : 'bg-success'} bg-opacity-40 p-[15px] text-base font-medium `}
       href={`/order/${table.number}`}
       passHref
       onClick={handleTableClick}
     >
       <div
-        className={`absolute right-[15px] top-[15px] h-[15px] w-[15px] rounded-full border border-white ${orderForTable ? 'bg-[#FF0000]' : 'bg-[#88E152]'}`}
+        className={`absolute right-[15px] top-[15px] h-[15px] w-[15px] rounded-full border border-white ${orderForTable ? 'bg-primary' : 'bg-success'}`}
       ></div>
       <div className="flex flex-col items-center justify-center">
         <div>#{String(table.number).padStart(3, '0')}</div>
@@ -119,7 +119,7 @@ export function TableInfo({ Tables, orders }: TableInfoProps) {
         </div>
 
         <div className="flex flex-row items-center justify-center gap-[10px] ">
-          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-destructive" />
+          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-primary" />
           <div className="text-[14px] font-medium text-third">Ocupada</div>
         </div>
       </div>
@@ -132,7 +132,7 @@ export function TableInfo({ Tables, orders }: TableInfoProps) {
         </div>
 
         <div className="flex flex-row items-center justify-center gap-[10px] ">
-          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-destructive" />
+          <div className="h-[15px] w-[15px] gap-[10px] rounded-full bg-primary" />
           <div className="text-[14px] font-medium text-third">
             ({occupiedTables})
           </div>
