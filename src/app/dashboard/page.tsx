@@ -5,7 +5,7 @@ import React from 'react'
 
 export default function Page() {
   return (
-    <div>
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <ApexChart />
     </div>
   )

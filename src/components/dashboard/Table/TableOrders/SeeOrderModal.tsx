@@ -52,15 +52,15 @@ export default function SeeOrderModal({ order }: SeeOrderModalProps) {
       <DialogTrigger className="flex items-center justify-center rounded-lg bg-black px-2 py-2 text-white">
         <Binoculars size={16} weight="bold" />
       </DialogTrigger>
-      <DialogContent className="min-w-[630px] bg-background">
+      <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-y-auto bg-background p-4">
         {order ? (
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
-              Ver Utilizador
+              Ver Pedido #{order.orderId}
             </DialogTitle>
             <hr />
             <DialogDescription className="w-full">
-              <div className="mt-2 grid grid-cols-2 gap-6">
+              <div className="mt-2 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <Label className="text-black">Id</Label>
                   <Input
@@ -144,7 +144,7 @@ export default function SeeOrderModal({ order }: SeeOrderModalProps) {
                     {getStatusOrder(order.status)}
                   </div>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-2 max-h-[300px] overflow-y-auto">
                   {order.OrderProduct.map((orderProduct, index) => (
                     <div key={index} className="mb-4">
                       {products &&
@@ -190,7 +190,7 @@ export default function SeeOrderModal({ order }: SeeOrderModalProps) {
                   ))}
                 </div>
               </div>
-              <div className="flex w-full justify-end gap-2">
+              <div className="mt-4 flex w-full justify-end gap-2">
                 <DialogClose asChild>
                   <Button
                     type="button"

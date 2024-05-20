@@ -5,23 +5,21 @@ import { getStatusOrder, getStatusStyleOrder } from '@/functions/Order/order';
 import { useEffect, useState } from 'react';
 import { SearchInput } from '../TableSearchItem';
 import TablePagination from '../TablePagination';
-import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
 
 import { Order } from '@/types/Order';
 import SeeOrderModal from './SeeOrderModal';
 
 export interface OrdersTableProps {
-  orders: Order[]; // Corrigido para "orders" em vez de "Order"
+  orders: Order[];
 }
 
 export default function TableOrders({ orders }: OrdersTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]); // Corrigido para "filteredOrders" em vez de "Orders"
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
 
-
-  // Atualização dos pedidos filtrados quando a lista de pedidos é alterada
   useEffect(() => {
     if (orders) {
       const filtered = orders.filter((order) =>
@@ -29,22 +27,25 @@ export default function TableOrders({ orders }: OrdersTableProps) {
         order.NifClient?.toString().toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredOrders(filtered);
-      setCurrentPage(1); // Redefine para a primeira página ao filtrar
+      setCurrentPage(1);
     }
   }, [orders, searchTerm]);
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
-  // Função para lidar com a mudança de página
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  // Função para lidar com a mudança de itens por página
   const handleItemsPerPageChange = (value: number) => {
     setItemsPerPage(value);
-    setCurrentPage(1); // Redefine para a primeira página
+    setCurrentPage(1);
   };
+
+  const currentOrders = filteredOrders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="w-full">
@@ -58,37 +59,34 @@ export default function TableOrders({ orders }: OrdersTableProps) {
       </div>
       <div className="overflow-x-auto">
         <Table className="min-w-full">
-          <TableHeader className="">
+          <TableHeader>
             <TableRow>
-              <TableCell
-                scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase"
-              >
+              <TableCell scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase">
                 Order ID
               </TableCell>
               <TableCell className="whitespace-nowrap px-6 py-4 text-sm">
                 Criado Por
               </TableCell>
-              <TableCell className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase">
+              <TableCell className="px-6 py-3 text-left text-xs font-medium uppercase">
                 Mesa
               </TableCell>
-              <TableCell className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase">
+              <TableCell className="px-6 py-3 text-left text-xs font-medium uppercase">
                 Nif
               </TableCell>
-              <TableCell className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase">
+              <TableCell className="px-6 py-3 text-left text-xs font-medium uppercase">
                 Preço Final
               </TableCell>
-              <TableCell className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase">
+              <TableCell className="px-6 py-3 text-left text-xs font-medium uppercase">
                 Status
               </TableCell>
-              <TableCell className="TableRowacking-wider text-center text-xs font-medium uppercase">
+              <TableCell className="text-center text-xs font-medium uppercase">
                 Ações
               </TableCell>
             </TableRow>
           </TableHeader>
-          <tbody className="">
-            {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
+          <TableBody className="max-h-[400px] overflow-y-auto">
+            {currentOrders.length > 0 ? (
+              currentOrders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-sm">
                     {order.orderId}
@@ -119,9 +117,8 @@ export default function TableOrders({ orders }: OrdersTableProps) {
                       {getStatusOrder(order.status)}
                     </div>
                   </TableCell>
-
                   <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                    <div className="flex flex-row items-center gap-2 ">
+                    <div className="flex flex-row items-center gap-2">
                       <SeeOrderModal order={order} />
                     </div>
                   </TableCell>
@@ -129,19 +126,16 @@ export default function TableOrders({ orders }: OrdersTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="px-6 py-4 text-center text-sm "
-                >
+                <TableCell colSpan={5} className="px-6 py-4 text-center text-sm">
                   Nenhum pedido encontrado
                 </TableCell>
               </TableRow>
             )}
-          </tbody>
+          </TableBody>
         </Table>
       </div>
       <TablePagination
-        type="Produtos"
+        type="Pedidos"
         itemsPerPage={itemsPerPage}
         setItemsPerPage={handleItemsPerPageChange}
         currentPage={currentPage}

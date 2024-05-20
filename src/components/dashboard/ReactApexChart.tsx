@@ -115,12 +115,14 @@ export function ApexChart() {
     fetchData()
   }, [])
   return (
-    <Chart
-      options={options}
-      series={series}
-      type="area"
-      height={350}
-      width={'100%'}
-    />
+    <div className="h-full w-full">
+      <Chart
+        options={options}
+        series={series}
+        type="area"
+        height={350}
+        width={'100%'}
+      />
+    </div>
   )
 }

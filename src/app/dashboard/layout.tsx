@@ -16,8 +16,10 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
     <div className="flex h-full w-full flex-row ">
       <SideMenu />
       <div className="flex flex-1  flex-col justify-between overflow-auto p-10">
-        {children}
-        <MenuList />
+        <div className="flex flex-1 overflow-auto">{children}</div>
+        <div className="flex ">
+          <MenuList />
+        </div>
       </div>
     </div>
   )
