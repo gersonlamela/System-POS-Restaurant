@@ -2,16 +2,13 @@ import TableOrders from '@/components/dashboard/Table/TableOrders/TableOrders'
 import { handleGetOrders } from '@/functions/Order/order'
 import { Order } from '@/types/Order'
 
-export async function getServerSideProps() {
-  const orders = await handleGetOrders()
+// Marcar o componente como um Server Component explicitamente (opcional)
+export const dynamic = 'force-dynamic'
 
-  return {
-    props: {
-      orders,
-    },
-  }
-}
+export default async function Page() {
+  const orders: Order[] = await handleGetOrders()
 
-export default function Page({ orders }: { orders: Order[] }) {
+  console.log('orders', orders)
+
   return <TableOrders orders={orders} />
 }
