@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 'use client';
 
-import { getStatusOrder, getStatusStyleOrder } from '@/functions/Order/order';
+import { getStatusOrder, getStatusStyleOrder, handleGetOrders } from '@/functions/Order/order';
 import { useEffect, useState } from 'react';
 import { SearchInput } from '../TableSearchItem';
 import TablePagination from '../TablePagination';
@@ -11,15 +11,34 @@ import { Order } from '@/types/Order';
 import SeeOrderModal from './SeeOrderModal';
 import { DeleteOrderModal } from './DeleteOrderModal';
 
-export interface OrdersTableProps {
-  orders: Order[];
-}
 
-export default function TableOrders({ orders }: OrdersTableProps) {
+
+export default function TableOrders() {
+
+
+  const [orders, setOrders] = useState<Order[]>([])
+
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const fetchedOrders: Order[] = await handleGetOrders()
+        setOrders(fetchedOrders)
+
+        console.log(fetchedOrders)
+      } catch (error) {
+        console.error('Erro ao buscar pedidos:', error)
+      }
+    }
+
+    fetchOrders()
+  }, [])
 
   useEffect(() => {
     if (orders) {
