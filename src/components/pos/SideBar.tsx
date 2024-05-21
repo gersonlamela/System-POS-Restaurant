@@ -50,8 +50,10 @@ export function SideBar({ categories }: SideBarProps) {
       <div className="flex h-full flex-col items-center justify-between gap-[15px]">
         <div className="flex w-full flex-col gap-[15px] overflow-y-auto">
           <Link
-            href={`/order/${params.tableNumber}/`}
-            as={`/order/${params.tableNumber}/`}
+            href={
+              params.tableNumber ? `/order/${params.tableNumber}/` : '/menus'
+            }
+            as={params.tableNumber ? `/order/${params.tableNumber}/` : '/menus'}
             className={linkClass(!params.categoryId)}
           >
             <Notebook size={40} />
@@ -60,8 +62,16 @@ export function SideBar({ categories }: SideBarProps) {
 
           {categories.map((category: ProductCategory) => (
             <Link
-              href={`/order/${params.tableNumber}/category/${category.id}`}
-              as={`/order/${params.tableNumber}/category/${category.id}`}
+              href={
+                params.tableNumber
+                  ? `/order/${params.tableNumber}/category/${category.id}`
+                  : `/menus/category/${category.id}`
+              }
+              as={
+                params.tableNumber
+                  ? `/order/${params.tableNumber}/category/${category.id}`
+                  : `/menus/category/${category.id}`
+              }
               key={category.id}
               className={linkClass(activeCategoryId === category.id)}
             >

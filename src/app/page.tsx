@@ -46,7 +46,7 @@ export default function Order() {
         </div>
 
         <div className="flex h-full flex-1 flex-col  justify-between gap-[15px]">
-          <div className="flex h-full  flex-row gap-[15px]">
+          <div className="flex h-full flex-row gap-[15px]">
             <div
               style={{ maxHeight: `calc(100vh - 300px)` }}
               className="grid grid-rows-auto-fill-120 justify-items-start  w-full grid-cols-auto-fill-194 gap-[15px]   overflow-y-auto rounded-[10px] bg-LightGray p-[15px] align-top shadow-md"

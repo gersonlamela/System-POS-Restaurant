@@ -11,10 +11,11 @@ import SeeProductModal from './SeeProductModal'
 import { getTax } from '@/functions/Product/product'
 
 import EditProductModal from './EditProduct'
-import { DeleteProductModal } from '../TableOrders/DeleteOrderModal'
+
 import { Button } from '@/components/ui/button'
 import { FilterIcon } from 'lucide-react'
 import { ProductWithIngredients } from '@/types/Product'
+import { DeleteProductModal } from './DeleteProductModal'
 
 // Defina a interface para representar os produtos com ingredientes
 export interface Products {

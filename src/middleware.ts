@@ -7,7 +7,7 @@ export default withAuth({
 
       console.log(token)
       if (path.startsWith('/dashboard')) {
-        return token?.role === 'ADMIN'
+        return token?.role === 'ADMIN' || token?.role === 'MANAGER'
       }
 
       return token !== null
