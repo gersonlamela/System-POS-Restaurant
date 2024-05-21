@@ -12,6 +12,11 @@ import { Button } from '@/components/ui/button'
 import { Trash } from '@phosphor-icons/react'
 import { Order } from '@prisma/client'
 
+// Type guard function
+function isErrorWithMessage(error: unknown): error is { message: string } {
+  return typeof error === 'object' && error !== null && 'message' in error
+}
+
 export function DeleteOrderModal({ orderId }: { orderId: string }) {
   async function handleDelete(orderId: Order['id']) {
     try {
@@ -31,9 +36,14 @@ export function DeleteOrderModal({ orderId }: { orderId: string }) {
         console.error('Erro ao deletar pedido:', data.message)
       }
     } catch (error: unknown) {
-      console.error('Erro ao deletar pedido:', error?.message)
+      if (isErrorWithMessage(error)) {
+        console.error('Erro ao deletar pedido:', error.message)
+      } else {
+        console.error('Erro ao deletar pedido:', error)
+      }
     }
   }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

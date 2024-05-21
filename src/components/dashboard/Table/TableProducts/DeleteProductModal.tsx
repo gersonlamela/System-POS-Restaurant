@@ -12,6 +12,11 @@ import { Button } from '@/components/ui/button'
 import { Trash } from '@phosphor-icons/react'
 import { Product } from '@prisma/client'
 
+// Type guard function
+function isErrorWithMessage(error: unknown): error is { message: string } {
+  return typeof error === 'object' && error !== null && 'message' in error
+}
+
 export function DeleteProductModal({ productId }: { productId: string }) {
   async function handleDelete(productId: Product['id']) {
     try {
@@ -34,9 +39,14 @@ export function DeleteProductModal({ productId }: { productId: string }) {
         console.error('Erro ao deletar produto:', data.message)
       }
     } catch (error: unknown) {
-      console.error('Erro ao deletar produto:', error.message)
+      if (isErrorWithMessage(error)) {
+        console.error('Erro ao deletar produto:', error.message)
+      } else {
+        console.error('Erro ao deletar produto:', error)
+      }
     }
   }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
