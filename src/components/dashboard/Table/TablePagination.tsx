@@ -6,14 +6,14 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from '@/components/ui/pagination'
-import {
+/* import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select' */
 
 interface TablePaginationProps {
   itemsPerPage: number
@@ -27,19 +27,19 @@ interface TablePaginationProps {
 
 export default function TablePagination({
   itemsPerPage,
-  setItemsPerPage,
+  /*   setItemsPerPage, */
   currentPage,
   totalPages,
   handlePageChange,
   filteredItemsTotal,
   type,
 }: TablePaginationProps) {
-  const handleItemsPerPageChange = (value: string) => {
+  /*   const handleItemsPerPageChange = (value: string) => {
     const newValue = parseInt(value, 10)
     if (!isNaN(newValue)) {
       setItemsPerPage(newValue)
     }
-  }
+  } */
   const firstItemIndex = (currentPage - 1) * itemsPerPage + 1
   const lastItemIndex = Math.min(currentPage * itemsPerPage, filteredItemsTotal)
   const itemsBeingDisplayed = Math.min(
@@ -56,7 +56,7 @@ export default function TablePagination({
       </div>
       <div className="flex items-center justify-center gap-8">
         <div className="flex flex-1 items-center gap-2">
-          <span className="flex text-sm text-zinc-500">{type} por página:</span>
+          {/*    <span className="flex text-sm text-zinc-500">{type} por página:</span>
           <div className="px-3 py-[6px]">
             <Select
               defaultValue={itemsPerPage.toString()}
@@ -73,7 +73,7 @@ export default function TablePagination({
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
 
         {/* Pagination Component */}

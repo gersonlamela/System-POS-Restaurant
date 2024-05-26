@@ -4,14 +4,13 @@
 import { useEffect, useState } from 'react';
 import { Trash } from '@phosphor-icons/react';
 import { NumberIncrease } from './NumberIncrease';
-import { OrderProduct, useOrder } from '@/functions/OrderProvider';
+import { OrderIngredient, OrderProduct, useOrder } from '@/functions/OrderProvider';
 import { ProductCategory } from '@prisma/client';
 import { handleGetCategoryByCategoryId } from '@/functions/Product/product';
 import Image from 'next/image';
 import { NotePopup } from './NotePopup';
 
-import { handleGetIngredientsByProductId } from '@/functions/Ingredients/ingredients';
-import { IngredientsProduct } from '@/types/Product';
+
 import { EditOrderPopUp } from './EditOrderPopUp';
 
 interface OrderItemProps {
@@ -25,7 +24,7 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
   const [category, setCategory] = useState<ProductCategory>();
   const { decreaseProductQuantity, increaseProductQuantity, removeProductFromOrder, updateProductNote } = useOrder();
 
-  const [ingredients, setIngredients] = useState<IngredientsProduct[]>([])
+  const [ingredients] = useState<OrderIngredient[]>(product.ingredients)
 
 
   const handleRemoveProductClick = () => {
@@ -40,6 +39,7 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
   };
 
   useEffect(() => {
+
     const fetchCategory = async () => {
       if (product.id) {
         try {
@@ -50,22 +50,20 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
         }
       }
     };
-    const fetchIngredients = async () => {
-      try {
-        const ingredients = await handleGetIngredientsByProductId(product.id)
-        setIngredients(ingredients)
-      } catch (error) {
-        console.error('Error fetching Ingredients:', error)
-      }
-    }
-    fetchIngredients()
     fetchCategory();
+
   }, []);
+
 
 
   if (!orderId) {
     return null
   }
+
+
+
+
+  console.log(ingredients)
 
   return (
     <div className="flex flex-col gap-[8px]">
@@ -102,7 +100,7 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
         <NotePopup currentNote={note} onConfirm={handleConfirmNote} />
         <div className="h-full border border-l-2 border-[#ECEDED]"></div>
         <div className="flex items-center justify-center gap-[14px] text-[#A9A9A9]">
-          <EditOrderPopUp tableNumber={tableNumber} ProductIngredient={ingredients} product={product} orderId={product.orderId} />
+          <EditOrderPopUp tableNumber={tableNumber} ProductIngredient={ingredients} ProductId={product.id} orderId={product.orderId} />
         </div>
       </div>
       <div className="flex w-full items-center justify-between">

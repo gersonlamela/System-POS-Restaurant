@@ -26,7 +26,7 @@ interface CategoryTableProps {
 
 export default function TableCategories({ Category }: CategoryTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(8)
   const [searchTerm, setSearchTerm] = useState('')
 
   const getCategoryIcon = (categoryName: string) => {

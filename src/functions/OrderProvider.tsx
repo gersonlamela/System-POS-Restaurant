@@ -11,6 +11,7 @@ export interface OrderIngredient {
   id: string;
   name: string;
   quantity: number;
+  image: string;
   cookingPreference?: string;
 }
 
@@ -284,7 +285,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     parseFloat(orderTotalPrice(tableNumber).toFixed(2))
 
   const subtotal = (tableNumber: string) =>
-    parseFloat(orderTotalPrice(tableNumber).toFixed(2))
+    total(tableNumber) - totalDiscount(tableNumber) - totalTAX(tableNumber)
 
   const totalDiscount = (tableNumber: string) =>
     parseFloat(orderTotalDiscount(tableNumber).toFixed(2))

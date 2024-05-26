@@ -24,17 +24,23 @@ export interface Products {
 
 export default function TableProducts({ Products }: Products) {
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(8) // Always set items per page to 8
   const [searchTerm, setSearchTerm] = useState('')
   const [showOnlyInStock, setShowOnlyInStock] = useState(false)
+  const [showOnlyDiscounted, setShowOnlyDiscounted] = useState(false)
 
   const filterProductsInStock = () => {
     setShowOnlyInStock(!showOnlyInStock)
   }
 
+  const filterProductsDiscounted = () => {
+    setShowOnlyDiscounted(!showOnlyDiscounted)
+  }
+
   const filteredProducts = Products
     ? Products.filter((product) => {
       const stock = product.stock ?? 0 // Usa 0 como valor padrão se product.stock for null
+      const discount = product.discount ?? 0 // Usa 0 como valor padrão se product.discount for null
 
       // Função para remover caracteres especiais de uma string
       const removeSpecialChars = (str: string) => str.replace(/[^\w\s]/g, '')
@@ -48,6 +54,7 @@ export default function TableProducts({ Products }: Products) {
       )
 
       if (showOnlyInStock && stock !== 0) return false
+      if (showOnlyDiscounted && discount <= 0) return false
       if (searchTermCleaned === '') return true // Se o termo de pesquisa estiver vazio, inclui todos os produtos
 
       // Realizando a comparação entre a string de pesquisa e o nome do produto
@@ -71,7 +78,6 @@ export default function TableProducts({ Products }: Products) {
     setCurrentPage(1) // Reset to the first page
   }
 
-
   // Slice the filtered Products array to only include Products for the current page
   const indexOfLastProduct = currentPage * itemsPerPage
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage
@@ -79,9 +85,6 @@ export default function TableProducts({ Products }: Products) {
     indexOfFirstProduct,
     indexOfLastProduct,
   )
-
-
-
 
   return (
     <div className="w-full">
@@ -92,13 +95,22 @@ export default function TableProducts({ Products }: Products) {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        <Button
-          onClick={filterProductsInStock}
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
-        >
-          {showOnlyInStock ? 'Mostrar Todos' : 'Mostrar produtos sem stock'}
-          <FilterIcon />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={filterProductsInStock}
+            className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          >
+            {showOnlyInStock ? 'Mostrar Todos' : 'Mostrar produtos sem stock'}
+            <FilterIcon />
+          </Button>
+          <Button
+            onClick={filterProductsDiscounted}
+            className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          >
+            {showOnlyDiscounted ? 'Mostrar Todos' : 'Mostrar produtos com desconto'}
+            <FilterIcon />
+          </Button>
+        </div>
         <AddProductModal />
       </div>
 
@@ -206,7 +218,7 @@ export default function TableProducts({ Products }: Products) {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={5}
+                  colSpan={8}
                   className="px-6 py-4 text-center text-sm "
                 >
                   Nenhum produto encontrado

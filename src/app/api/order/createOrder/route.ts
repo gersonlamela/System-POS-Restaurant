@@ -6,14 +6,14 @@ import { z, ZodError } from 'zod'
 const orderSchema = z.object({
   methodPayment: z.enum(['CASH', 'BANK']),
   nif: z.string().optional(),
-  tableNumber: z.number(), // Alterado para string para corresponder ao tipo recebido do formulário
+  tableNumber: z.number(),
   date: z.string().pipe(z.coerce.date()),
   username: z.string(),
   totalPrice: z.number(),
   orders: z.array(
     z.object({
       productId: z.string(),
-      quantity: z.number(), // Alterado para opcional
+      quantity: z.number().optional(),
       ingredients: z
         .array(
           z.object({
@@ -21,7 +21,7 @@ const orderSchema = z.object({
             cookingPreference: z.string().optional(),
           }),
         )
-        .optional(), // Alterado para opcional
+        .optional(),
     }),
   ),
 })
@@ -39,7 +39,7 @@ async function getUserId(username: string): Promise<string> {
 async function getTableId(tableNumber: string): Promise<string> {
   const table = await prisma.table.findFirst({
     where: { number: parseInt(tableNumber) },
-  }) // Parse para int
+  })
   if (!table) {
     throw new Error(`Table with number ${tableNumber} not found`)
   }
@@ -54,64 +54,66 @@ export async function POST(req: Request) {
     // Validar o corpo da solicitação
     const validatedBody = orderSchema.parse(body)
 
-    // Aqui você pode prosseguir com o tratamento dos dados conforme necessário
-
     // Obter IDs de Utilizador e mesa
     const userId = await getUserId(validatedBody.username)
     const tableId = await getTableId(validatedBody.tableNumber.toString())
 
-    const mainOrder = await prisma.order.create({
-      data: {
-        dateOrder: validatedBody.date,
-        NifClient: validatedBody.nif,
-        totalPrice: validatedBody.totalPrice,
-        status: 'COMPLETED',
-        userId,
-        tableId,
-        PaymentMethod: validatedBody.methodPayment,
-      },
-    })
-
-    console.log(
-      'isto é um validate',
-      validatedBody.orders.map((order) => order.ingredients),
-    )
-    // Criar transação para criar itens de pedido
-    await prisma.$transaction(async (prisma) => {
-      // Criar itens de pedido para cada produto
-      for (const orderItem of validatedBody.orders) {
-        const { productId, quantity = 1, ingredients = [] } = orderItem // Definir valor padrão para quantity e ingredients
-
-        // Verificar se o produto existe
-        const product = await prisma.product.findUnique({
-          where: { id: productId },
-        })
-        if (!product) {
-          throw new Error(`Product with ID ${productId} not found`)
-        }
-
-        // Criar entrada de pedido para o produto associado à mainOrder
-        const createdOrderProduct = await prisma.orderProduct.create({
+    // Criar transação para criar a ordem e seus itens
+    await prisma.$transaction(
+      async (transactionPrisma) => {
+        // Criar a ordem principal
+        const mainOrder = await transactionPrisma.order.create({
           data: {
-            quantity,
-            product: { connect: { id: productId } },
-            order: { connect: { id: mainOrder.id } },
+            dateOrder: validatedBody.date,
+            NifClient: validatedBody.nif,
+            totalPrice: validatedBody.totalPrice,
+            status: 'COMPLETED',
+            userId,
+            tableId,
+            PaymentMethod: validatedBody.methodPayment,
           },
         })
 
-        // Verificar se há ingredientes antes de criar a associação
-        if (ingredients.length > 0) {
-          // Criar os ingredientes e associá-los ao item de pedido
-          await prisma.orderIngredient.createMany({
-            data: ingredients.map((ingredient) => ({
-              ingredientId: ingredient.ingredientId,
-              cookingPreference: ingredient.cookingPreference,
-              orderProductId: createdOrderProduct.id,
-            })),
+        // Criar itens de pedido para cada produto
+        for (const orderItem of validatedBody.orders) {
+          const { productId, quantity = 1, ingredients = [] } = orderItem
+
+          // Verificar se o produto existe
+          const product = await transactionPrisma.product.findUnique({
+            where: { id: productId },
           })
+          if (!product) {
+            throw new Error(`Product with ID ${productId} not found`)
+          }
+
+          // Criar entrada de pedido para o produto associado à mainOrder
+          const createdOrderProduct =
+            await transactionPrisma.orderProduct.create({
+              data: {
+                quantity,
+                product: { connect: { id: productId } },
+                order: { connect: { id: mainOrder.id } },
+              },
+            })
+
+          // Verificar se há ingredientes antes de criar a associação
+          if (ingredients.length > 0) {
+            // Criar os ingredientes e associá-los ao item de pedido
+            await transactionPrisma.orderIngredient.createMany({
+              data: ingredients.map((ingredient) => ({
+                ingredientId: ingredient.ingredientId,
+                cookingPreference: ingredient.cookingPreference,
+                orderProductId: createdOrderProduct.id,
+              })),
+            })
+          }
         }
-      }
-    })
+      },
+      {
+        maxWait: 5000, // default: 2000
+        timeout: 10000, // default: 5000
+      },
+    )
 
     return NextResponse.json(
       {

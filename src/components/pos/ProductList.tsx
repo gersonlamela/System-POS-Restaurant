@@ -72,6 +72,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
         ingredients: product.ProductIngredient.map((ingredient) => ({
           id: ingredient.ingredient.id,
           name: ingredient.ingredient.name,
+          image: ingredient.ingredient.image,
           quantity: ingredient.quantity,
         })),
       }
