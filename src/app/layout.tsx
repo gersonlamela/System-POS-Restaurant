@@ -38,9 +38,7 @@ export default async function RootLayout({
         <Providers>
           <Toaster position="top-right" />
           <Header />
-          <main className="flex flex-1 overflow-auto  px-[15px] pb-[10px] pt-[15px]">
-            {children}
-          </main>
+          <main className="flex flex-1 overflow-auto">{children}</main>
           <Footer />
           {!session && <UserSignIn />}
         </Providers>

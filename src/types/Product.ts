@@ -17,7 +17,7 @@ interface Product extends Products {
 
 export type ProductWithIngredients = Product & {
   productIngredient: {
-    ingredient: Ingredient
+    ingredients: Ingredient
     quantity: ProductIngredient['quantity']
   }[]
 }

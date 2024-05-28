@@ -19,6 +19,7 @@ import { parseISO, format } from 'date-fns'
 import { getTax } from '@/functions/Product/product'
 import IngredientsList from '@/components/IngredientsList'
 import { ProductWithIngredients } from '@/types/Product'
+import Image from 'next/image'
 
 interface SeeProductModalProps {
   Product: ProductWithIngredients
@@ -33,8 +34,8 @@ export default function SeeProductModal({ Product }: SeeProductModalProps) {
   return (
     <>
       <Dialog>
-        <DialogTrigger className="flex items-center justify-center  rounded-lg bg-black px-2 py-2 text-white">
-          <Binoculars size={16} weight="bold" />
+        <DialogTrigger className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5">
+          <Binoculars size={22} />
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
@@ -45,7 +46,7 @@ export default function SeeProductModal({ Product }: SeeProductModalProps) {
             <DialogDescription className=" w-full ">
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
-                  <img
+                  <Image
                     src={`/uploads/products/${Product.image}`}
                     alt={Product.name}
                     width={200}

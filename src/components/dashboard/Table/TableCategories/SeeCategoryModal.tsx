@@ -14,9 +14,10 @@ import { Input } from '@/components/ui/input'
 
 import { Label } from '@/components/ui/label'
 import { Binoculars } from '@phosphor-icons/react'
-import { Ingredient, ProductCategory } from '@prisma/client'
+import { ProductCategory } from '@prisma/client'
 
 import { parseISO, format } from 'date-fns'
+import { getCategoryIcon } from '@/functions/Category/category'
 
 interface SeeCategoryModalProps {
   Category: ProductCategory
@@ -31,10 +32,10 @@ export default function SeeCategoryModal({ Category }: SeeCategoryModalProps) {
   return (
     <>
       <Dialog>
-        <DialogTrigger className="flex items-center justify-center  rounded-lg bg-black px-2 py-2 text-white">
-          <Binoculars size={16} weight="bold" />
+        <DialogTrigger className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5">
+          <Binoculars size={20} />
         </DialogTrigger>
-        <DialogContent className="min-w-[630px] bg-background">
+        <DialogContent className="w-auto bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
               Ver Categoria
@@ -43,12 +44,7 @@ export default function SeeCategoryModal({ Category }: SeeCategoryModalProps) {
             <DialogDescription className=" w-full ">
               <div className="mt-2 grid w-full grid-cols-2 items-start gap-6">
                 <div className="flex h-full items-center justify-center">
-                  <img
-                    src={`/uploads/icons/${Category.icon}`}
-                    alt={Category.name}
-                    width={300}
-                    height={300}
-                  />
+                  {getCategoryIcon(Category.name, 70)}
                 </div>
                 <div className="mb-5">
                   <div>

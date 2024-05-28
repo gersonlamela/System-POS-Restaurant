@@ -48,9 +48,9 @@ export default function TablePagination({
   )
 
   return (
-    <div className="flex w-full flex-row items-center justify-between text-sm text-zinc-500">
+    <div className="flex w-full flex-row items-center justify-between text-base font-normal text-third">
       <div className="flex flex-1">
-        <span>
+        <span className="text-base font-normal text-third">
           Exibido {itemsBeingDisplayed} de {filteredItemsTotal} {type}
         </span>
       </div>
@@ -78,30 +78,37 @@ export default function TablePagination({
 
         {/* Pagination Component */}
         <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-              />
-            </PaginationItem>
-            {[...Array(totalPages)].map((_, index) => (
-              <PaginationItem key={index}>
-                <PaginationLink
-                  onClick={() => handlePageChange(index + 1)}
-                  isActive={currentPage === index + 1}
-                  className="text-black"
-                >
-                  {index + 1}
-                </PaginationLink>
+          <PaginationContent className="h-[40px]">
+            {currentPage !== 1 && (
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                />
               </PaginationItem>
-            ))}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() =>
-                  handlePageChange(Math.min(totalPages, currentPage + 1))
-                }
-              />
-            </PaginationItem>
+            )}
+
+            {totalPages > 1 &&
+              [...Array(totalPages)].map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(index + 1)}
+                    isActive={currentPage === index + 1}
+                    className="text-base font-normal text-third"
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+            {totalPages > 1 && (
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() =>
+                    handlePageChange(Math.min(totalPages, currentPage + 1))
+                  }
+                />
+              </PaginationItem>
+            )}
           </PaginationContent>
         </Pagination>
       </div>

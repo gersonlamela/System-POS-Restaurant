@@ -4,8 +4,6 @@ export default withAuth({
   callbacks: {
     authorized: ({ req, token }) => {
       const path = req.nextUrl.pathname
-
-      console.log(token)
       if (path.startsWith('/dashboard')) {
         return token?.role === 'ADMIN' || token?.role === 'MANAGER'
       }

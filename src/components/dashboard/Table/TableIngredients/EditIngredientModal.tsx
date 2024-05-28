@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { CircleNotch, Pencil, Trash } from '@phosphor-icons/react'
+import { CircleNotch, PencilSimple, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -24,11 +24,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
-import { Ingredient, Product } from '@prisma/client'
+import { Ingredient } from '@prisma/client'
 
 const FormSchema = z.object({
   name: z.string().min(1, 'O nome do produto é obrigatório.'),
-  price: z.number().positive('O preço deve ser um valor positivo.'),
+  stock: z.number().positive('O stock deve ser um valor positivo.'),
   image: z.any(),
 })
 
@@ -48,7 +48,7 @@ export default function EditIngredientModal({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: ingredient.name,
-      price: ingredient.price,
+      stock: ingredient.stock,
       image: ingredient.image,
     },
   })
@@ -66,7 +66,7 @@ export default function EditIngredientModal({
 
       // Adiciona os outros campos ao FormData conforme necessário
       formData.append('name', values.name)
-      formData.append('price', values.price.toString())
+      formData.append('stock', values.stock.toString())
 
       const response = await fetch(
         `/api/ingredient/editIngredient?id=${ingredient.id}`,
@@ -116,12 +116,12 @@ export default function EditIngredientModal({
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5"
           onClick={() => {
             reset()
           }}
         >
-          <Pencil size={16} weight="bold" />
+          <PencilSimple size={20} />
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
@@ -155,11 +155,11 @@ export default function EditIngredientModal({
                     />
                     <FormField
                       control={form.control}
-                      name="price"
+                      name="stock"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="font-medium text-black">
-                            Preço
+                            Stock
                           </FormLabel>
                           <FormControl>
                             <Input

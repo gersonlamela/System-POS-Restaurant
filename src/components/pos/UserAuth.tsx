@@ -1,3 +1,5 @@
+'use client'
+
 import { getRole } from '@/functions/user/user'
 
 import { useSession } from 'next-auth/react'

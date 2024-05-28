@@ -24,8 +24,6 @@ export function OrderList() {
     location.href = '/';
   }
 
-  console.log('filteredOrders', filteredOrders.map(([, value]) => value.products));
-
   return (
     <div className="flex min-w-[335px] flex-1 flex-col justify-between gap-[15px]">
       <div className="flex flex-col flex-grow bg-LightGray rounded-[10px] p-4 shadow">
@@ -43,7 +41,7 @@ export function OrderList() {
 
 
 
-            <div style={{ maxHeight: `calc(100vh - 530px)` }} className="overflow-y-scroll">
+            <div style={{ maxHeight: `calc(100vh - 540px)` }} className="overflow-y-scroll">
               {filteredOrders.map(([tableNumber, products], orderIndex) => (
                 products.products.map((product, productIndex) => (
                   <div key={product.orderId} className='flex flex-col'>

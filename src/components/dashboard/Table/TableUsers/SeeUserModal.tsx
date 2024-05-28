@@ -31,8 +31,8 @@ export default function SeeUserModal({ user }: SeeUserModalProps) {
   return (
     <>
       <Dialog>
-        <DialogTrigger className="flex items-center justify-center  rounded-lg bg-black px-2 py-2 text-white">
-          <Binoculars size={16} weight="bold" />
+        <DialogTrigger className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5">
+          <Binoculars size={20} />
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>

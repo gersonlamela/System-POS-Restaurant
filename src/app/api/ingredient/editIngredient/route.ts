@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { Tax, ProductCategory } from '@prisma/client'
+
 import cuid from 'cuid'
 import { writeFile } from 'fs/promises'
 
@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest) {
   try {
     const id = searchParams.get('id') as string
     const name = data.get('name') as string
-    const price = parseFloat(data.get('price') as string)
+    const stock = parseFloat(data.get('stock') as string)
 
     const existingIngredient = await prisma.ingredient.findUnique({
       where: { id },
@@ -33,7 +33,7 @@ export async function PUT(request: NextRequest) {
         where: { id },
         data: {
           name,
-          price,
+          stock,
         },
       })
     } else {
@@ -53,7 +53,7 @@ export async function PUT(request: NextRequest) {
         where: { id },
         data: {
           name,
-          price,
+          stock,
           image: `${cuidValue}${ext}`,
         },
       })

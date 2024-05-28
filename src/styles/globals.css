@@ -26,6 +26,11 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
+
+}
+
+*:disabled {
+  cursor: not-allowed;
 }
 
 /* Para IE 10+ e Edge */

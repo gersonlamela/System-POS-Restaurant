@@ -1,5 +1,4 @@
 import React from 'react'
-import { Input } from '@/components/ui/input'
 
 // Define an interface for the component's props
 interface SearchInputProps {
@@ -14,13 +13,13 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   searchPlaceholder,
 }) => {
   return (
-    <div className="relative h-[40px] w-[380px] rounded-3xl">
-      <Input
+    <div className="relative h-[40px] w-[400px]  rounded-[5px]">
+      <input
         type="text"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder={searchPlaceholder}
-        className="absolute flex  flex-1 items-center  border p-[10px] outline-none ring-0 focus-visible:ring-0"
+        className="absolute flex h-full  w-full flex-1 items-center  rounded-[5px] border border-secondary pl-[15px] outline-none ring-0 focus-visible:ring-0"
       />
     </div>
   )

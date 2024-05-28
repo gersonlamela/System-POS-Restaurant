@@ -5,9 +5,21 @@ import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
-    const users = await prisma.user.findMany()
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        address: true,
+        name: true,
+        phone: true,
+        role: true,
+        status: true,
+      },
+    })
 
     return NextResponse.json(
       { user: users, message: 'Utilizador encontrados com sucesso' },

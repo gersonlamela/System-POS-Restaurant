@@ -89,7 +89,7 @@ export default function AddCategoryModal() {
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex h-[40px] flex-row items-center gap-2 rounded-lg bg-third px-[15px] text-white"
           onClick={() => {
             reset()
           }}

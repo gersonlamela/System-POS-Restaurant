@@ -9,7 +9,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { CircleNotch, Pencil, Trash } from '@phosphor-icons/react'
+import { CircleNotch, PencilSimple, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/form'
 import { UploadCloud } from 'lucide-react'
 import { ProductCategory } from '@prisma/client'
+import { getCategoryIcon } from '@/functions/Category/category'
 
 const FormSchema = z.object({
   name: z.string().min(1, 'O nome do produto é obrigatório.'),
@@ -113,12 +114,12 @@ export default function EditCategoryModal({
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5"
           onClick={() => {
             reset()
           }}
         >
-          <Pencil size={16} weight="bold" />
+          <PencilSimple size={20} />
         </DialogTrigger>
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
@@ -162,12 +163,7 @@ export default function EditCategoryModal({
                           <FormControl>
                             {imagePreview ? (
                               <div className="relative my-4 flex h-[200px] w-[200px] cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-100 text-center">
-                                <img
-                                  src={imagePreview}
-                                  alt={form.getValues('name')}
-                                  className="h-[150px] w-[150px] object-cover"
-                                  style={{ maxHeight: '200px' }}
-                                />
+                                {getCategoryIcon(productCategory.name, 150)}
                                 <Button
                                   type="button"
                                   className="absolute right-0 top-0 rounded-full p-2 text-white transition duration-300 hover:text-red-600"

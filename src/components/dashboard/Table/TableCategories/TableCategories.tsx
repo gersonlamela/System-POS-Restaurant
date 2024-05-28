@@ -5,20 +5,22 @@ import { ProductCategory } from '@prisma/client'
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
-import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 import { DeleteCategorieModal } from './DeleteCategoryModal'
 import AddCategoryModal from './AddCategoryModal'
 import SeeCategoryModal from './SeeCategoryModal'
 import EditCategoryModal from './EditCategoryModal'
-import {
-  BeerBottle,
-  CookingPot,
-  ForkKnife,
-  Hamburger,
-} from '@phosphor-icons/react'
-import BowlSteam from '../../../../../public/icons/Bowl'
-import { IceCream } from 'lucide-react'
+
+import { FilterIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { getCategoryIcon } from '@/functions/Category/category'
 
 interface CategoryTableProps {
   Category: ProductCategory[] // Mark Categories prop as optional
@@ -28,26 +30,6 @@ export default function TableCategories({ Category }: CategoryTableProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(8)
   const [searchTerm, setSearchTerm] = useState('')
-
-  const getCategoryIcon = (categoryName: string) => {
-    switch (categoryName) {
-      case 'Entradas':
-        return <ForkKnife size={32} />
-      case 'Sopas':
-        return <CookingPot size={32} />
-      case 'Hamburguers':
-        return <Hamburger size={32} />
-      case 'Acompanhamentos':
-        return <BowlSteam />
-      case 'Bebidas':
-        return <BeerBottle size={32} />
-      case 'Sobremesas':
-        return <IceCream size={32} />
-      // Adicione mais cases conforme necessário para outras categorias
-      default:
-        return null // Retorna null se o nome da categoria não corresponder
-    }
-  }
 
   const filteredCategories = Category.filter(
     (Category) =>
@@ -75,82 +57,130 @@ export default function TableCategories({ Category }: CategoryTableProps) {
     indexOfLastIngredient,
   )
 
-  async function handleDelete(id: string) {
-    try {
-      console.log('delete')
-
-      const response = await fetch(`/api/product/deleteCategory?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      // Verifica se a resposta é bem-sucedida
-      if (response.ok) {
-        console.log('Categoria eliminado com sucesso')
-      } else {
-        const data = await response.json()
-        console.error('Erro ao deletar categoria:', data.message)
-      }
-    } catch (error: any) {
-      console.error('Erro ao deletar categoria:', error.message)
-    }
-  }
-
   return (
-    <div className="w-full">
-      <h1 className="mb-5 text-xl font-bold">Categories</h1>
-      <div className="mb-5 flex w-full items-center justify-between">
+    <div className="mt-[65px] w-full">
+      <div className="mb-[22px] flex w-full flex-wrap items-center justify-between gap-[15px]">
         <SearchInput
-          searchPlaceholder="Pesquisar pela categoria (id / nome)"
+          searchPlaceholder="Pesquisar categoria (id / nome)"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        <AddCategoryModal />
-      </div>
+        <div className="flex flex-wrap items-center gap-[15px]">
+          <div>
+            <Button
+              disabled
+              className={`flex h-[40px] flex-row items-center gap-2 rounded-lg  border border-[#a9a9a9] bg-white px-[15px] text-[#a9a9a9]`}
+            >
+              <span className="text-base font-normal">
+                Mostrar categoria c/ stock
+              </span>
+              <FilterIcon />
+            </Button>
+          </div>
+          <div>
+            <Button
+              disabled
+              className={`flex h-[40px] flex-row items-center gap-2 rounded-lg   border border-[#a9a9a9] bg-white px-[15px] text-[#a9a9a9]`}
+            >
+              <span className="text-base font-normal">
+                Mostrar categoria s/ desconto (%)
+              </span>
+              <FilterIcon />
+            </Button>
+          </div>
 
-      <div className="overflow-x-auto">
+          <div>
+            <AddCategoryModal />
+          </div>
+        </div>
+      </div>
+      <div className="h-[560px] overflow-x-auto">
         <Table className="min-w-full ">
-          <TableHeader className="">
+          <TableHeader className="sticky top-0">
             <TableRow>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-third "
               >
                 Imagem
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-left text-base font-normal uppercase text-third "
               >
-                Nome
+                Name
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-[#B5B5B5] "
+              >
+                Preço
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-[#B5B5B5] "
+              >
+                Desconto
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-[#B5B5B5] "
+              >
+                Categoria
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-[#B5B5B5] "
+              >
+                Iva
+              </TableCell>
+              <TableCell
+                scope="col"
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-[#B5B5B5] "
+              >
+                Stock
               </TableCell>
 
               <TableCell
                 scope="col"
-                className=" TableRowacking-wider text-center text-xs font-medium uppercase  "
+                className=" TableRowacking-wider text-center text-base font-normal uppercase text-third  "
               >
                 Ações
               </TableCell>
             </TableRow>
           </TableHeader>
-          <tbody className="">
+          <TableBody className="">
             {currentCategories?.length ? (
               currentCategories.map((Category) => (
                 <TableRow key={Category.id}>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
-                    {getCategoryIcon(Category.name)}
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal ">
+                    <div className="mx-auto text-center">
+                      {getCategoryIcon(Category.name)}
+                    </div>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base font-normal ">
                     {Category.name}
                   </TableCell>
-
-                  <TableCell className="whitespace-nowrap px-6 py-4  text-sm font-medium">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-[#B5B5B5]  ">
+                    -
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-[#B5B5B5]  ">
+                    -
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-[#B5B5B5]  ">
+                    -
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-[#B5B5B5]  ">
+                    -
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-[#B5B5B5]  ">
+                    -
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-6 py-4  text-base font-normal">
                     <div className="flex flex-row items-center justify-center gap-2 ">
+                      <EditCategoryModal productCategory={Category} />
                       <SeeCategoryModal Category={Category} />
                       <DeleteCategorieModal categoryId={Category.id} />
-                      <EditCategoryModal productCategory={Category} />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -165,7 +195,7 @@ export default function TableCategories({ Category }: CategoryTableProps) {
                 </TableCell>
               </TableRow>
             )}
-          </tbody>
+          </TableBody>
         </Table>
       </div>
       <TablePagination

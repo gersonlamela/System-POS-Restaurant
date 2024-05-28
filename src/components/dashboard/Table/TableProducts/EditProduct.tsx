@@ -10,7 +10,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { CircleNotch, Pencil, Trash } from '@phosphor-icons/react'
+import { CircleNotch, PencilSimple, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -186,13 +186,14 @@ export default function EditProductModal({ Product }: EditProductModalProps) {
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center justify-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5"
           onClick={() => {
             reset()
           }}
         >
-          <Pencil size={16} weight="bold" />
+          <PencilSimple size={20} />
         </DialogTrigger>
+
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">

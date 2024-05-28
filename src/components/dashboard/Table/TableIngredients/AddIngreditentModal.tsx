@@ -27,7 +27,7 @@ import { UploadCloud } from 'lucide-react'
 
 const FormSchema = z.object({
   name: z.string().min(1, 'O nome do ingrediente é obrigatório.'),
-  price: z.number().positive('O preço deve ser um valor positivo.'),
+  stock: z.number().positive('O stock deve ser um valor positivo.'),
   image: z.any(),
 })
 
@@ -39,7 +39,7 @@ export default function AddIngredientModal() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: '',
-      price: 0.0,
+      stock: 0,
       image: '',
     },
   })
@@ -53,7 +53,7 @@ export default function AddIngredientModal() {
 
       // Add other fields to the FormData as needed
       formData.append('name', values.name)
-      formData.append('price', values.price.toString())
+      formData.append('stock', values.stock.toString())
 
       const response = await fetch('/api/ingredient/createIngredient', {
         method: 'POST',
@@ -92,7 +92,7 @@ export default function AddIngredientModal() {
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex h-[40px] flex-row items-center gap-2 rounded-lg bg-third px-[15px] text-white"
           onClick={() => {
             reset()
           }}
@@ -131,12 +131,12 @@ export default function AddIngredientModal() {
                     />
 
                     <FormField
-                      name="price"
                       control={form.control}
+                      name="stock"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="font-medium text-black">
-                            Preço
+                            Stock
                           </FormLabel>
                           <FormControl>
                             <Input
@@ -153,7 +153,6 @@ export default function AddIngredientModal() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="image"

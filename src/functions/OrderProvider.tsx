@@ -235,7 +235,6 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-
   const removeProductFromOrder = (orderId: string, productId: string, tableNumber: string) => {
     const updater = (order: OrderData) => {
       if (!order || !order.products) {
@@ -245,12 +244,27 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
 
       const productIndex = order.products.findIndex((p) => p.id === productId && p.orderId === orderId);
       if (productIndex !== -1) {
-        order.products.splice(productIndex, 1);
+        const removedProduct = order.products.splice(productIndex, 1)[0]; // Remove o produto e obtém o produto removido
+
+        // Verifica se totalPrice pode ser convertido em número
+        const totalPriceNumeric = parseFloat(order.totalPrice);
+        const productPriceNumeric = removedProduct.price;
+        const productQuantityNumeric = removedProduct.quantity; // A quantidade do produto já é um número, então não precisamos converter
+
+        if (!isNaN(totalPriceNumeric) && !isNaN(productPriceNumeric)) {
+          // Subtrai o valor do produto removido do totalPrice
+          const newTotalPrice = totalPriceNumeric - productPriceNumeric * productQuantityNumeric;
+          order.totalPrice = newTotalPrice.toFixed(2); // Atualizamos o totalPrice com duas casas decimais
+        } else {
+          console.error('O totalPrice ou preço do produto não pôde ser convertido em um número.');
+        }
       }
       return { ...order };
     };
     updateOrder(tableNumber, updater);
   };
+
+
 
 
   const orderTotalPrice = (tableNumber: string) => {

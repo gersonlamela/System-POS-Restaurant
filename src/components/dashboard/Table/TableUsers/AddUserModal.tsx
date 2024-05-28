@@ -103,7 +103,7 @@ export default function AddUserModal() {
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex h-[40px] flex-row items-center gap-2 rounded-lg bg-third px-[15px] text-white"
           onClick={() => {
             reset()
           }}
@@ -111,7 +111,7 @@ export default function AddUserModal() {
           <Plus size={16} weight="bold" />
           Adicionar utilizador
         </DialogTrigger>
-        <DialogContent className="min-w-[630px] bg-background">
+        <DialogContent className="w-auto bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">
               Adicionar Utilizador
@@ -277,7 +277,7 @@ export default function AddUserModal() {
                       )}
                     />
                   </div>
-                  <div className="flex w-full justify-end gap-2">
+                  <div className="mt-4 flex w-full justify-end gap-2">
                     <DialogClose asChild>
                       <Button
                         type="button"

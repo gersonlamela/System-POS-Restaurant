@@ -174,7 +174,7 @@ export default function AddProductModal() {
     <>
       <Dialog>
         <DialogTrigger
-          className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
+          className="flex flex-row items-center gap-2 rounded-lg bg-third px-[15px] h-[40px] text-white"
           onClick={() => {
             reset()
           }}
@@ -182,6 +182,7 @@ export default function AddProductModal() {
           <Plus size={16} weight="bold" />
           Adicionar Produto
         </DialogTrigger>
+
         <DialogContent className="min-w-[630px] bg-background">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-center">

@@ -29,7 +29,7 @@ const OrderLayout: FC<OrderLayoutProps> = ({ children }) => {
     fetchCategories()
   }, [])
   return (
-    <div className="flex max-h-screen w-full flex-row gap-[15px]">
+    <div className="flex max-h-screen w-full flex-row gap-[15px]  px-[15px] pb-[10px] pt-[15px]">
       <SideBar categories={categories} />
 
       <div className="flex flex-1 flex-col gap-[15px]">

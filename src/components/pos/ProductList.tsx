@@ -60,6 +60,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
         product.price * (1 + getTax(product.tax) / 100)
 
       const { id, name, image, tax } = product
+
       const newProduct = {
         id,
         name,
@@ -77,7 +78,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
         })),
       }
 
-      console.log(newProduct) // Verifique se os dados do novo produto estão corretos
+      console.log('produto', newProduct) // Verifique se os dados do novo produto estão corretos
 
       addProductToOrder(newProduct, tableNumber)
     } else {

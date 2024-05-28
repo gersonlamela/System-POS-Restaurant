@@ -48,7 +48,6 @@ async function main() {
     const ingredient1 = await prisma.ingredient.create({
       data: {
         name: 'Pão',
-        price: 5.0,
         image: 'pao.png',
       },
     })
@@ -56,51 +55,48 @@ async function main() {
     const ingredient2 = await prisma.ingredient.create({
       data: {
         name: 'Carne',
-        price: 10.0,
         image: 'carne.png',
-      },
-    })
-
-    const ingredient3 = await prisma.ingredient.create({
-      data: {
-        name: 'Coca Cola',
-        price: 5.0,
-        image: 'coca-cola.png',
       },
     })
 
     const ingredient4 = await prisma.ingredient.create({
       data: {
         name: 'Gelo',
-        price: 2.0,
         image: 'gelo.png',
       },
     })
 
     // Criar categorias de produtos
-    const category1 = await prisma.productCategory.create({
-      data: {
-        name: 'Prato Principal',
-        icon: 'icon1.png',
-      },
-    })
+    const categories = [
+      { name: 'Entradas', icon: 'fork-knife.svg' },
+      { name: 'Sopas', icon: 'cooking-pot.svg' },
+      { name: 'Hamburgers', icon: 'hamburger.svg' },
+      { name: 'Acompanhamentos', icon: 'bowl-stream.svg' },
+      { name: 'Bebidas', icon: 'beer-bottle.svg' },
+      { name: 'Sobremesas', icon: 'ice-cream.svg' },
+    ]
 
-    const category2 = await prisma.productCategory.create({
-      data: {
-        name: 'Bebida',
-        icon: 'icon2.png',
-      },
-    })
+    const createdCategories = []
+
+    for (const category of categories) {
+      const createdCategory = await prisma.productCategory.create({
+        data: category,
+      })
+      createdCategories.push(createdCategory)
+    }
+
+    const category1 = createdCategories.find((cat) => cat.name === 'Hamburgers')
+    const category2 = createdCategories.find((cat) => cat.name === 'Bebidas')
 
     // Criar produtos
     await prisma.product.create({
       data: {
-        name: 'Francesinha',
+        name: 'Hamburger',
         price: 25.0,
         image: 'produtoE.png', // Nome do arquivo de imagem em português
         tax: 'INTERMEDIATE', // Adaptação da taxa para o português
         discount: 2,
-        productCategoryId: category1.id,
+        productCategoryId: category1?.id,
         ProductIngredient: {
           create: [
             { ingredientId: ingredient1.id, quantity: 1, maxQuantity: 5 },
@@ -116,10 +112,9 @@ async function main() {
         price: 15.0,
         image: 'produtoF.png', // Nome do arquivo de imagem em português
         tax: 'INTERMEDIATE', // Adaptação da taxa para o português
-        productCategoryId: category2.id,
+        productCategoryId: category2?.id,
         ProductIngredient: {
           create: [
-            { ingredientId: ingredient3.id, quantity: 1, maxQuantity: 3 },
             { ingredientId: ingredient4.id, quantity: 1, maxQuantity: 2 },
           ],
         },

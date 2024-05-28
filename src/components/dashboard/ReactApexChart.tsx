@@ -31,6 +31,7 @@ export function ApexChart() {
         autoSelected: 'zoom',
       },
     },
+    colors: ['#F86E0A', '#63667B'],
     dataLabels: {
       enabled: false,
     },

@@ -37,9 +37,9 @@ export function DeleteUserModal({ userId }: { userId: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} className="bg-black">
-          <Trash size={16} weight="bold" />
-        </Button>
+        <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5">
+          <Trash size={20} className="w-[20px]" />
+        </div>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

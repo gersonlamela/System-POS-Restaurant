@@ -62,9 +62,6 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
 
 
 
-
-  console.log(ingredients)
-
   return (
     <div className="flex flex-col gap-[8px]">
       <div className="flex w-full flex-row items-center gap-[15px]">
@@ -100,7 +97,7 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
         <NotePopup currentNote={note} onConfirm={handleConfirmNote} />
         <div className="h-full border border-l-2 border-[#ECEDED]"></div>
         <div className="flex items-center justify-center gap-[14px] text-[#A9A9A9]">
-          <EditOrderPopUp tableNumber={tableNumber} ProductIngredient={ingredients} ProductId={product.id} orderId={product.orderId} />
+          <EditOrderPopUp Product={product} tableNumber={tableNumber} ProductIngredient={ingredients} ProductId={product.id} orderId={product.orderId} />
         </div>
       </div>
       <div className="flex w-full items-center justify-between">

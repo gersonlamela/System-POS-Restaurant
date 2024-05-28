@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { FilterIcon } from 'lucide-react'
 import { ProductWithIngredients } from '@/types/Product'
 import { DeleteProductModal } from './DeleteProductModal'
+import Image from 'next/image'
 
 // Defina a interface para representar os produtos com ingredientes
 export interface Products {
@@ -87,85 +88,88 @@ export default function TableProducts({ Products }: Products) {
   )
 
   return (
-    <div className="w-full">
-      <h1 className="mb-5 text-xl font-bold">Produtos</h1>
-      <div className="mb-5 flex w-full items-center justify-between">
+    <div className="w-full mt-[65px]">
+      <div className="mb-[22px] flex-wrap flex w-full gap-[15px] items-center justify-between">
         <SearchInput
-          searchPlaceholder="Pesquisar pelo Produto (id / nome)"
+          searchPlaceholder="Pesquisar produto (id / nome)"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        <div className="flex gap-2">
-          <Button
-            onClick={filterProductsInStock}
-            className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
-          >
-            {showOnlyInStock ? 'Mostrar Todos' : 'Mostrar produtos sem stock'}
-            <FilterIcon />
-          </Button>
-          <Button
+        <div className="flex gap-[15px] items-center flex-wrap">
+          <div>
+            <Button
+              onClick={filterProductsInStock}
+              className={`flex h-[40px] flex-row items-center gap-2 rounded-lg  px-[15px] ${showOnlyInStock ? 'bg-white text-secondary border border-secondary' : 'bg-white text-[#a9a9a9] border border-[#a9a9a9]'}`}>
+              <span className='font-normal text-base'>{showOnlyInStock ? 'Mostrar produtos c/ stock' : 'Mostrar produtos s/ stock'}</span>
+              <FilterIcon />
+            </Button>
+          </div>
+          <div> <Button
             onClick={filterProductsDiscounted}
-            className="flex flex-row items-center gap-2 rounded-lg bg-black px-2 py-2 text-white"
-          >
-            {showOnlyDiscounted ? 'Mostrar Todos' : 'Mostrar produtos com desconto'}
+            className={`flex h-[40px] flex-row items-center gap-2 rounded-lg   px-[15px] ${showOnlyDiscounted ? 'bg-white text-secondary border border-secondary ' : 'bg-white text-[#a9a9a9] border border-[#a9a9a9]'}`}>
+            <span className='font-normal text-base'>     {showOnlyDiscounted ? 'Mostrar produtos s/ desconto (%)' : 'Mostrar produtos c/ desconto (%)'}</span>
             <FilterIcon />
-          </Button>
+          </Button></div>
+
+          <div>
+            <AddProductModal />
+          </div>
         </div>
-        <AddProductModal />
+
       </div>
 
-      <div className="overflow-x-auto">
-        <Table className="min-w-full ">
+      <div className="h-[560px] overflow-x-auto">
+        <Table className="min-w-full">
           <TableHeader className="">
             <TableRow>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-third text-base font-normal uppercase "
               >
                 Imagem
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-left text-third text-base font-normal uppercase "
               >
-                Name
+                Nome
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-right text-third text-base font-normal uppercase "
               >
-                Price
+                Preço
               </TableCell>
 
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-third text-base font-normal uppercase "
               >
                 Desconto
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-left text-third text-base font-normal uppercase "
               >
                 Categoria
               </TableCell>
 
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-third text-base font-normal uppercase "
               >
-                Imposto
+                Iva
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-third text-base font-normal uppercase "
               >
                 Stock
               </TableCell>
 
               <TableCell
                 scope="col"
-                className=" TableRowacking-wider text-center text-xs font-medium uppercase "
+                className=" TableRowacking-wider text-center text-third text-base font-normal uppercase "
               >
                 Ações
               </TableCell>
@@ -175,42 +179,42 @@ export default function TableProducts({ Products }: Products) {
             {currentProducts.length ? (
               currentProducts.map((Product) => (
                 <TableRow key={Product.id}>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
-                    <img
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base ">
+                    <Image
                       src={`/uploads/products/${Product.image}`}
                       alt={Product.name}
-                      width={70}
-                      height={70}
-                      className="h-[70px] w-[70px] object-contain"
+                      width={60}
+                      height={60}
+                      className="h-[60px] w-[60px] object-fill mx-auto rounded-[5px] "
                     />
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base  text-left">
                     {Product.name}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base font-normal text-right ">
                     {new Intl.NumberFormat('pt-PT', {
                       style: 'currency',
                       currency: 'EUR',
                       minimumFractionDigits: 1,
                     }).format(Product.price)}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base font-normal text-center ">
                     {Product.discount}%
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base font-normal text-left ">
                     {Product.ProductCategory.name}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base font-normal text-center ">
                     {getTax(Product.tax)}%
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
-                    {Product.stock}
+                  <TableCell className={`whitespace-nowrap px-6 py-4 text-base font-normal text-center ${Product.stock ? 'text-black' : 'text-[#a9a9a9]'}`}>
+                    {Product.stock ? Product.stock : '-'}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                    <div className="flex flex-row items-center gap-2 ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal center">
+                    <div className="flex flex-row items-center gap-2 justify-center ">
+                      <EditProductModal Product={Product} />
                       <SeeProductModal Product={Product} />
                       <DeleteProductModal productId={Product.id} />
-                      <EditProductModal Product={Product} />
                     </div>
                   </TableCell>
                 </TableRow>

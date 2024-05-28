@@ -3,13 +3,21 @@ import { User } from '@prisma/client'
 import TablePagination from '../TablePagination'
 import { useState } from 'react'
 import { SearchInput } from '../TableSearchItem'
-import { Table, TableCell, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { getRole, getStatus, getStatusStyle } from '@/functions/user/user'
 import AddUserModal from './AddUserModal'
 import SeeUserModal from './SeeUserModal'
 
 import EditUserModal from './EditUserModal'
 import { DeleteUserModal } from './DeleteUserModal'
+import { Button } from '@/components/ui/button'
+import { FilterIcon } from 'lucide-react'
 
 interface UsersTableProps {
   users: User[]
@@ -46,85 +54,111 @@ export default function TableUsers({ users }: UsersTableProps) {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
 
   return (
-    <div className="w-full">
-      <h1 className="mb-5 text-xl font-bold">Utilizadores</h1>
-      <div className="mb-5 flex w-full items-center justify-between">
+    <div className="mt-[65px] w-full">
+      <div className="mb-[22px] flex w-full flex-wrap items-center justify-between gap-[15px]">
         <SearchInput
-          searchPlaceholder="Pesquisar pelo Utilizador (id / nome)"
+          searchPlaceholder="Pesquisar utilizador (id / nome)"
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        <AddUserModal />
+        <div className="flex flex-wrap items-center gap-[15px]">
+          <div>
+            <Button
+              disabled
+              className={`flex h-[40px] flex-row items-center gap-2  rounded-lg  border border-[#a9a9a9] bg-white px-[15px] text-[#a9a9a9]`}
+            >
+              <span className="text-base font-normal">
+                Mostrar utilizadores c/ stock
+              </span>
+              <FilterIcon />
+            </Button>
+          </div>
+          <div>
+            <Button
+              disabled
+              className={`flex h-[40px] flex-row items-center  gap-2 rounded-lg   border border-[#a9a9a9] bg-white px-[15px] text-[#a9a9a9]`}
+            >
+              <span className="text-base font-normal">
+                Mostrar utilizadores s/ desconto (%)
+              </span>
+              <FilterIcon />
+            </Button>
+          </div>
+
+          <div>
+            <AddUserModal />
+          </div>
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="h-[560px] overflow-x-auto">
         <Table className="min-w-full ">
-          <TableHeader className="">
+          <TableHeader className="sticky top-0">
             <TableRow>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase text-third "
               >
-                Name
+                Nome
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-left text-base font-normal uppercase text-third "
               >
                 Email
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase  text-third "
               >
-                Telemóvel
+                Telemovel
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase  text-third "
               >
                 Morada
               </TableCell>
               <TableCell
                 scope="col"
-                className="TableRowacking-wider px-6 py-3 text-left text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase  text-third "
               >
-                Role
+                Cargo
               </TableCell>
               <TableCell
                 scope="col"
-                className=" TableRowacking-wider text-center text-xs font-medium uppercase "
+                className="TableRowacking-wider px-6 py-3 text-center text-base font-normal uppercase  text-third "
               >
                 Status
               </TableCell>
               <TableCell
                 scope="col"
-                className=" TableRowacking-wider text-center text-xs font-medium uppercase "
+                className=" TableRowacking-wider text-center text-base font-normal uppercase text-third  "
               >
                 Ações
               </TableCell>
             </TableRow>
           </TableHeader>
-          <tbody className="">
-            {currentUsers.length ? (
+          <TableBody className="">
+            {currentUsers?.length ? (
               currentUsers.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-third">
                     {user.name}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-base font-normal  text-third">
                     {user.email}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal  text-third  ">
                     {user.phone}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal  text-third  ">
                     {user.address}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-sm ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal  text-third  ">
                     {getRole(user.role)}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4  text-sm ">
+                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-normal text-third  ">
                     <div className="flex flex-row items-center  justify-center gap-2">
                       <div
                         className={` h-[10px] w-[10px] rounded-full ${getStatusStyle(user.status)}`}
@@ -132,11 +166,11 @@ export default function TableUsers({ users }: UsersTableProps) {
                       {getStatus(user.status)}
                     </div>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-6 py-4 text-center text-sm font-medium">
-                    <div className="flex flex-row items-center gap-2 ">
+                  <TableCell className="whitespace-nowrap px-6 py-4  text-base font-normal">
+                    <div className="flex flex-row items-center justify-center gap-2 ">
+                      <EditUserModal user={user} />
                       <SeeUserModal user={user} />
                       <DeleteUserModal userId={user.id} />
-                      <EditUserModal user={user} />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -147,11 +181,11 @@ export default function TableUsers({ users }: UsersTableProps) {
                   colSpan={5}
                   className="px-6 py-4 text-center text-sm "
                 >
-                  Nenhum utilizador encontrado
+                  Nenhum produto encontrado
                 </TableCell>
               </TableRow>
             )}
-          </tbody>
+          </TableBody>
         </Table>
       </div>
       <TablePagination

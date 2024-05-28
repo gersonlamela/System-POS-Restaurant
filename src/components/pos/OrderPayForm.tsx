@@ -2,8 +2,8 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
-import { Backspace, XCircle } from '@phosphor-icons/react'
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../ui/dialog'
+import { Backspace, Check, CurrencyEur, X, XCircle } from '@phosphor-icons/react'
 import { OrderData, useOrder } from '@/functions/OrderProvider'
 import { useParams } from 'next/navigation'
 import { format } from 'date-fns'
@@ -11,6 +11,9 @@ import { Division } from './Division'
 import { handleGetCompany } from '@/functions/Company/route'
 import { Company } from '@prisma/client'
 import { getPayMethodOrder } from '@/functions/Order/order'
+
+import Image from 'next/image'
+
 
 // Componente para o passo de entrada do NIF do cliente
 const NifClientFormStep: React.FC<{
@@ -28,14 +31,14 @@ const NifClientFormStep: React.FC<{
     setNif('')
   }
 
-  const handleNextPage = () => {
-    onNextPage()
-  }
+  /*   const handleNextPage = () => {
+      onNextPage()
+    } */
 
   return (
-    <div className="flex h-[650px] w-[400px] flex-col items-center justify-between rounded-[30px] bg-white px-[50px] py-[20px] shadow-button20">
-      <label>NIF do Cliente</label>
-      <div className="flex h-[65px] w-full items-end justify-center rounded-[10px] bg-white text-center text-3xl font-semibold text-primary shadow-button10">
+    <div className="flex flex-col items-center justify-between">
+      <label className='text-[24px] font-bold text-third mb-[51px]'>Fatura c/ contribuinte</label>
+      <div className="flex h-[65px]  mb-[20px] w-full items-end justify-center rounded-[10px] text-center text-3xl font-semibold text-primary shadow-button10">
         <div className="flex h-full items-center justify-center">
           {defaultNif.padEnd(9)}
         </div>
@@ -69,9 +72,6 @@ const NifClientFormStep: React.FC<{
           <Backspace size={36} />
         </Button>
       </div>
-      <button type="button" onClick={handleNextPage}>
-        Próximo
-      </button>
     </div>
   )
 }
@@ -80,15 +80,22 @@ interface PaymentDataProps {
   nif: string
   order: [string, OrderData][]
   methodPayment: string
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
   setMethodPayment: React.Dispatch<React.SetStateAction<string>>
+  setPaymentSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+  setPaymentError: React.Dispatch<React.SetStateAction<boolean>>;
+  setOrderList: React.Dispatch<React.SetStateAction<[string, OrderData][]>>;
   table: string
 }
 
 function PaymentMethodFormStep({
   nif,
   order,
-  methodPayment,
   setMethodPayment,
+  setPaymentSuccess,
+  setLoading,
+  setPaymentError,
+  setOrderList,
   table,
 }: PaymentDataProps) {
   // Extrai informações do pedido
@@ -96,20 +103,31 @@ function PaymentMethodFormStep({
   const totalPrice =
     order.find(([, data]) => data.totalPrice)?.[1].totalPrice || ''
   const products = order.find(([, data]) => data.products)?.[1].products || []
-
   const { clearOrdersForTable } = useOrder();
 
+  const paymentMethods = [
+    { value: 'BANK', label: 'Multibanco', icon: 'multibanco.png', height: 90, width: 76 },
+    { value: 'BANK', label: 'Visa', icon: 'Visa.png', height: 121, width: 121 },
+    { value: 'BANK', label: 'MbWay', icon: 'mbway.png', height: 120, width: 150 },
+    { value: 'BANK', label: 'Apple Pay', icon: 'Apple-Pay.png', height: 125, width: 110 },
+    { value: 'CASH', label: 'Dinheiro' },
+  ];
 
   // Função para lidar com o envio do pedido
-  async function onSubmit() {
+  async function onSubmit(methodPayment: string) {
     const tableNumber = parseInt(table)
 
+    setMethodPayment(methodPayment)
+
+
+    setLoading(true)
     if (!nif) {
       nif = '999999999'
     }
 
 
     const currentDate = new Date();
+
 
 
     try {
@@ -146,17 +164,18 @@ function PaymentMethodFormStep({
         },
         body: JSON.stringify(orderData),
       })
-
-      console.log(orderData)
-
-
-
       // Verifica se a solicitação foi bem-sucedida
       if (response.ok) {
-        clearOrdersForTable(tableNumber.toString());
-        location.href = '/';
+        setTimeout(() => {
+          setLoading(false)
+          setOrderList(order);
+          clearOrdersForTable(tableNumber.toString());
+          setPaymentSuccess(true);
+        }, 2000);
+
       }
       if (!response.ok) {
+        setPaymentError(true);
         throw new Error('Failed to submit order')
       }
     } catch (error) {
@@ -164,65 +183,31 @@ function PaymentMethodFormStep({
     }
   }
 
+
+
   return (
-    <div className="flex flex-col items-center justify-center">
-      {/* Exibe o NIF do cliente */}
-      <label className="mb-4 text-xl">NIF do Cliente: {nif}</label>
-      <div className="flex flex-col items-center justify-center rounded-lg bg-gray-100 p-8 shadow-lg">
+    <div className="flex flex-col items-center h-full">
+      <label className='text-[24px] font-bold text-third mb-[51px]'>Métodos de Pagamento</label>
+      <div className="flex max-w-[350px] gap-[50px] flex-row flex-wrap items-center justify-center">
         {/* Seleção do método de pagamento */}
-        <label className="mb-2 text-lg">Método de Pagamento</label>
-        <select
-          name="paymentMethod"
-          value={methodPayment}
-          onChange={(e) => setMethodPayment(e.target.value)}
-          className="h-10 w-64 rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none"
-        >
-          <option value="CASH">Dinheiro</option>
-          <option value="BANK">Multibanco</option>
-        </select>
-        {/* Lista de produtos no pedido */}
-        <div className="h-[200px] w-full overflow-y-auto">
-          {order.map(([id, data]) => (
-            <div
-              key={id}
-              className="mb-4 flex flex-col items-center justify-center rounded-lg bg-gray-100 p-8 shadow-lg"
-            >
-              {data.products.map((product: any, index: number) => (
-                <div key={index} className="mb-4 flex flex-col items-start">
-                  <span className="mb-2 text-lg font-semibold">
-                    Produto: {product.name}
-                  </span>
-                  <span className="mb-2 text-sm font-semibold">
-                    Quantidade: {product.quantity}
-                  </span>
-                  <span className="mb-2 text-sm font-semibold">
-                    Preço unitário: {product.price}
-                  </span>
-                  {/* Exibe os ingredientes, se houver */}
-                  {product.ingredients && (
-                    <span className="mb-2 text-sm font-semibold">
-                      Ingredientes:{' '}
-                      {product.ingredients
-                        .map((ingredient: any) => ingredient.name)
-                        .join(', ')}
-                    </span>
-                  )}
-                </div>
-              ))}
-              {/* Exibe o preço total do pedido */}
-              <label className="mb-2 mt-4 text-lg font-semibold">
-                Total: {data.totalPrice}
-              </label>
-            </div>
-          ))}
-        </div>
-        {/* Botão para enviar o pedido */}
-        <button
-          onClick={onSubmit}
-          className="mt-8 h-12 w-40 rounded-md bg-blue-500 text-white shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Enviar
-        </button>
+
+        {paymentMethods.map((method) => (
+          <button
+            key={method.label}
+            type="button"
+            className={`border-2 flex items-center justify-center border-third shadow-button5 w-[150px] h-[120px] rounded-[10px] px-4 py-2 focus:outline-none`}
+            onClick={() => onSubmit(method.value)}
+          >
+            {method.icon ? (
+              <Image priority src={`/icons/${method.icon}`} alt={method.label} width={method.width} height={method.height} />
+            ) : (
+              <div className='flex flex-col gap-[15px] items-center justify-center'>
+                <CurrencyEur size={50} weight='bold' />
+                <span>Numerário</span>
+              </div>
+            )}
+          </button>
+        ))}
       </div>
     </div>
   )
@@ -230,13 +215,45 @@ function PaymentMethodFormStep({
 
 export default PaymentMethodFormStep
 
+export const PaymentSuccessPopUp = () => {
+  return (
+    <div className="absolute flex flex-col gap-[32px] h-full w-full items-center justify-center rounded-[30px] bg-white">
+      <div className='w-[235px] animate-bounce  flex items-center justify-center h-[235px] rounded-full bg-[#88E152] border-[20px] border-[#88E152] bg-opacity-50'>
+        <Check size={120} className='text-white' weight='bold' />
+      </div>
+      <h1 className='text-[24px] font-semibold'>Processamento Concluído</h1>
+    </div>
+  )
+}
+
+export const PaymentErrorPopUp = () => {
+  return (
+    <div className="absolute flex flex-col gap-[32px] h-full w-full items-center justify-center rounded-[30px] bg-white">
+      <div className='w-[235px] animate-pulse  flex items-center justify-center h-[235px] rounded-full bg-[#F86E0A] border-[20px] border-[#F86E0A] bg-opacity-50'>
+        <X size={120} className='text-white' weight='bold' />
+      </div>
+      <h1 className='text-[24px] font-semibold'>Processamento Recusado!</h1>
+    </div>
+  )
+}
+
+export const LoadingData = () => {
+  return (
+    <div className="absolute flex flex-col gap-[32px] h-full w-full items-center justify-center rounded-[30px]  backdrop-blur-[3px]">
+      <div className='w-[500px] animate-bounce text-[24px] font-semibold text-white h-[100px] bg-third rounded-[20px] flex items-center justify-center'>
+        A processar pagamento...
+      </div>
+    </div>
+  )
+}
+
 interface OrderPayFormProps {
   order: [string, OrderData][]
-  totalPrice: number
+  totalPriceTable: number
 }
 
 // Componente principal do formulário de pagamento
-export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
+export function OrderPayForm({ order, totalPriceTable }: OrderPayFormProps) {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [nif, setNif] = useState<string>('')
   const [amountPay, setAmountPay] = useState<number>(0.0)
@@ -246,10 +263,27 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
   const [dataFormatada, setDataFormatada] = useState<string>('')
   const [horaFormatada, setHoraFormatada] = useState<string>('')
 
+
+
+  const [PaymentSuccess, setPaymentSuccess] = useState<boolean>(false)
+  const [Loading, setLoading] = useState<boolean>(false)
+
+  const [PaymentError, setPaymentError] = useState<boolean>(true)
+  const [Receipt, setReceipt] = useState<boolean>(false)
+
+  const [orderList, setOrderList] = useState<[string, OrderData][]>([])
+
+
+  const totalPrice =
+    orderList.find(([, data]) => data.totalPrice)?.[1].totalPrice || ''
+
+
+
   const [company, setCompany] = useState<Company>()
   useEffect(() => {
     const fetchCompany = async () => {
       try {
+
         const fetchedCompany = await handleGetCompany()
         setCompany(fetchedCompany)
       } catch (error) {
@@ -257,7 +291,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
       }
     }
     fetchCompany()
-  }, [])
+  }, [order])
 
   useEffect(() => {
     const dataCompleta = Date.now()
@@ -269,34 +303,59 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
       setDataFormatada(dataFormatada)
       setHoraFormatada(horaFormatada)
     }
+
+
+
   }, [order])
+
 
   const handleResetPage = () => {
     setCurrentPage(1)
     setNif('')
     setMethodPayment('BANK')
     setAmountPay(0.0)
+    setReceipt(false);
+    setLoading(false);
+    setPaymentSuccess(false);
+    setPaymentError(false);
   }
-
   /*   const beforePage = () => setCurrentPage(currentPage - 1) */
   const nextPage = () => setCurrentPage(currentPage + 1)
 
-  const atendente = order.find(([, data]) => data.userName)?.[1].userName || ''
+  const atendente = orderList.find(([, data]) => data.userName)?.[1].userName || ''
   const primeiroNome = atendente.split(' ')[0] // Primeiro nome
   const segundoNome = atendente.split(' ')[1] // Segundo nome
 
   const nomeFormatado = `${segundoNome ? primeiroNome + ' ' + segundoNome.charAt(0) : primeiroNome}.` // Pegando a primeira letra do primeiro nome seguida de um ponto
 
+  if (PaymentSuccess) {
+    setTimeout(() => {
+      setReceipt(true);
+      setPaymentSuccess(false);
+      setPaymentError(false);
+    }, 1000);
+  }
+
+  if (PaymentError) {
+    setTimeout(() => {
+      setReceipt(false);
+      setPaymentSuccess(false);
+      setPaymentError(false);
+    }, 1000);
+  }
 
 
+
+  console.log(orderList)
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleResetPage}>
       <DialogTrigger
+
         onClick={handleResetPage}
         asChild
         className="flex cursor-pointer items-center justify-center gap-[14px] text-[#A9A9A9]"
       >
-        <Button disabled={totalPrice === 0} className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
+        <Button disabled={totalPriceTable === 0} className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
           Finalizar
         </Button>
       </DialogTrigger>
@@ -310,29 +369,46 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
           paddingRight: '0px',
         }}
       >
-        <div className="flex h-[75px] w-[1100px] items-center justify-center rounded-t-[40px] bg-third text-[32px] font-bold text-white ">
+
+        {Loading && <LoadingData />}
+        {PaymentError && <PaymentErrorPopUp />}
+        {PaymentSuccess && <PaymentSuccessPopUp />}
+
+
+        <div className="flex min-h-[75px] max-h-[75px]  w-[1100px] items-center justify-center rounded-t-[40px] bg-third text-[32px] font-bold text-white ">
           Pagamento
         </div>
-        <div className="grid h-full w-full items-center justify-between gap-[10px] pl-[46px] pr-[71px] md:grid-cols-2">
-          <div className="flex h-full flex-1 items-center">
-            {currentPage === 1 ? (
+        {!Receipt && (
+          <div className={`h-full w-full py-[59px]`}>
+            <div className="flex justify-around w-full h-full items-center">
+
               <NifClientFormStep
                 defaultNif={nif}
                 onNextPage={nextPage}
                 setNif={setNif}
               />
-            ) : (
+
+              <div className='w-[2px] h-full bg-secondary' />
+
               <PaymentMethodFormStep
+                setLoading={setLoading}
+                setPaymentError={setPaymentError}
+                setPaymentSuccess={setPaymentSuccess}
                 table={params.tableNumber}
                 order={order}
+                setOrderList={setOrderList}
                 methodPayment={methodPayment}
                 setMethodPayment={setMethodPayment}
                 nif={nif}
               />
-            )}
-          </div>
 
-          <div className="flex w-full items-center justify-end">
+            </div>
+          </div>
+        )}
+
+
+        {Receipt && (
+          <div className={'flex items-center justify-center'}>
             <div className="flex h-[640px] w-[400px] items-center justify-center rounded-[10px] bg-white shadow-button20 ">
               <div className="flex max-h-[589px] w-[323px] flex-col items-center gap-[15px] overflow-y-scroll leading-[17px]">
                 <div className="flex flex-col">
@@ -354,7 +430,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
 
                   <div className="flex w-full flex-row justify-between font-medium leading-[18px]">
                     <div>
-                      <div>REF: {order.find(([id]) => id)?.[0]}</div>
+                      <div>REF: {orderList.find(([id]) => id)?.[0]}</div>
                       <div>
                         MESA: {String(params.tableNumber).padStart(2, '0')}
                       </div>
@@ -383,7 +459,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {order.map(([id, data]) => (
+                    {orderList.map(([id, data]) => (
                       <React.Fragment key={id}>
                         {data.products.map((product, index) => (
                           <tr key={index} className="font-medium">
@@ -408,7 +484,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
                   <div className="flex w-full flex-row justify-between">
                     <div>
                       <div className="font-semibold">Taxa</div>
-                      {order.map(([id, data]) => {
+                      {orderList.map(([id, data]) => {
                         // Calcula os valores únicos de imposto (IVA) para cada ordem
                         const uniqueTaxes: number[] = data.products.reduce(
                           (acc: number[], product) => {
@@ -438,7 +514,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
                           IVA
                         </div>
                         <div>
-                          {order.map(([id, data]) => {
+                          {orderList.map(([id, data]) => {
                             // Inicializa as variáveis para armazenar o total do IVA para cada taxa
                             let totalTax6 = 0
                             let totalTax13 = 0
@@ -488,7 +564,7 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
 
                       <div>
                         <div className="font-semibold">INCID.</div>
-                        {order.map(([id, data]) => {
+                        {orderList.map(([id, data]) => {
                           // Calcula o total dos produtos sem o IVA para cada taxa de imposto
                           const totalExcludingTax6 = data.products
                             .filter((product) => product.tax === 6)
@@ -564,28 +640,22 @@ export function OrderPayForm({ order, totalPrice }: OrderPayFormProps) {
                 </div>
               </div>
             </div>
+
+            {Receipt && (
+              <div className='absolute flex flex-col gap-[15px] right-[30px] bottom-[15px]'>
+                <button className='bg-secondary px-8 py-2 rounded-[10px] text-white'>Imprimir</button>
+                <DialogClose asChild>
+                  <button className='bg-secondary px-8 py-2 rounded-[10px] text-white'>Sair</button>
+                </DialogClose>
+
+              </div>
+            )}
           </div>
-        </div>
-        {/*      <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
+        )}
 
-          {currentPage >= 2 && (
-            <button type="button" onClick={beforePage}>
-              Recuar
-            </button>
-          )}
-
-          {currentPage < 2 && (
-            <button type="button" onClick={nextPage}>
-              Continuar
-            </button>
-          )}
-        </DialogFooter> */}
       </DialogContent>
-    </Dialog>
+    </Dialog >
   )
 }
+
+

@@ -42,6 +42,8 @@ const SignInForm = ({
     },
   })
 
+  console.log(user)
+
   const handleOutsideClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {

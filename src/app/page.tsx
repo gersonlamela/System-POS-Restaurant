@@ -38,7 +38,7 @@ export default function Order() {
   const skeletonArray = Array.from({ length: 22 })
 
   return (
-    <div className="flex w-full flex-row gap-[15px]">
+    <div className="flex w-full flex-row gap-[15px]  px-[15px] pb-[10px] pt-[15px]">
       <div className="flex h-full flex-1 flex-col   gap-[15px]">
         <div className="flex max-h-[50px] w-full flex-1 flex-row gap-[15px]">
           <Time />

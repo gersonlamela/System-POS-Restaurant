@@ -49,8 +49,8 @@ export default function SeeOrderModal({ order }: SeeOrderModalProps) {
 
   return (
     <Dialog>
-      <DialogTrigger className="flex items-center justify-center rounded-lg bg-black px-2 py-2 text-white">
-        <Binoculars size={16} weight="bold" />
+      <DialogTrigger className="flex h-[40px] w-[40px] items-center justify-center rounded-[5px]  border border-third bg-white text-third shadow-button5">
+        <Binoculars size={20} />
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] w-full max-w-2xl overflow-y-auto bg-background p-4">
         {order ? (

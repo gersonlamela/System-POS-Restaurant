@@ -44,6 +44,7 @@ module.exports = {
         Poppins: ['poppins', 'sans-serif'],
       },
       boxShadow: {
+        button5: '0px 0px 5px 0px #00000025',
         button10: '0px 0px 10px 0px #00000025',
         button20: '0px 4px 20px 0px #00000025',
       },

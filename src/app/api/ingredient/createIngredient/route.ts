@@ -1,21 +1,20 @@
-import { ProductCategory, Tax } from '@prisma/client'
 import { writeFile } from 'fs/promises'
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { z } from 'zod'
+/* import { z } from 'zod' */
 import cuid from 'cuid'
 import { prisma } from '@/lib/prisma'
 import console from 'console'
 
-const IngredienteSchema = z.object({
+/* const IngredienteSchema = z.object({
   name: z.string().min(1, 'O nome do produto é obrigatório.'),
-  price: z.number().positive('O preço deve ser um valor positivo.'),
+
   image: z.string().optional(),
   tax: z.enum(['REDUCED', 'INTERMEDIATE', 'STANDARD']),
   discount: z.number().optional(),
   category: z.enum(['DRINK', 'FOOD', 'DESSERT']),
-})
+}) */
 
 export async function POST(request: NextRequest) {
   const data = await request.formData()
@@ -29,7 +28,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const name = data.get('name') as string
-    const price = parseFloat(data.get('price') as string)
+    const stock = data.get('stock') as string
 
     const file = data.get('file') as File
 
@@ -48,8 +47,7 @@ export async function POST(request: NextRequest) {
     const newIngredient = await prisma.ingredient.create({
       data: {
         name,
-
-        price,
+        stock: parseInt(stock),
         image: ImageName,
       },
     })
