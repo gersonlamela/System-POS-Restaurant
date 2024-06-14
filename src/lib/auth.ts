@@ -22,25 +22,18 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.id && !credentials?.pin) {
           throw new Error('Por favor, forneça ID ou PIN para fazer login.')
         }
-
         const existigUser = await prisma.user.findUnique({
           where: {
             id: credentials.id,
           },
         })
-
         if (!existigUser) {
           throw new Error('Utilizador não encontrado')
         }
-
         const pinMatch = compareSync(credentials.pin, existigUser.pin) // true
-
-        console.log(pinMatch)
-
         if (!pinMatch) {
           throw new Error('Pin inválido')
         }
-
         return {
           id: `${existigUser.id}`,
           email: existigUser.email,

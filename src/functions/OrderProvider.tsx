@@ -25,12 +25,12 @@ export interface OrderProduct {
   image: string;
   tax: number;
   note: string;
-  ingredients: OrderIngredient[]; // Adicione os ingredientes do produto aqui
+  ingredients: OrderIngredient[];
 }
 
 export interface OrderData {
   products: OrderProduct[]
-  createdAt: string // Storing the creation time
+  createdAt: string
   userName: string
   totalPrice: string
 }
@@ -127,20 +127,17 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   const addProductToOrder = (product: OrderProduct, tableNumber: string) => {
     const updater = (prevOrders: Record<string, OrderData>): Record<string, OrderData> => {
       let updatedOrders: Record<string, OrderData> = { ...prevOrders };
-
       // Verifique se já existe um pedido para esta mesa
       if (tableNumber in prevOrders) {
         // Se já houver um pedido para esta mesa, adicione o produto a esse pedido
         const existingOrder = prevOrders[tableNumber];
         const updatedProducts = [...existingOrder.products, { ...product, orderId: cuid() }]; // Adicione orderId ao produto
-
         // Recalcular o preço total do pedido
         const totalPrice = updatedProducts.reduce(
           (total, product) => total + product.price * product.quantity,
           0
         );
         const formattedTotalPrice = totalPrice.toFixed(2);
-
         updatedOrders[tableNumber] = {
           ...existingOrder,
           products: updatedProducts,
@@ -159,13 +156,10 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
           [tableNumber]: newOrder,
         };
       }
-
       return updatedOrders;
     };
-
     // Verificar se o produto tem ingredientes de carne
     const hasMeatIngredient = product.ingredients.some((ingredient) => ingredient.name === 'Carne');
-
     // Se o produto tiver ingredientes de carne, inclua o cookingPreference
     if (hasMeatIngredient) {
       product.ingredients.forEach((ingredient) => {
@@ -174,9 +168,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         }
       });
     }
-
     const updatedOrders = updater(orders); // Atualize as ordens
-
     // Atualize o estado das ordens e chame orderTotalPrice
     setOrders(updatedOrders);
     orderTotalPrice(tableNumber);
@@ -219,15 +211,12 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         console.error(`Pedido com orderId ${orderId} não possui produtos.`);
         return order;
       }
-
       const productIndex = order.products.findIndex((p) => p.id === productId && p.orderId === orderId);
       if (productIndex !== -1) {
         order.products[productIndex].quantity++;
       }
-
       // Recalcular o preço total do pedido após aumentar a quantidade
       order.totalPrice = orderTotalPrice(tableNumber).toFixed(2);
-
       return { ...order };
     };
     updateOrder(tableNumber, updater);
@@ -241,16 +230,13 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         console.error(`Pedido com orderId ${orderId} não possui produtos.`);
         return order;
       }
-
       const productIndex = order.products.findIndex((p) => p.id === productId && p.orderId === orderId);
       if (productIndex !== -1) {
         const removedProduct = order.products.splice(productIndex, 1)[0]; // Remove o produto e obtém o produto removido
-
         // Verifica se totalPrice pode ser convertido em número
         const totalPriceNumeric = parseFloat(order.totalPrice);
         const productPriceNumeric = removedProduct.price;
         const productQuantityNumeric = removedProduct.quantity; // A quantidade do produto já é um número, então não precisamos converter
-
         if (!isNaN(totalPriceNumeric) && !isNaN(productPriceNumeric)) {
           // Subtrai o valor do produto removido do totalPrice
           const newTotalPrice = totalPriceNumeric - productPriceNumeric * productQuantityNumeric;
@@ -339,14 +325,12 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         console.error(`Pedido com orderId ${orderId} não encontrado ou não possui produtos.`);
         return order;
       }
-
       // Verifique se o pedido possui o produto com productId e orderId especificados
       const productToUpdate = order.products.find(product => product.id === productId && product.orderId === orderId);
       if (!productToUpdate) {
         console.error(`Produto com productId ${productId} e orderId ${orderId} não encontrado no pedido.`);
         return order;
       }
-
       // Clone o pedido para não modificar o original diretamente
       const updatedOrder = { ...order };
 
@@ -358,24 +342,19 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         if (ingredient.id === ingredientId) {
           // Atualize a quantidade do ingrediente para newQuantity
           const updatedIngredient = { ...ingredient, quantity: newQuantity };
-
           // Verificar se o ingrediente é carne e, se for, incluir o cookingPreference
           if (ingredient.name === 'Carne') {
             updatedIngredient.cookingPreference = cookingPreference;
           }
-
           return updatedIngredient;
         }
         return ingredient;
       });
-
       // Atualize o produto com os ingredientes atualizados
       updatedProduct.ingredients = updatedIngredients;
-
       // Atualize o pedido com o produto atualizado
       const productIndex = updatedOrder.products.findIndex(product => product.id === productId && product.orderId === orderId);
       updatedOrder.products[productIndex] = updatedProduct;
-
       // Retorne o pedido com os produtos atualizados
       return updatedOrder;
     });

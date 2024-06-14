@@ -185,7 +185,7 @@ export default function TableProducts({ Products }: Products) {
                       alt={Product.name}
                       width={60}
                       height={60}
-                      className="h-[60px] w-[60px] object-fill mx-auto rounded-[5px] "
+                      className="h-[60px] w-[60px] object-cover mx-auto rounded-[5px] "
                     />
                   </TableCell>
                   <TableCell className="whitespace-nowrap px-6 py-4 text-base  text-left">

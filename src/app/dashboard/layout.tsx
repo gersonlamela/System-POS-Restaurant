@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className="relative flex max-h-screen w-full flex-row gap-[15px]">
-      <div className="h-full py-[15px] pl-[15px]">
+      <div className="z-50 h-full py-[15px] pl-[15px]">
         <SideMenu />
       </div>
 

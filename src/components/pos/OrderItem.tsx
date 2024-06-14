@@ -72,7 +72,7 @@ export function OrderItem({ orderId, product, tableNumber }: OrderItemProps) {
               height={70}
               src={`/uploads/products/${product.image}`}
               alt={product.name}
-              className="h-[70px] w-[70px] object-contain"
+              className="h-[70px] w-[70px] object-cover rounded-[5px]"
               priority
             />
           )}

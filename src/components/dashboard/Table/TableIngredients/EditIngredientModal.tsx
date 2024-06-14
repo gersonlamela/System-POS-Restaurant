@@ -145,7 +145,7 @@ export default function EditIngredientModal({
                           <FormControl>
                             <Input
                               className="bg-zinc-50 text-black"
-                              placeholder="johndoe"
+                              placeholder="Nome do ingrediente"
                               {...field}
                             />
                           </FormControl>

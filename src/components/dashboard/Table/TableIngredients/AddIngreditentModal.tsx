@@ -121,7 +121,7 @@ export default function AddIngredientModal() {
                           <FormControl>
                             <Input
                               className="bg-zinc-50 text-black"
-                              placeholder="johndoe"
+                              placeholder="Nome do ingrediente"
                               {...field}
                             />
                           </FormControl>
@@ -221,18 +221,17 @@ export default function AddIngredientModal() {
                     <Button
                       type="submit"
                       disabled={form.formState.isSubmitting}
-                      variant={'outline'}
-                      className="hover:bg-green-500 hover:text-white"
+                      className="text-white hover:bg-green-500 "
                     >
                       {form.formState.isSubmitting ? (
                         <CircleNotch size={16} className="animate-spin" />
                       ) : (
-                        <Button
+                        <span
                           className="  "
                           onClick={() => console.log(form.getValues())}
                         >
                           Criar Ingrediente
-                        </Button>
+                        </span>
                       )}
                     </Button>
                   </div>

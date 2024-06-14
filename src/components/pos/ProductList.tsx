@@ -104,6 +104,14 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
     fetchCategory()
   }, [product.id])
 
+  const formattedPrice = new Intl.NumberFormat('pt-PT', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 1,
+  }).format(productPriceWithTax)
+
+  const customFormattedPrice = formattedPrice.replace(',', '.')
+
   return (
     <div
       className="relative flex max-h-[200px] min-h-[200px] min-w-[199.5px] max-w-[199.5px] cursor-pointer flex-col items-center justify-between"
@@ -117,7 +125,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
               height={199.5}
               src={`/uploads/products/${product.image}`}
               alt={product.name}
-              className="object-contain"
+              className="h-full w-full object-cover"
               priority
             />
           )}
@@ -127,11 +135,7 @@ const ProductItem = ({ product, tableNumber }: ProductItemProps) => {
             {product.name}
           </span>
           <span className="text-[12px] font-semibold text-white">
-            {new Intl.NumberFormat('pt-PT', {
-              style: 'currency',
-              currency: 'EUR',
-              minimumFractionDigits: 1,
-            }).format(productPriceWithTax)}
+            {customFormattedPrice}
           </span>
         </div>
       </div>

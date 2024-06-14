@@ -19,7 +19,6 @@ const authenticateAndAuthorize = async (req: any): Promise<boolean> => {
       return false
     }
 
-    // Check if the user has the 'ADMIN' role
     if (session.user?.role !== 'ADMIN') {
       console.error('User is not an admin.')
       return false

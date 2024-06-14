@@ -1,5 +1,6 @@
 import {
   BeerBottle,
+  BowlSteam,
   CookingPot,
   ForkKnife,
   Hamburger,
@@ -8,7 +9,7 @@ import {
   SignOut,
 } from '@phosphor-icons/react'
 import { ProductCategory } from '@prisma/client'
-import BowlSteam from '../../../public/icons/Bowl'
+
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
@@ -23,7 +24,7 @@ const getCategoryIcon = (categoryName: string) => {
     case 'Hamburguers':
       return <Hamburger size={40} />
     case 'Acompanhamentos':
-      return <BowlSteam className="fill-primary" />
+      return <BowlSteam size={40} />
     case 'Bebidas':
       return <BeerBottle size={40} />
     case 'Sobremesas':

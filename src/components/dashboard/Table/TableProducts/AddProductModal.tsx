@@ -204,7 +204,7 @@ export default function AddProductModal() {
                           <FormControl>
                             <Input
                               className="bg-zinc-50 text-black"
-                              placeholder="johndoe"
+                              placeholder="Nome do Produto"
                               {...field}
                             />
                           </FormControl>

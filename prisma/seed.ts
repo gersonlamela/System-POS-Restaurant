@@ -70,7 +70,7 @@ async function main() {
     const categories = [
       { name: 'Entradas', icon: 'fork-knife.svg' },
       { name: 'Sopas', icon: 'cooking-pot.svg' },
-      { name: 'Hamburgers', icon: 'hamburger.svg' },
+      { name: 'Hamburguers', icon: 'hamburger.svg' },
       { name: 'Acompanhamentos', icon: 'bowl-stream.svg' },
       { name: 'Bebidas', icon: 'beer-bottle.svg' },
       { name: 'Sobremesas', icon: 'ice-cream.svg' },
@@ -85,8 +85,16 @@ async function main() {
       createdCategories.push(createdCategory)
     }
 
-    const category1 = createdCategories.find((cat) => cat.name === 'Hamburgers')
-    const category2 = createdCategories.find((cat) => cat.name === 'Bebidas')
+    const category1 = createdCategories.find((cat) => cat.name === 'Entradas')
+    const category2 = createdCategories.find(
+      (cat) => cat.name === 'Hamburguers',
+    )
+    const category3 = createdCategories.find((cat) => cat.name === 'Bebidas')
+    const category4 = createdCategories.find(
+      (cat) => cat.name === 'Acompanhamentos',
+    )
+    const category5 = createdCategories.find((cat) => cat.name === 'Sobremesas')
+    const category6 = createdCategories.find((cat) => cat.name === 'Sopas')
 
     // Criar produtos
     await prisma.product.create({

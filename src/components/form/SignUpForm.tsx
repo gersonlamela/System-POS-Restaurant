@@ -105,7 +105,7 @@ const SignUpForm = () => {
                 <FormItem>
                   <FormLabel>name</FormLabel>
                   <FormControl>
-                    <Input placeholder="johndoe" {...field} />
+                    <Input placeholder="Nome do Utilizador" {...field} />
                   </FormControl>
                   <FormMessage className="absolute text-red-500" />
                 </FormItem>

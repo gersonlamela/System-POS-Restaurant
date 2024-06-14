@@ -118,7 +118,7 @@ export default function AddCategoryModal() {
                           <FormControl>
                             <Input
                               className="bg-zinc-50 text-black"
-                              placeholder="johndoe"
+                              placeholder="Nome da Categoria"
                               {...field}
                             />
                           </FormControl>

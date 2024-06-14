@@ -38,17 +38,13 @@ const menuItems = [
     title: 'Utilizadores',
     href: '/dashboard/users',
   },
-
-
-
-
 ]
 
 export default function SideMenu() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full min-w-[220px] max-w-[220px]  transform flex-col bg-white justify-between rounded-[10px] px-[15px] shadow-md">
+    <div className="flex h-full min-w-[220px] max-w-[220px] z-40  transform flex-col bg-white justify-between rounded-[10px] px-[15px] shadow-md">
 
       <div className="mt-4 flex flex-col items-center justify-center gap-[10px] md:flex-row">
         <h1 className="text-[22px]  text-third font-bold">POSLamela</h1>

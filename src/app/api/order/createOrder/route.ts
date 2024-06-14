@@ -48,12 +48,8 @@ async function getTableId(tableNumber: string): Promise<string> {
 
 export async function POST(req: Request) {
   try {
-    // Receber os dados como JSON
-    const body = await req.json()
-
-    // Validar o corpo da solicitação
-    const validatedBody = orderSchema.parse(body)
-
+    const body = await req.json() // Receber os dados como JSON
+    const validatedBody = orderSchema.parse(body) // Validar o corpo da solicitação
     // Obter IDs de Utilizador e mesa
     const userId = await getUserId(validatedBody.username)
     const tableId = await getTableId(validatedBody.tableNumber.toString())

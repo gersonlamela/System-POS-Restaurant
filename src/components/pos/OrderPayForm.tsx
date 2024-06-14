@@ -20,7 +20,7 @@ const NifClientFormStep: React.FC<{
   onNextPage: () => void
   defaultNif: string // Valor padrão do NIF
   setNif: React.Dispatch<React.SetStateAction<string>>
-}> = ({ onNextPage, defaultNif, setNif }) => {
+}> = ({ defaultNif, setNif }) => {
   const handleNumberClick = (number: string) => {
     if (typeof defaultNif === 'string' && defaultNif.length < 9) {
       setNif((prevNif) => prevNif + number)
@@ -356,7 +356,7 @@ export function OrderPayForm({ order, totalPriceTable }: OrderPayFormProps) {
         className="flex cursor-pointer items-center justify-center gap-[14px] text-[#A9A9A9]"
       >
         <Button disabled={totalPriceTable === 0} className="flex h-[50px] w-full items-center justify-center rounded-[30px] bg-primary text-[18px] font-medium text-white shadow">
-          Finalizar
+          Pagar
         </Button>
       </DialogTrigger>
       <DialogContent
