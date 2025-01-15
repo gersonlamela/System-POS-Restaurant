@@ -24,6 +24,42 @@ This project was built using the following technologies:
 - Insomnia ![Insomnia](https://img.shields.io/badge/-Insomnia-5849BE?logo=insomnia&logoColor=white&style=flat)
 - Git and GitHub ![Git](https://img.shields.io/badge/-Git-F05032?logo=git&logoColor=white&style=flat) ![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github&logoColor=white&style=flat)
 
+---
+
+## 🚀 Getting Started
+
+To set up and run the project locally:
+
+1. Clone the repository to your local machine.
+2. Install the necessary dependencies `npm i`.
+3. Set up the environment variables (see [Environment Variables](#-environment-variables)).
+4. Run database migrations `npx prisma migrate dev`.
+5. Start the development server.
+6. Open your browser and navigate to `http://localhost:3000`.
+
+---
+
+## ⚡ Environment Variables
+
+The project requires the following environment variables to function properly. Create a `.env` file in the root of the project and add:
+
+DATABASE_URL=your-database-url  
+JWT_SECRET=your-jwt-secret
+
+```env
+# Connection string for your database
+DATABASE_URL=postgresql://<username>:<password>@localhost:5432/<database_name>
+
+# NextAuth configuration
+NEXTAUTH_SECRET=<your-next-auth-secret>
+NEXTAUTH_URL=<your-next-url>
+
+# Base URL for your application
+NEXT_PUBLIC_BASE_URL=<your-next-public-base-url>
+```
+
+---
+
 
 
 
