@@ -10,22 +10,11 @@ async function main() {
 
     await prisma.user.create({
       data: {
-        email: 'gersonlamela@example.com',
-        pin: hashedPin,
-        address: 'Vila Nova de Gaia',
-        name: 'Gerson Lamela',
-        phone: '930678098', // Adicionando prefixo de código de país para Portugal
-        status: 'ACTIVE',
-        role: 'ADMIN',
-      },
-    })
-    await prisma.user.create({
-      data: {
-        email: 'evacruz@example.com',
+        email: 'teste@teste.com',
         pin: hashedPin,
         address: 'Porto',
-        name: 'Eva Cruz',
-        phone: '930678098', // Adicionando prefixo de código de país para Portugal
+        name: 'Teste teste',
+        phone: '912345678',
         status: 'ACTIVE',
         role: 'MANAGER',
       },

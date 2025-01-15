@@ -13,7 +13,10 @@ import { useOrder } from '@/functions/OrderProvider'
 import { handleGetTables } from '@/functions/Table/table'
 import { SignOut } from '@phosphor-icons/react'
 import { signOut } from 'next-auth/react'
+import Head from 'next/head'
 import { useState, useEffect } from 'react'
+
+
 
 export default function Order() {
   const [tables, setTables] = useState([])

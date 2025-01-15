@@ -17,9 +17,10 @@ import { Binoculars } from '@phosphor-icons/react'
 
 import { parseISO, format } from 'date-fns'
 import { getTax } from '@/functions/Product/product'
-import IngredientsList from '@/components/IngredientsList'
+
 import { ProductWithIngredients } from '@/types/Product'
 import Image from 'next/image'
+import IngredientsList from '@/components/IngredientsList'
 
 interface SeeProductModalProps {
   Product: ProductWithIngredients

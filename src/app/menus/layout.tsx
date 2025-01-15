@@ -6,6 +6,7 @@ import { SideBar } from '@/components/pos/SideBar'
 import { Time } from '@/components/pos/Time'
 import { UserAuth } from '@/components/pos/UserAuth'
 import { handleGetProductsCategory } from '@/functions/Product/product'
+import Head from 'next/head'
 import { FC, ReactNode, useEffect, useState } from 'react'
 
 interface OrderLayoutProps {
@@ -30,6 +31,9 @@ const OrderLayout: FC<OrderLayoutProps> = ({ children }) => {
   }, [])
   return (
     <div className="flex max-h-screen w-full flex-row gap-[15px]  px-[15px] pb-[10px] pt-[15px]">
+      <Head>
+        <title>Menus</title>
+      </Head>
       <SideBar categories={categories} />
 
       <div className="flex flex-1 flex-col gap-[15px]">

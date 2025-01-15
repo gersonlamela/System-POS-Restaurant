@@ -159,9 +159,9 @@ export default function SeeOrderModal({ order }: SeeOrderModalProps) {
                                 <Image
                                   src={`/uploads/products/${foundProduct.image}`}
                                   alt={foundProduct.name}
-                                  className="mr-3 rounded-full object-contain"
+                                  className="mr-3 rounded-[5px] object-contain"
                                   width={60}
-                                  height={60}
+                                  height={30}
                                 />
                                 <p className="text-lg font-bold">
                                   {foundProduct.name}
